@@ -10,6 +10,16 @@ public class TaiKhoan {
 
     public TaiKhoan() {}
 
+    public TaiKhoan(int taiKhoanId, int nhanVienId, String tenDangNhap, String matKhau, String vaiTro, int trangThai, String hoTen) {
+        this.taiKhoanId = taiKhoanId;
+        this.nhanVienId = nhanVienId;
+        this.tenDangNhap = tenDangNhap;
+        this.matKhau = matKhau;
+        this.vaiTro = vaiTro;
+        this.trangThai = trangThai;
+        this.hoTen = hoTen;
+    }
+
     public int getTaiKhoanId() { return taiKhoanId; }
     public void setTaiKhoanId(int taiKhoanId) { this.taiKhoanId = taiKhoanId; }
     public int getNhanVienId() { return nhanVienId; }
