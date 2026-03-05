@@ -233,7 +233,7 @@
     </div>
     <h2>Đã có tài khoản?</h2>
     <p>Đăng nhập ngay để truy cập vào hệ thống quản lý.</p>
-    <a href="login.jsp" class="switch-btn">Đăng Nhập</a>
+    <a href="taikhoan?action=login" class="switch-btn">Đăng Nhập</a>
   </div>
 </div>
 
