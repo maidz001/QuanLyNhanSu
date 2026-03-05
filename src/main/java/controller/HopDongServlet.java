@@ -13,9 +13,7 @@ import java.util.*;
 @WebServlet("/hopdong")
 public class HopDongServlet extends HttpServlet {
 
-    // =========================================================================
-    // doGet
-    // =========================================================================
+ 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
@@ -31,9 +29,7 @@ public class HopDongServlet extends HttpServlet {
         }
     }
 
-    // =========================================================================
-    // doPost
-    // =========================================================================
+   
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
@@ -185,9 +181,7 @@ public class HopDongServlet extends HttpServlet {
         response.sendRedirect("hopdong");
     }
 
-    // =========================================================================
-    // 7. XEM CHI TIẾT
-    // =========================================================================
+  
     private void xemChiTiet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
@@ -208,9 +202,7 @@ public class HopDongServlet extends HttpServlet {
         request.getRequestDispatcher("ChiTietHopDong.jsp").forward(request, response);
     }
 
-    // =========================================================================
-    // 8. ĐỔI TRẠNG THÁI (Hieu luc / Het han / Cham dut)
-    // =========================================================================
+  
     private void doiTrangThai(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         try {
@@ -247,9 +239,7 @@ public class HopDongServlet extends HttpServlet {
         return list;
     }
 
-    // =========================================================================
-    // HELPER: mapRow & mapList
-    // =========================================================================
+   
     private HopDong mapRow(ResultSet rs) throws SQLException {
         HopDong hd = new HopDong();
         hd.setHopDongId(rs.getInt("hop_dong_id"));
@@ -273,3 +263,4 @@ public class HopDongServlet extends HttpServlet {
         return list;
     }
 }
+
