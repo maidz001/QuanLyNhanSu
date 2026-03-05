@@ -13,9 +13,7 @@ import java.util.*;
 @WebServlet("/danhgia")
 public class DanhGiaServlet extends HttpServlet {
 
-    // =========================================================================
-    // doGet
-    // =========================================================================
+    
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
@@ -30,9 +28,7 @@ public class DanhGiaServlet extends HttpServlet {
         }
     }
 
-    // =========================================================================
-    // doPost
-    // =========================================================================
+   
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
@@ -245,3 +241,4 @@ public class DanhGiaServlet extends HttpServlet {
         return list;
     }
 }
+
