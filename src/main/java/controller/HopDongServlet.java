@@ -8,6 +8,7 @@ import model.HopDong;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.*;
+import java.sql.Date;
 import java.util.*;
 
 @WebServlet("/hopdong")

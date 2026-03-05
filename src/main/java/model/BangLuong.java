@@ -26,6 +26,30 @@ public class BangLuong {
     private String hoTen;
     private String maNhanVien;
 
+    public BangLuong(int bangLuongId, int nhanVienId, int thang, int nam, BigDecimal soNgayLamViec, BigDecimal soNgayThucTe, BigDecimal gioLamThem, BigDecimal luongCoBan, BigDecimal phuCap, BigDecimal luongLamThem, BigDecimal thuong, BigDecimal tongThuNhap, BigDecimal baoHiemXaHoi, BigDecimal baoHiemYTe, BigDecimal tamUng, BigDecimal tongKhauTru, BigDecimal luongThucLanh, Date ngayThanhToan, String trangThai, String hoTen, String maNhanVien) {
+        this.bangLuongId = bangLuongId;
+        this.nhanVienId = nhanVienId;
+        this.thang = thang;
+        this.nam = nam;
+        this.soNgayLamViec = soNgayLamViec;
+        this.soNgayThucTe = soNgayThucTe;
+        this.gioLamThem = gioLamThem;
+        this.luongCoBan = luongCoBan;
+        this.phuCap = phuCap;
+        this.luongLamThem = luongLamThem;
+        this.thuong = thuong;
+        this.tongThuNhap = tongThuNhap;
+        this.baoHiemXaHoi = baoHiemXaHoi;
+        this.baoHiemYTe = baoHiemYTe;
+        this.tamUng = tamUng;
+        this.tongKhauTru = tongKhauTru;
+        this.luongThucLanh = luongThucLanh;
+        this.ngayThanhToan = ngayThanhToan;
+        this.trangThai = trangThai;
+        this.hoTen = hoTen;
+        this.maNhanVien = maNhanVien;
+    }
+
     public BangLuong() {}
 
     public int getBangLuongId() { return bangLuongId; }
