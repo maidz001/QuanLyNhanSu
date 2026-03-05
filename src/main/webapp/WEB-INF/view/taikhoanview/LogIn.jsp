@@ -151,7 +151,7 @@
     </div>
     <h2>Xin chào!</h2>
     <p>Chưa có tài khoản?<br/>Đăng ký ngay để bắt đầu sử dụng hệ thống.</p>
-    <a href="signin.jsp" class="switch-btn">Đăng Ký</a>
+    <a href="taikhoan?action=signin" class="switch-btn">Đăng Ký</a>
   </div>
 
   <div class="panel-right">
@@ -165,7 +165,7 @@
     <div class="error-box">⚠ <%= message %></div>
     <% } %>
 
-    <form action="hello" method="post">
+    <form action="taikhoan" method="post">
       <input type="hidden" name="action" value="dangnhap"/>
 
       <div class="field">

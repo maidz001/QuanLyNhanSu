@@ -157,7 +157,7 @@
     <div class="success-box">✓ <%= message %></div>
     <% } %>
 
-    <form action="hello" method="post">
+    <form action="taikhoan" method="post">
       <input type="hidden" name="action" value="dangky"/>
 
       <div class="grid-2">
