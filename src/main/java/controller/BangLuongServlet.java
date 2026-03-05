@@ -1,9 +1,9 @@
 package controller;
 
 import ConnDatabase.DBConnection;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
 import model.BangLuong;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -19,8 +19,8 @@ public class BangLuongServlet extends HttpServlet {
         String action=request.getParameter("action");
         if(action==null)action="list";
         switch(action){
-            case "moformthem": showFormThem(request,response);break;
-            case "moformsuasua": suaForm(request,response);break;
+            case "them": showFormThem(request,response);break;
+            case "sua": suaForm(request,response);break;
             case "xoa": xoaBangLuong(request,response);break;
             case "xem": xemChiTiet(request,response);break;
             default: danhSachBangLuong(request,response);

@@ -1,24 +1,25 @@
 package controller;
 
 import ConnDatabase.DBConnection;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
 import model.TaiKhoan;
 import java.io.IOException;
 import java.sql.*;
 import java.util.*;
 
-@WebServlet("/hello")
+@WebServlet("/taikhoan")
 public class TaiKhoanServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
         String action=request.getParameter("action");
-        if(action==null) action="list";
+        if(action==null) action="";
         switch(action){
             case "xoa": xoaTaiKhoan(request,response); break;
             case "xem": xemChiTiet(request,response); break;
-            default: danhSachTaiKhoan(request,response);
+            case "login": moFormDK(request,response); break;
+            default: moFormDK(request,response);
         }
     }
 
@@ -28,7 +29,7 @@ public class TaiKhoanServlet extends HttpServlet {
         switch(action){
             case "dangnhap": dangNhap(request,response); break;
             case "dangky": dangKy(request,response); break;
-            case "them": themTaiKhoan(request,response); break;
+            case "them": moFormDK(request,response); break;
             case "sua": capNhatTaiKhoan(request,response); break;
         }
     }
@@ -65,12 +66,12 @@ public class TaiKhoanServlet extends HttpServlet {
                     response.sendRedirect(request.getContextPath()+"/TrangChuQuanLy.jsp");
             }else{
                 request.setAttribute("message","tai khoan khong ton tai");
-                request.getRequestDispatcher("login.jsp").forward(request,response);
+                request.getRequestDispatcher("/view/taikhoanview/LogIn.jsp").forward(request,response);
             }
         }catch(Exception e){e.printStackTrace();}
     }
 
-    private void dangKy(HttpServletRequest request,HttpServletResponse response) throws IOException {
+    private void dangKy(HttpServletRequest request,HttpServletResponse response) throws IOException, ServletException {
         try{
             Connection conn=DBConnection.layKetNoi();
             PreparedStatement pstt=conn.prepareStatement("insert into tai_khoan(taiKhoanId,nhanVienId,tenDangNhap,matKhau,vaiTro,trangThai,hoTen) values(?,?,?,?,?,?,?)");
@@ -82,12 +83,15 @@ public class TaiKhoanServlet extends HttpServlet {
             pstt.setInt(6,Integer.parseInt(request.getParameter("trangThai")));
             pstt.setString(7,request.getParameter("hoTen"));
             pstt.executeUpdate();
+           request.getRequestDispatcher("/view/taikhoanview/SignIn.jsp").forward(request,response);
         }catch(Exception e){e.printStackTrace();}
-        response.sendRedirect("hello");
+        request.getRequestDispatcher("/view/taikhoanview/LogIn.jsp").forward(request,response);
     }
 
-    private void themTaiKhoan(HttpServletRequest request,HttpServletResponse response) throws IOException {
-        dangKy(request,response);
+    private void moFormDK(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        request.getRequestDispatcher("/WEB-INF/view/taikhoanview/LogIn.jsp")
+                .forward(request, response);
     }
 
     private void suaForm(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
