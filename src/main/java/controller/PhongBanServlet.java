@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.sql.*;
 import java.util.*;
 
-@WebServlet("/PhongBanServlet")
+@WebServlet("/PhongBan")
 public class PhongBanServlet extends HttpServlet {
     
     private PhongBanService phongBanService = new PhongBanService();
@@ -122,3 +122,4 @@ public class PhongBanServlet extends HttpServlet {
         request.getRequestDispatcher("phong-ban-form.jsp").forward(request, response);
     }
 }
+
