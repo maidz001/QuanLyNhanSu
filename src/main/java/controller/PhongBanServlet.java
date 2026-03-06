@@ -1,154 +1,124 @@
 package controller;
 
-import dao.PhongBanDAO;
+import ConnDatabase.DBConnection;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
 import model.PhongBan;
-
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
+import service.PhongBanService;
 
 import java.io.IOException;
-import java.util.List;
+import java.sql.*;
+import java.util.*;
 
-@WebServlet("/phongban")
+@WebServlet("/PhongBanServlet")
 public class PhongBanServlet extends HttpServlet {
-
-    private PhongBanDAO dao;
-
-    @Override
-    public void init() {
-        dao = new PhongBanDAO();
-    }
+    
+    private PhongBanService phongBanService = new PhongBanService();
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-
-        request.setCharacterEncoding("UTF-8");
-        response.setContentType("text/html;charset=UTF-8");
-
         String action = request.getParameter("action");
-        if (action == null) action = "list";
+        if (action == null) {
+            action = "list";
+        }
 
-        switch (action) {
-
-            case "add":
-                request.getRequestDispatcher("/phongban/add.jsp")
-                        .forward(request, response);
-                break;
-
-            case "edit":
-                hienFormSua(request, response);
-                break;
-
-            case "delete":
-                xoaPhongBan(request, response);
-                break;
-
-            default:
-                danhSachPhongBan(request, response);
-                break;
+        try {
+            switch (action) {
+                case "list":
+                    hienThiDanhSach(request, response);
+                    break;
+                case "delete":
+                    xoaPhongBan(request, response);
+                    break;
+                case "edit":
+                    hienThiFormSua(request, response);
+                    break;
+                default:
+                    hienThiDanhSach(request, response);
+                    break;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-
         request.setCharacterEncoding("UTF-8");
-
         String action = request.getParameter("action");
 
-        if ("insert".equals(action)) {
-            themPhongBan(request, response);
-        } else if ("update".equals(action)) {
-            suaPhongBan(request, response);
+        try {
+            if ("insert".equals(action)) {
+                themPhongBan(request, response);
+            } else if ("update".equals(action)) {
+                suaPhongBan(request, response);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
-  
-    private void danhSachPhongBan(HttpServletRequest request,
-                                  HttpServletResponse response)
-            throws ServletException, IOException {
 
-        List<PhongBan> ds = dao.layTatCa();
+    private void hienThiDanhSach(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        List<PhongBan> ds = phongBanService.layTatCa();
         request.setAttribute("dsPhongBan", ds);
-        request.getRequestDispatcher("/phongban/list.jsp")
-                .forward(request, response);
+        request.getRequestDispatcher("phong-ban-list.jsp").forward(request, response);
     }
 
-    private void themPhongBan(HttpServletRequest request,
-                              HttpServletResponse response)
+    private void themPhongBan(HttpServletRequest request, HttpServletResponse response) 
             throws IOException {
-
         PhongBan pb = new PhongBan();
-
         pb.setMaPhongBan(request.getParameter("maPhongBan"));
         pb.setTenPhongBan(request.getParameter("tenPhongBan"));
+        
+        String chaId = request.getParameter("phongBanChaId");
+        if (chaId != null && !chaId.isEmpty()) pb.setPhongBanChaId(Integer.parseInt(chaId));
+        
+        String tpId = request.getParameter("truongPhongId");
+        if (tpId != null && !tpId.isEmpty()) pb.setTruongPhongId(Integer.parseInt(tpId));
+        
         pb.setMoTa(request.getParameter("moTa"));
         pb.setTrangThai(Integer.parseInt(request.getParameter("trangThai")));
 
-        String pbCha = request.getParameter("phongBanChaId");
-        if (pbCha != null && !pbCha.isEmpty())
-            pb.setPhongBanChaId(Integer.parseInt(pbCha));
-        else
-            pb.setPhongBanChaId(null);
-
-        String tp = request.getParameter("truongPhongId");
-        if (tp != null && !tp.isEmpty())
-            pb.setTruongPhongId(Integer.parseInt(tp));
-        else
-            pb.setTruongPhongId(null);
-
-        dao.them(pb);
-        response.sendRedirect("phongban");
+        phongBanService.them(pb);
+        response.sendRedirect("PhongBanServlet?action=list");
     }
 
-    private void hienFormSua(HttpServletRequest request,
-                             HttpServletResponse response)
+    private void suaPhongBan(HttpServletRequest request, HttpServletResponse response) 
+            throws IOException {
+        PhongBan pb = new PhongBan();
+        pb.setPhongBanId(Integer.parseInt(request.getParameter("id")));
+        pb.setMaPhongBan(request.getParameter("maPhongBan"));
+        pb.setTenPhongBan(request.getParameter("tenPhongBan"));
+        
+        String chaId = request.getParameter("phongBanChaId");
+        pb.setPhongBanChaId((chaId != null && !chaId.isEmpty()) ? Integer.parseInt(chaId) : null);
+        
+        String tpId = request.getParameter("truongPhongId");
+        pb.setTruongPhongId((tpId != null && !tpId.isEmpty()) ? Integer.parseInt(tpId) : null);
+
+        pb.setMoTa(request.getParameter("moTa"));
+        pb.setTrangThai(Integer.parseInt(request.getParameter("trangThai")));
+
+        phongBanService.sua(pb);
+        response.sendRedirect("PhongBanServlet?action=list");
+    }
+
+    private void xoaPhongBan(HttpServletRequest request, HttpServletResponse response) 
+            throws IOException {
+        int id = Integer.parseInt(request.getParameter("id"));
+        phongBanService.xoa(id);
+        response.sendRedirect("PhongBanServlet?action=list");
+    }
+
+    private void hienThiFormSua(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-
         int id = Integer.parseInt(request.getParameter("id"));
-        PhongBan pb = dao.layTheoId(id);
-
+        PhongBan pb = phongBanService.layTheoId(id);
         request.setAttribute("phongBan", pb);
-        request.getRequestDispatcher("/phongban/edit.jsp")
-                .forward(request, response);
-    }
-
-    private void suaPhongBan(HttpServletRequest request,
-                             HttpServletResponse response)
-            throws IOException {
-
-        PhongBan pb = new PhongBan();
-
-        pb.setPhongBanId(Integer.parseInt(request.getParameter("phongBanId")));
-        pb.setMaPhongBan(request.getParameter("maPhongBan"));
-        pb.setTenPhongBan(request.getParameter("tenPhongBan"));
-        pb.setMoTa(request.getParameter("moTa"));
-        pb.setTrangThai(Integer.parseInt(request.getParameter("trangThai")));
-
-        String pbCha = request.getParameter("phongBanChaId");
-        if (pbCha != null && !pbCha.isEmpty())
-            pb.setPhongBanChaId(Integer.parseInt(pbCha));
-        else
-            pb.setPhongBanChaId(null);
-
-        String tp = request.getParameter("truongPhongId");
-        if (tp != null && !tp.isEmpty())
-            pb.setTruongPhongId(Integer.parseInt(tp));
-        else
-            pb.setTruongPhongId(null);
-
-        dao.sua(pb);
-        response.sendRedirect("phongban");
-    }
-
-    private void xoaPhongBan(HttpServletRequest request,
-                             HttpServletResponse response)
-            throws IOException {
-
-        int id = Integer.parseInt(request.getParameter("id"));
-        dao.xoa(id);
-        response.sendRedirect("phongban");
+        request.getRequestDispatcher("phong-ban-form.jsp").forward(request, response);
     }
 }
