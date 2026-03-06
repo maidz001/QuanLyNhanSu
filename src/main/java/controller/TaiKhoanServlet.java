@@ -76,7 +76,7 @@ public class TaiKhoanServlet extends HttpServlet {
 
             }else{
 
-                request.setAttribute("message","tai khoan khong ton tai");
+                request.setAttribute("message","Tài khoản không tồn tại trên hệ thống");
 
                 request.getRequestDispatcher("/WEB-INF/view/taikhoanview/LogIn.jsp")
                         .forward(request,response);
