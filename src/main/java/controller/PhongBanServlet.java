@@ -1,125 +1,221 @@
 package controller;
 
-import ConnDatabase.DBConnection; 
+import ConnDatabase.DBConnection;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
-import model.PhongBan; 
-import service.PhongBanService; 
+import model.PhongBan;
 
 import java.io.IOException;
 import java.sql.*;
 import java.util.*;
 
-@WebServlet("/PhongBan")
-public class PhongBan extends HttpServlet {
+@WebServlet("/phongban")
+public class PhongBanServlet extends HttpServlet {
 
-    private PhongBanService phongBanService = new PhongBanService(); //
-
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String action = request.getParameter("action");
-        if (action == null) {
-            action = "list";
-        }
 
-        switch (action) {
-            case "list":
-                hienThiDanhSach(request, response);
-                break;
-            case "edit":
-                hienThiFormSua(request, response);
-                break;
-            case "delete":
-                xoaPhongBan(request, response);
-                break;
-            default:
-                hienThiDanhSach(request, response);
-                break;
+        String action = request.getParameter("action");
+        if(action == null) action = "";
+
+        switch(action){
+            case "xoa": xoaPhongBan(request,response); break;
+            case "xem": xemChiTiet(request,response); break;
+            case "sua": moFormSua(request,response); break;
+            default: danhSachPhongBan(request,response);
         }
     }
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+    protected void doPost(HttpServletRequest request,HttpServletResponse response)
             throws ServletException, IOException {
+
         request.setCharacterEncoding("UTF-8");
+
         String action = request.getParameter("action");
+        if(action == null) action = "";
 
-        if ("insert".equals(action)) {
-            themPhongBan(request, response);
-        } else if ("update".equals(action)) {
-            suaPhongBan(request, response);
+        switch(action){
+            case "them": themPhongBan(request,response); break;
+            case "capnhat": capNhatPhongBan(request,response); break;
         }
     }
 
-    private void hienThiDanhSach(HttpServletRequest request, HttpServletResponse response) 
+    // ================= DANH SÁCH =================
+
+    private void danhSachPhongBan(HttpServletRequest request,HttpServletResponse response)
             throws ServletException, IOException {
-        List<model.PhongBan> ds = phongBanService.layTatCa(); 
-        request.setAttribute("dsPhongBan", ds);
-        request.getRequestDispatcher("phongban-list.jsp").forward(request, response);
+
+        List<PhongBan> ds = new ArrayList<>();
+
+        try{
+
+            Connection conn = DBConnection.layKetNoi();
+
+            PreparedStatement pst = conn.prepareStatement(
+                    "select pb.*, nv.ho_ten as ten_truong_phong " +
+                            "from phong_ban pb " +
+                            "left join nhan_vien nv on pb.truong_phong_id = nv.nhan_vien_id"
+            );
+
+            ResultSet rs = pst.executeQuery();
+
+            while(rs.next()) ds.add(mapRow(rs));
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        request.setAttribute("dsPhongBan",ds);
+
+        request.getRequestDispatcher("phongban-list.jsp")
+                .forward(request,response);
     }
 
-    private void hienThiFormSua(HttpServletRequest request, HttpServletResponse response) 
+    // ================= THÊM =================
+
+    private void themPhongBan(HttpServletRequest request,HttpServletResponse response)
+            throws IOException {
+
+        try{
+
+            Connection conn = DBConnection.layKetNoi();
+
+            PreparedStatement pst = conn.prepareStatement(
+                    "insert into phong_ban(ma_phong_ban,ten_phong_ban,phong_ban_cha_id,truong_phong_id,mo_ta,trang_thai) values(?,?,?,?,?,?)"
+            );
+
+            pst.setString(1,request.getParameter("maPhongBan"));
+            pst.setString(2,request.getParameter("tenPhongBan"));
+            pst.setObject(3,request.getParameter("phongBanChaId"));
+            pst.setObject(4,request.getParameter("truongPhongId"));
+            pst.setString(5,request.getParameter("moTa"));
+            pst.setInt(6,Integer.parseInt(request.getParameter("trangThai")));
+
+            pst.executeUpdate();
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        response.sendRedirect("phongban");
+    }
+
+    // ================= CẬP NHẬT =================
+
+    private void capNhatPhongBan(HttpServletRequest request,HttpServletResponse response)
+            throws IOException {
+
+        try{
+
+            Connection conn = DBConnection.layKetNoi();
+
+            PreparedStatement pst = conn.prepareStatement(
+                    "update phong_ban set ma_phong_ban=?,ten_phong_ban=?,phong_ban_cha_id=?,truong_phong_id=?,mo_ta=?,trang_thai=? where phong_ban_id=?"
+            );
+
+            pst.setString(1,request.getParameter("maPhongBan"));
+            pst.setString(2,request.getParameter("tenPhongBan"));
+            pst.setObject(3,request.getParameter("phongBanChaId"));
+            pst.setObject(4,request.getParameter("truongPhongId"));
+            pst.setString(5,request.getParameter("moTa"));
+            pst.setInt(6,Integer.parseInt(request.getParameter("trangThai")));
+            pst.setInt(7,Integer.parseInt(request.getParameter("phongBanId")));
+
+            pst.executeUpdate();
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        response.sendRedirect("phongban");
+    }
+
+    // ================= XÓA =================
+
+    private void xoaPhongBan(HttpServletRequest request,HttpServletResponse response)
+            throws IOException {
+
+        try{
+
+            int id = Integer.parseInt(request.getParameter("id"));
+
+            Connection conn = DBConnection.layKetNoi();
+
+            PreparedStatement pst = conn.prepareStatement(
+                    "delete from phong_ban where phong_ban_id=?"
+            );
+
+            pst.setInt(1,id);
+
+            pst.executeUpdate();
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        response.sendRedirect("phongban");
+    }
+
+    // ================= XEM CHI TIẾT =================
+
+    private void xemChiTiet(HttpServletRequest request,HttpServletResponse response)
             throws ServletException, IOException {
-        String idStr = request.getParameter("id");
-        if (idStr != null) {
-            int id = Integer.parseInt(idStr);
-            model.PhongBan pb = phongBanService.layTheoId(id); 
-            request.setAttribute("phongBan", pb);
+
+        int id = Integer.parseInt(request.getParameter("id"));
+
+        PhongBan pb = null;
+
+        try{
+
+            Connection conn = DBConnection.layKetNoi();
+
+            PreparedStatement pst = conn.prepareStatement(
+                    "select * from phong_ban where phong_ban_id=?"
+            );
+
+            pst.setInt(1,id);
+
+            ResultSet rs = pst.executeQuery();
+
+            if(rs.next()) pb = mapRow(rs);
+
+        }catch(Exception e){
+            e.printStackTrace();
         }
-        request.getRequestDispatcher("phongban-form.jsp").forward(request, response);
+
+        request.setAttribute("phongBan",pb);
+
+        request.getRequestDispatcher("phongban-form.jsp")
+                .forward(request,response);
     }
 
-    private void themPhongBan(HttpServletRequest request, HttpServletResponse response) 
-            throws IOException {
-        model.PhongBan pb = mapRequestToModel(request);
-        phongBanService.them(pb); 
-        response.sendRedirect("PhongBan?action=list");
+    // ================= FORM SỬA =================
+
+    private void moFormSua(HttpServletRequest request,HttpServletResponse response)
+            throws ServletException, IOException {
+
+        xemChiTiet(request,response);
     }
 
-    private void suaPhongBan(HttpServletRequest request, HttpServletResponse response) 
-            throws IOException {
-        model.PhongBan pb = mapRequestToModel(request);
-        String idStr = request.getParameter("id");
-        if (idStr != null) {
-            pb.setPhongBanId(Integer.parseInt(idStr));
-            phongBanService.sua(pb); 
-        }
-        response.sendRedirect("PhongBan?action=list");
-    }
+    // ================= MAP DATA =================
 
-    private void xoaPhongBan(HttpServletRequest request, HttpServletResponse response) 
-            throws IOException {
-        String idStr = request.getParameter("id");
-        if (idStr != null) {
-            int id = Integer.parseInt(idStr);
-            phongBanService.xoa(id); 
-        }
-        response.sendRedirect("PhongBan?action=list");
-    }
+    private PhongBan mapRow(ResultSet rs) throws SQLException {
 
-    private model.PhongBan mapRequestToModel(HttpServletRequest request) {
-        model.PhongBan pb = new model.PhongBan();
-        pb.setMaPhongBan(request.getParameter("maPhongBan"));
-        pb.setTenPhongBan(request.getParameter("tenPhongBan"));
-        
-        String chaId = request.getParameter("phongBanChaId");
-        if (chaId != null && !chaId.isEmpty()) {
-            pb.setPhongBanChaId(Integer.parseInt(chaId));
-        }
+        PhongBan pb = new PhongBan();
 
-        String tpId = request.getParameter("truongPhongId");
-        if (tpId != null && !tpId.isEmpty()) {
-            pb.setTruongPhongId(Integer.parseInt(tpId));
-        }
+        pb.setPhongBanId(rs.getInt("phong_ban_id"));
+        pb.setMaPhongBan(rs.getString("ma_phong_ban"));
+        pb.setTenPhongBan(rs.getString("ten_phong_ban"));
+        pb.setPhongBanChaId((Integer)rs.getObject("phong_ban_cha_id"));
+        pb.setTruongPhongId((Integer)rs.getObject("truong_phong_id"));
+        pb.setMoTa(rs.getString("mo_ta"));
+        pb.setTrangThai(rs.getInt("trang_thai"));
 
-        pb.setMoTa(request.getParameter("moTa"));
-        
-        String trangThai = request.getParameter("trangThai");
-        if (trangThai != null) {
-            pb.setTrangThai(Integer.parseInt(trangThai));
-        }
+        try{
+            pb.setTenTruongPhong(rs.getString("ten_truong_phong"));
+        }catch(Exception ignored){}
+
         return pb;
     }
 }

@@ -33,8 +33,7 @@ public class ChucVuDAO {
             ps.setString(1, cv.getMaChucVu());
             ps.setString(2, cv.getTenChucVu());
             ps.setInt(3, cv.getCapBac());
-            ps.setBigDecimal(4, cv.getLuongCoBanMin());
-            ps.setBigDecimal(5, cv.getLuongCoBanMax());
+            ps.setBigDecimal(4, cv.getluongCoBan());
             ps.setString(6, cv.getMoTa());
             ps.setInt(7, cv.getTrangThai());
             return ps.executeUpdate() > 0;
@@ -48,11 +47,10 @@ public class ChucVuDAO {
             ps.setString(1, cv.getMaChucVu());
             ps.setString(2, cv.getTenChucVu());
             ps.setInt(3, cv.getCapBac());
-            ps.setBigDecimal(4, cv.getLuongCoBanMin());
-            ps.setBigDecimal(5, cv.getLuongCoBanMax());
-            ps.setString(6, cv.getMoTa());
-            ps.setInt(7, cv.getTrangThai());
-            ps.setInt(8, cv.getChucVuId());
+            ps.setBigDecimal(4, cv.getluongCoBan());
+            ps.setString(5, cv.getMoTa());
+            ps.setInt(6, cv.getTrangThai());
+            ps.setInt(7, cv.getChucVuId());
             return ps.executeUpdate() > 0;
         } catch (SQLException e) { e.printStackTrace(); }
         return false;
@@ -73,8 +71,8 @@ public class ChucVuDAO {
         cv.setMaChucVu(rs.getString("ma_chuc_vu"));
         cv.setTenChucVu(rs.getString("ten_chuc_vu"));
         cv.setCapBac(rs.getInt("cap_bac"));
-        cv.setLuongCoBanMin(rs.getBigDecimal("luong_co_ban_min"));
-        cv.setLuongCoBanMax(rs.getBigDecimal("luong_co_ban_max"));
+        cv.setluongCoBan(rs.getBigDecimal("luong_co_ban"));
+
         cv.setMoTa(rs.getString("mo_ta"));
         cv.setTrangThai(rs.getInt("trang_thai"));
         return cv;

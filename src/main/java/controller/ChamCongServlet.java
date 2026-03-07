@@ -5,123 +5,218 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import model.ChamCong;
-import service.ChamCongService;
 
 import java.io.IOException;
 import java.sql.*;
+import java.sql.Date;
 import java.util.*;
 
-@WebServlet("/ChamCong")
-public class ChamCong extends HttpServlet {
+@WebServlet("/chamcong")
+public class ChamCongServlet extends HttpServlet {
 
-    private ChamCongService chamCongService = new ChamCongService();
-
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+    protected void doGet(HttpServletRequest request,HttpServletResponse response)
             throws ServletException, IOException {
-        String action = request.getParameter("action");
-        if (action == null) {
-            action = "list";
-        }
 
-        switch (action) {
-            case "list":
-                hienThiDanhSach(request, response);
-                break;
-            case "edit":
-                hienThiFormSua(request, response);
-                break;
-            case "delete":
-                xoaChamCong(request, response);
-                break;
-            default:
-                hienThiDanhSach(request, response);
-                break;
+        String action=request.getParameter("action");
+        if(action==null) action="";
+
+        switch(action){
+            case "xoa": xoaChamCong(request,response); break;
+            case "xem": xemChiTiet(request,response); break;
+            case "sua": moFormSua(request,response); break;
+            default: danhSachChamCong(request,response);
         }
     }
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+    protected void doPost(HttpServletRequest request,HttpServletResponse response)
             throws ServletException, IOException {
+
         request.setCharacterEncoding("UTF-8");
-        String action = request.getParameter("action");
 
-        if ("insert".equals(action)) {
-            themChamCong(request, response);
-        } else if ("update".equals(action)) {
-            suaChamCong(request, response);
+        String action=request.getParameter("action");
+        if(action==null) action="";
+
+        switch(action){
+            case "them": themChamCong(request,response); break;
+            case "capnhat": capNhatChamCong(request,response); break;
         }
     }
 
-    private void hienThiDanhSach(HttpServletRequest request, HttpServletResponse response) 
+    // ================= DANH SÁCH =================
+
+    private void danhSachChamCong(HttpServletRequest request,HttpServletResponse response)
             throws ServletException, IOException {
-        List<model.ChamCong> ds = chamCongService.layTatCa();
-        request.setAttribute("dsChamCong", ds);
-        request.getRequestDispatcher("chamcong-list.jsp").forward(request, response);
+
+        List<ChamCong> ds=new ArrayList<>();
+
+        try{
+
+            Connection conn=DBConnection.layKetNoi();
+
+            PreparedStatement pst=conn.prepareStatement(
+                    "select cc.*, nv.ho_ten, nv.ma_nhan_vien " +
+                            "from cham_cong cc join nhan_vien nv on cc.nhan_vien_id=nv.nhan_vien_id"
+            );
+
+            ResultSet rs=pst.executeQuery();
+
+            while(rs.next()) ds.add(mapRow(rs));
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        request.setAttribute("dsChamCong",ds);
+
+        request.getRequestDispatcher("chamcong-list.jsp")
+                .forward(request,response);
     }
 
-    private void hienThiFormSua(HttpServletRequest request, HttpServletResponse response) 
+    // ================= THÊM =================
+
+    private void themChamCong(HttpServletRequest request,HttpServletResponse response)
+            throws IOException {
+
+        try{
+
+            Connection conn=DBConnection.layKetNoi();
+
+            PreparedStatement pst=conn.prepareStatement(
+                    "insert into cham_cong(nhan_vien_id,ngay_cham_cong,gio_vao,gio_ra,trang_thai,ghi_chu) values(?,?,?,?,?,?)"
+            );
+
+            pst.setInt(1,Integer.parseInt(request.getParameter("nhanVienId")));
+            pst.setDate(2,Date.valueOf(request.getParameter("ngay")));
+            pst.setString(3,request.getParameter("gioVao"));
+            pst.setString(4,request.getParameter("gioRa"));
+            pst.setString(5,request.getParameter("trangThai"));
+            pst.setString(6,request.getParameter("ghiChu"));
+
+            pst.executeUpdate();
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        response.sendRedirect("chamcong");
+    }
+
+    // ================= CẬP NHẬT =================
+
+    private void capNhatChamCong(HttpServletRequest request,HttpServletResponse response)
+            throws IOException {
+
+        try{
+
+            Connection conn=DBConnection.layKetNoi();
+
+            PreparedStatement pst=conn.prepareStatement(
+                    "update cham_cong set nhan_vien_id=?,ngay_cham_cong=?,gio_vao=?,gio_ra=?,trang_thai=?,ghi_chu=? where cham_cong_id=?"
+            );
+
+            pst.setInt(1,Integer.parseInt(request.getParameter("nhanVienId")));
+            pst.setDate(2, Date.valueOf(request.getParameter("ngay")));
+            pst.setString(3,request.getParameter("gioVao"));
+            pst.setString(4,request.getParameter("gioRa"));
+            pst.setString(5,request.getParameter("trangThai"));
+            pst.setString(6,request.getParameter("ghiChu"));
+            pst.setInt(7,Integer.parseInt(request.getParameter("chamCongId")));
+
+            pst.executeUpdate();
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        response.sendRedirect("chamcong");
+    }
+
+    // ================= XÓA =================
+
+    private void xoaChamCong(HttpServletRequest request,HttpServletResponse response)
+            throws IOException {
+
+        try{
+
+            int id=Integer.parseInt(request.getParameter("id"));
+
+            Connection conn=DBConnection.layKetNoi();
+
+            PreparedStatement pst=conn.prepareStatement(
+                    "delete from cham_cong where cham_cong_id=?"
+            );
+
+            pst.setInt(1,id);
+
+            pst.executeUpdate();
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        response.sendRedirect("chamcong");
+    }
+
+    // ================= XEM CHI TIẾT =================
+
+    private void xemChiTiet(HttpServletRequest request,HttpServletResponse response)
             throws ServletException, IOException {
-        String idStr = request.getParameter("id");
-        if (idStr != null) {
-            int id = Integer.parseInt(idStr);
-            model.ChamCong cc = chamCongService.layTheoId(id);
-            request.setAttribute("chamCong", cc);
+
+        int id=Integer.parseInt(request.getParameter("id"));
+
+        ChamCong cc=null;
+
+        try{
+
+            Connection conn=DBConnection.layKetNoi();
+
+            PreparedStatement pst=conn.prepareStatement(
+                    "select * from cham_cong where cham_cong_id=?"
+            );
+
+            pst.setInt(1,id);
+
+            ResultSet rs=pst.executeQuery();
+
+            if(rs.next()) cc=mapRow(rs);
+
+        }catch(Exception e){
+            e.printStackTrace();
         }
-        request.getRequestDispatcher("chamcong-form.jsp").forward(request, response);
+
+        request.setAttribute("chamCong",cc);
+
+        request.getRequestDispatcher("chamcong-form.jsp")
+                .forward(request,response);
     }
 
-    private void themChamCong(HttpServletRequest request, HttpServletResponse response) 
-            throws IOException {
-        model.ChamCong cc = mapRequestToModel(request);
-        chamCongService.them(cc);
-        response.sendRedirect("ChamCong?action=list");
+    // ================= FORM SỬA =================
+
+    private void moFormSua(HttpServletRequest request,HttpServletResponse response)
+            throws ServletException, IOException {
+
+        xemChiTiet(request,response);
     }
 
-    private void suaChamCong(HttpServletRequest request, HttpServletResponse response) 
-            throws IOException {
-        model.ChamCong cc = mapRequestToModel(request);
-        String idStr = request.getParameter("id");
-        if (idStr != null) {
-            cc.setChamCongId(Integer.parseInt(idStr));
-            chamCongService.sua(cc);
-        }
-        response.sendRedirect("ChamCong?action=list");
-    }
+    // ================= MAP DATA =================
 
-    private void xoaChamCong(HttpServletRequest request, HttpServletResponse response) 
-            throws IOException {
-        String idStr = request.getParameter("id");
-        if (idStr != null) {
-            int id = Integer.parseInt(idStr);
-            chamCongService.xoa(id);
-        }
-        response.sendRedirect("ChamCong?action=list");
-    }
+    private ChamCong mapRow(ResultSet rs) throws SQLException{
 
-    private model.ChamCong mapRequestToModel(HttpServletRequest request) {
-        model.ChamCong cc = new model.ChamCong();
-        
-        String nvId = request.getParameter("nhanVienId");
-        if (nvId != null && !nvId.isEmpty()) {
-            cc.setNhanVienId(Integer.parseInt(nvId));
-        }
+        ChamCong cc=new ChamCong();
 
-        String ngayStr = request.getParameter("ngay");
-        if (ngayStr != null && !ngayStr.isEmpty()) {
-            cc.setNgay(java.sql.Date.valueOf(ngayStr));
-        }
+        cc.setChamCongId(rs.getInt("cham_cong_id"));
+        cc.setNhanVienId(rs.getInt("nhan_vien_id"));
+        cc.setNgayChamCong(rs.getDate("ngay_cham_cong"));
+        cc.setGioVao(rs.getString("gio_vao"));
+        cc.setGioRa(rs.getString("gio_ra"));
+        cc.setTrangThai(rs.getString("trang_thai"));
+        cc.setGhiChu(rs.getString("ghi_chu"));
 
-        cc.setGioVao(request.getParameter("gioVao"));
-        cc.setGioRa(request.getParameter("gioRa"));
-        
-        String tt = request.getParameter("trangThai");
-        if (tt != null && !tt.isEmpty()) {
-            cc.setTrangThai(Integer.parseInt(tt));
-        }
-        
-        cc.setGhiChu(request.getParameter("ghiChu"));
-        
+        try{
+            cc.setHoTen(rs.getString("ho_ten"));
+            cc.setMaNhanVien(rs.getString("ma_nhan_vien"));
+        }catch(Exception ignored){}
+
         return cc;
     }
 }

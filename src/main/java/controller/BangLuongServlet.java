@@ -77,7 +77,7 @@ public class BangLuongServlet extends HttpServlet {
         }catch(Exception e){e.printStackTrace();}
 
         request.setAttribute("list",list);
-        request.getRequestDispatcher("DanhSachBangLuong.jsp").forward(request,response);
+        request.getRequestDispatcher("/WEB-INF/view/luongview/DanhSachBangLuong.jsp").forward(request,response);
     }
 
     private void showFormThem(HttpServletRequest request,HttpServletResponse response) throws ServletException,IOException{
