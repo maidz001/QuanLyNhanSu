@@ -12,4 +12,8 @@ public class ThongBaoService {
     public boolean danhDauDaDoc(int id) { return thongBaoDAO.danhDauDaDoc(id); }
     public boolean docTatCa(int nguoiNhan) { return thongBaoDAO.docTatCa(nguoiNhan); }
     public boolean them(ThongBao tb) { return thongBaoDAO.them(tb); }
+
+    public ThongBao layTheoId(int id) {
+        return thongBaoDAO.layTheoId(id);
+    }
 }

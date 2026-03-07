@@ -1,17 +1,18 @@
 package controller;
 
-import ConnDatabase.DBConnection;
+import model.ChucVu;
+import service.ChucVuService;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
-import model.ChucVu;
-
 import java.io.IOException;
-import java.sql.*;
-import java.util.*;
+import java.util.List;
 
 @WebServlet("/chucvu")
 public class ChucVuServlet extends HttpServlet {
+
+    private ChucVuService chucVuService = new ChucVuService();
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -20,15 +21,19 @@ public class ChucVuServlet extends HttpServlet {
         if (action == null) action = "";
 
         switch (action) {
+
             case "xoa":
                 xoaChucVu(request, response);
                 break;
+
             case "xem":
                 xemChiTiet(request, response);
                 break;
+
             case "sua":
                 moFormSua(request, response);
                 break;
+
             default:
                 danhSachChucVu(request, response);
         }
@@ -43,39 +48,23 @@ public class ChucVuServlet extends HttpServlet {
         if (action == null) action = "";
 
         switch (action) {
+
             case "them":
                 themChucVu(request, response);
                 break;
+
             case "capnhat":
                 capNhatChucVu(request, response);
                 break;
         }
     }
 
-    // ===================== DANH SÁCH =====================
+    // ================= DANH SÁCH =================
 
     private void danhSachChucVu(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        List<ChucVu> ds = new ArrayList<>();
-
-        try {
-
-            Connection conn = DBConnection.layKetNoi();
-
-            PreparedStatement pst = conn.prepareStatement(
-                    "select * from chuc_vu"
-            );
-
-            ResultSet rs = pst.executeQuery();
-
-            while (rs.next()) {
-                ds.add(mapRow(rs));
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        List<ChucVu> ds = chucVuService.layTatCa();
 
         request.setAttribute("dsChucVu", ds);
 
@@ -83,119 +72,65 @@ public class ChucVuServlet extends HttpServlet {
                 .forward(request, response);
     }
 
-    // ===================== THÊM =====================
+    // ================= THÊM =================
 
     private void themChucVu(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
 
-        try {
+        ChucVu cv = new ChucVu();
 
-            Connection conn = DBConnection.layKetNoi();
+        cv.setMaChucVu(request.getParameter("maChucVu"));
+        cv.setTenChucVu(request.getParameter("tenChucVu"));
+        cv.setCapBac(Integer.parseInt(request.getParameter("capBac")));
+        cv.setluongCoBan(new java.math.BigDecimal(request.getParameter("luongCoBan")));
+        cv.setMoTa(request.getParameter("moTa"));
+        cv.setTrangThai(Integer.parseInt(request.getParameter("trangThai")));
 
-            PreparedStatement pst = conn.prepareStatement(
-                    "insert into chuc_vu(ma_chuc_vu,ten_chuc_vu,cap_bac,luong_co_ban,mo_ta,trang_thai) values(?,?,?,?,?,?)"
-            );
-
-            pst.setString(1, request.getParameter("maChucVu"));
-            pst.setString(2, request.getParameter("tenChucVu"));
-            pst.setInt(3, Integer.parseInt(request.getParameter("capBac")));
-            pst.setBigDecimal(4, new java.math.BigDecimal(request.getParameter("luongCoBan")));
-            pst.setString(5, request.getParameter("moTa"));
-            pst.setInt(6, Integer.parseInt(request.getParameter("trangThai")));
-
-            pst.executeUpdate();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        chucVuService.them(cv);
 
         response.sendRedirect("chucvu");
     }
 
-    // ===================== CẬP NHẬT =====================
+    // ================= CẬP NHẬT =================
 
     private void capNhatChucVu(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
 
-        try {
+        ChucVu cv = new ChucVu();
 
-            Connection conn = DBConnection.layKetNoi();
+        cv.setChucVuId(Integer.parseInt(request.getParameter("chucVuId")));
+        cv.setMaChucVu(request.getParameter("maChucVu"));
+        cv.setTenChucVu(request.getParameter("tenChucVu"));
+        cv.setCapBac(Integer.parseInt(request.getParameter("capBac")));
+        cv.setluongCoBan(new java.math.BigDecimal(request.getParameter("luongCoBan")));
+        cv.setMoTa(request.getParameter("moTa"));
+        cv.setTrangThai(Integer.parseInt(request.getParameter("trangThai")));
 
-            PreparedStatement pst = conn.prepareStatement(
-                    "update chuc_vu set ma_chuc_vu=?,ten_chuc_vu=?,cap_bac=?,luong_co_ban=?,mo_ta=?,trang_thai=? where chuc_vu_id=?"
-            );
-
-            pst.setString(1, request.getParameter("maChucVu"));
-            pst.setString(2, request.getParameter("tenChucVu"));
-            pst.setInt(3, Integer.parseInt(request.getParameter("capBac")));
-            pst.setBigDecimal(4, new java.math.BigDecimal(request.getParameter("luongCoBan")));
-            pst.setString(5, request.getParameter("moTa"));
-            pst.setInt(6, Integer.parseInt(request.getParameter("trangThai")));
-            pst.setInt(7, Integer.parseInt(request.getParameter("chucVuId")));
-
-            pst.executeUpdate();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        chucVuService.sua(cv);
 
         response.sendRedirect("chucvu");
     }
 
-    // ===================== XÓA =====================
+    // ================= XÓA =================
 
     private void xoaChucVu(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
 
-        try {
+        int id = Integer.parseInt(request.getParameter("id"));
 
-            int id = Integer.parseInt(request.getParameter("id"));
-
-            Connection conn = DBConnection.layKetNoi();
-
-            PreparedStatement pst = conn.prepareStatement(
-                    "delete from chuc_vu where chuc_vu_id=?"
-            );
-
-            pst.setInt(1, id);
-
-            pst.executeUpdate();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        chucVuService.xoa(id);
 
         response.sendRedirect("chucvu");
     }
 
-    // ===================== XEM CHI TIẾT =====================
+    // ================= XEM CHI TIẾT =================
 
     private void xemChiTiet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         int id = Integer.parseInt(request.getParameter("id"));
 
-        ChucVu cv = null;
-
-        try {
-
-            Connection conn = DBConnection.layKetNoi();
-
-            PreparedStatement pst = conn.prepareStatement(
-                    "select * from chuc_vu where chuc_vu_id=?"
-            );
-
-            pst.setInt(1, id);
-
-            ResultSet rs = pst.executeQuery();
-
-            if (rs.next()) {
-                cv = mapRow(rs);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        ChucVu cv = chucVuService.layTheoId(id);
 
         request.setAttribute("cv", cv);
 
@@ -203,28 +138,11 @@ public class ChucVuServlet extends HttpServlet {
                 .forward(request, response);
     }
 
-    // ===================== FORM SỬA =====================
+    // ================= FORM SỬA =================
 
     private void moFormSua(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         xemChiTiet(request, response);
-    }
-
-    // ===================== MAP DATA =====================
-
-    private ChucVu mapRow(ResultSet rs) throws SQLException {
-
-        ChucVu cv = new ChucVu();
-
-        cv.setChucVuId(rs.getInt("chuc_vu_id"));
-        cv.setMaChucVu(rs.getString("ma_chuc_vu"));
-        cv.setTenChucVu(rs.getString("ten_chuc_vu"));
-        cv.setCapBac(rs.getInt("cap_bac"));
-        cv.setluongCoBan(rs.getBigDecimal("luong_co_ban"));
-        cv.setMoTa(rs.getString("mo_ta"));
-        cv.setTrangThai(rs.getInt("trang_thai"));
-
-        return cv;
     }
 }

@@ -95,4 +95,72 @@ public class HopDongDAO {
         try { hd.setHoTen(rs.getString("ho_ten")); } catch (SQLException ignored) {}
         try { hd.setMaNhanVien(rs.getString("ma_nhan_vien")); } catch (SQLException ignored) {}
         return hd;
-    }}
+    }
+    public List<HopDong> searchHopDong(String keyword, String loaiHopDong, String trangThai) {
+
+        List<HopDong> list = new ArrayList<>();
+
+        StringBuilder sql = new StringBuilder(
+                "SELECT hd.*, nv.hoTen " +
+                        "FROM HopDong hd " +
+                        "JOIN NhanVien nv ON hd.nhanVienId = nv.nhanVienId " +
+                        "WHERE 1=1 "
+        );
+
+        List<Object> params = new ArrayList<>();
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql.append(" AND (hd.soHopDong LIKE ? OR nv.hoTen LIKE ?)");
+            params.add("%" + keyword + "%");
+            params.add("%" + keyword + "%");
+        }
+
+        if (loaiHopDong != null && !loaiHopDong.isEmpty()) {
+            sql.append(" AND hd.loaiHopDong = ?");
+            params.add(loaiHopDong);
+        }
+
+        if (trangThai != null && !trangThai.isEmpty()) {
+            sql.append(" AND hd.trangThai = ?");
+            params.add(trangThai);
+        }
+
+        sql.append(" ORDER BY hd.ngayBatDau DESC");
+
+        try (Connection conn = DBConnection.layKetNoi();
+             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
+            }
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+
+                HopDong hd = new HopDong();
+
+                hd.setHopDongId(rs.getInt("hopDongId"));
+                hd.setSoHopDong(rs.getString("soHopDong"));
+                hd.setNhanVienId(rs.getInt("nhanVienId"));
+                hd.setLoaiHopDong(rs.getString("loaiHopDong"));
+                hd.setNgayBatDau(rs.getDate("ngayBatDau"));
+                hd.setNgayKetThuc(rs.getDate("ngayKetThuc"));
+                hd.setLuongCoBan(rs.getBigDecimal("luongCoBan"));
+                hd.setPhuCap(rs.getBigDecimal("phuCap"));
+                hd.setTrangThai(rs.getString("trangThai"));
+                hd.setGhiChu(rs.getString("ghiChu"));
+
+                // nếu model có field tên nhân viên
+                hd.setHoTen(rs.getString("hoTen"));
+
+                list.add(hd);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+}

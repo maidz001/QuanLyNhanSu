@@ -35,6 +35,8 @@ public class NghiPhepService {
         }
         return kq;
     }
-
+    public boolean them(NghiPhep np){
+        return nghiPhepDAO.them(np);
+    }
     public boolean xoa(int id) { return nghiPhepDAO.xoa(id); }
 }

@@ -1,10 +1,8 @@
 package until;
 
-import model.BangLuong;
-import model.NghiPhep;
-import model.NhanVien;
-import model.PhongBan;
+import model.*;
 import ConnDatabase.DBConnection;
+import service.*;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -12,14 +10,29 @@ import javax.servlet.annotation.WebServlet;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @WebServlet("/dashboard")
 public class DashboardServlet extends HttpServlet {
+    private TaiKhoanService taiKhoanService = new TaiKhoanService();
+    private BangLuongService bangLuongService=new BangLuongService();
+    private ChamCongService chamCongService=new ChamCongService();
+    private ChucVuService chucVuService=new ChucVuService();
+    private DanhGiaService danhGiaService=new DanhGiaService();
+    private HopDongService hopDongService=new HopDongService();
+    private NghiPhepService nghiPhepService=new NghiPhepService();
+    private NhanVienService nhanVienService=new NhanVienService();
+    private PhongBanService phongBanService=new PhongBanService();
+    private ThongBaoService thongBaoService=new ThongBaoService();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
 
         // Lấy tháng/năm lọc (mặc định = tháng hiện tại)
         Calendar cal = Calendar.getInstance();
@@ -129,5 +142,35 @@ public class DashboardServlet extends HttpServlet {
 
         request.getRequestDispatcher("/WEB-INF/views/dashboard.jsp")
                 .forward(request, response);
+    }
+    public void nhanVienDas(HttpServletRequest request,HttpServletResponse response,TaiKhoan tk){
+        NhanVien nhanVien=nhanVienService.layTheoId(tk.getNhanVienId());
+        List<BangLuong> listBangLuong = bangLuongService.layTheoNhanVien(tk.getNhanVienId());
+        List<ChamCong>listChamCong=chamCongService.layTheoNhanVien(tk.getNhanVienId());
+        ChucVu chucVu=chucVuService.layTheoId(nhanVienService.layTheoId(tk.getNhanVienId()).getChucVuId());
+        List<DanhGia> listDanhGia=danhGiaService.layTheoNhanVien(tk.getNhanVienId());
+        HopDong hopdong=hopDongService.layHopDongHieuLuc(tk.getNhanVienId());
+        List<NghiPhep> listNghiPhep=nghiPhepService.layTheoNhanVien(tk.getNhanVienId());
+        PhongBan phongBan=phongBanService.layTheoId(nhanVienService.layTheoId(tk.getNhanVienId()).getPhongBanId());
+        List<ThongBao> listThongBao=thongBaoService.layTheoNguoiNhan(tk.getNhanVienId());
+        LocalDate now=LocalDate.now();
+        int ngayNghiPhep = 0;
+
+        for (NghiPhep np : listNghiPhep) {
+
+            long diff = np.getNgayKetThuc().getTime() - np.getNgayBatDau().getTime();
+
+            long soNgay = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+
+            ngayNghiPhep += soNgay + 1;
+        }
+        double diem=0;
+        for(DanhGia dg:listDanhGia){
+            diem=diem+dg.getTongDiem().doubleValue();
+        }
+        request.setAttribute("soNgayCong",chamCongService.demNgayDiLam(tk.getNhanVienId(),now.getMonthValue(),now.getYear()));
+        request.setAttribute("luongGanNhat", bangLuongService.getBangLuongMoiNhatByNhanVien(tk.getNhanVienId()).getLuongThucLanh());
+request.setAttribute("soDonNghiPhep",ngayNghiPhep);
+request.setAttribute("diemDanhGia",diem/listDanhGia.size());
     }
 }

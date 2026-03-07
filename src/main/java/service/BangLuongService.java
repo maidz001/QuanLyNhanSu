@@ -228,4 +228,15 @@ public class BangLuongService {
         return bangLuongDAO.xoa(id);
     }
 
+    public boolean them(BangLuong bl) {
+        return bangLuongDAO.them(bl);
+    }
+
+    public boolean sua(BangLuong bl) {
+        return bangLuongDAO.sua(bl);
+    }
+
+    public BangLuong getBangLuongMoiNhatByNhanVien(int id) {
+        return bangLuongDAO.getBangLuongMoiNhatByNhanVien(id);
+    }
 }

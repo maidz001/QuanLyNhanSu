@@ -74,8 +74,7 @@ public class XuatExcel {
             int rowNum = 1;
             for (BangLuong bl : ds) {
                 Row row = sheet.createRow(rowNum++);
-                row.createCell(0).setCellValue(bl.getMaNhanVien() != null ? bl.getMaNhanVien() : "");
-                row.createCell(1).setCellValue(bl.getHoTen() != null ? bl.getHoTen() : "");
+
                 row.createCell(2).setCellValue(bl.getSoNgayLamViec() != null ? bl.getSoNgayLamViec().doubleValue() : 0);
                 row.createCell(3).setCellValue(bl.getSoNgayThucTe() != null ? bl.getSoNgayThucTe().doubleValue() : 0);
                 row.createCell(4).setCellValue(bl.getGioLamThem() != null ? bl.getGioLamThem().doubleValue() : 0);

@@ -22,4 +22,12 @@ public class DanhGiaService {
 
     public boolean sua(DanhGia dg) { return danhGiaDAO.sua(dg); }
     public boolean xoa(int id) { return danhGiaDAO.xoa(id); }
+
+    public List<DanhGia> searchDanhGia(String keyword, String thang, String nam, String xepLoai) {
+        return danhGiaDAO.searchDanhGia(keyword,thang,nam,xepLoai);
+    }
+
+    public List<DanhGia> layTheoNhanVien(int nhanVienId) {
+        return danhGiaDAO.layTheoNhanVienId(nhanVienId);
+    }
 }

@@ -1,132 +1,168 @@
 package controller;
 
-import ConnDatabase.DBConnection;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
+
 import model.NhanVien;
+import model.TaiKhoan;
+import service.NhanVienService;
+
 import java.io.IOException;
-import java.sql.*;
-import java.util.*;
+import java.util.List;
 
 @WebServlet("/nhanvien")
 public class NhanVienServlet extends HttpServlet {
 
-    protected void doGet(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
+    private NhanVienService nhanVienService = new NhanVienService();
+
+    protected void doGet(HttpServletRequest request,HttpServletResponse response)
+            throws ServletException, IOException {
+
         String action=request.getParameter("action");
         if(action==null) action="list";
+
         switch(action){
-            case "them": request.getRequestDispatcher("ThemNhanVien.jsp").forward(request,response); break;
-            case "sua": suaForm(request,response); break;
-            case "xoa": xoaNhanVien(request,response); break;
-            case "xem": xemChiTiet(request,response); break;
-            default: danhSachNhanVien(request,response);
+
+            case "them":
+                request.getRequestDispatcher("ThemNhanVien.jsp")
+                        .forward(request,response);
+                break;
+
+            case "sua":
+                suaForm(request,response);
+                break;
+
+            case "xoa":
+                xoaNhanVien(request,response);
+                break;
+
+            case "xem":
+                xemChiTiet(request,response);
+                break;
+
+            default:
+                danhSachNhanVien(request,response);
         }
     }
 
-    protected void doPost(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request,HttpServletResponse response)
+            throws ServletException, IOException {
+
+        request.setCharacterEncoding("UTF-8");
+
         String action=request.getParameter("action");
+
+        if(action==null) return;
+
         switch(action){
-            case "them": themNhanVien(request,response); break;
-            case "sua": capNhatNhanVien(request,response); break;
+
+            case "them":
+                themNhanVien(request,response);
+                break;
+
+            case "sua":
+                capNhatNhanVien(request,response);
+                break;
         }
     }
 
-    private void danhSachNhanVien(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
-        List<NhanVien> list=new ArrayList<>();
-        try{
-            Connection conn=DBConnection.layKetNoi();
-            PreparedStatement pstt=conn.prepareStatement("select * from nhan_vien");
-            ResultSet rs=pstt.executeQuery();
-            list=mapList(rs);
-        }catch(Exception e){e.printStackTrace();}
+    // ================= DANH SÁCH =================
+
+    private void danhSachNhanVien(HttpServletRequest request,HttpServletResponse response)
+            throws ServletException, IOException {
+
+        List<NhanVien> list = nhanVienService.layTatCa();
+
         request.setAttribute("list",list);
-        request.getRequestDispatcher("DanhSachNhanVien.jsp").forward(request,response);
+
+        request.getRequestDispatcher("DanhSachNhanVien.jsp")
+                .forward(request,response);
     }
 
-    private void themNhanVien(HttpServletRequest request,HttpServletResponse response) throws IOException {
-        try{
-            Connection conn=DBConnection.layKetNoi();
-            PreparedStatement pstt=conn.prepareStatement("insert into nhan_vien(maNhanVien,hoTen,email,dienThoai,diaChi,phongBanId,chucVuId,trangThai) values(?,?,?,?,?,?,?,?)");
-            pstt.setString(1,request.getParameter("maNhanVien"));
-            pstt.setString(2,request.getParameter("hoTen"));
-            pstt.setString(3,request.getParameter("email"));
-            pstt.setString(4,request.getParameter("dienThoai"));
-            pstt.setString(5,request.getParameter("diaChi"));
-            pstt.setInt(6,Integer.parseInt(request.getParameter("phongBanId")));
-            pstt.setInt(7,Integer.parseInt(request.getParameter("chucVuId")));
-            pstt.setString(8,"hoatdong");
-            pstt.executeUpdate();
-        }catch(Exception e){e.printStackTrace();}
+    // ================= THÊM =================
+
+    private void themNhanVien(HttpServletRequest request,HttpServletResponse response)
+            throws IOException {
+
+        NhanVien nv = new NhanVien();
+
+        nv.setMaNhanVien(request.getParameter("maNhanVien"));
+        nv.setHoTen(request.getParameter("hoTen"));
+        nv.setEmail(request.getParameter("email"));
+        nv.setDienThoai(request.getParameter("dienThoai"));
+        nv.setDiaChi(request.getParameter("diaChi"));
+        nv.setPhongBanId(Integer.parseInt(request.getParameter("phongBanId")));
+        nv.setChucVuId(Integer.parseInt(request.getParameter("chucVuId")));
+        nv.setTrangThai("hoatdong");
+
+        nhanVienService.them(nv,getSS(request,response).getNhanVienId());
+
         response.sendRedirect("nhanvien");
     }
 
-    private void suaForm(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
+    // ================= FORM SỬA =================
+
+    private void suaForm(HttpServletRequest request,HttpServletResponse response)
+            throws ServletException, IOException {
+
         int id=Integer.parseInt(request.getParameter("id"));
-        NhanVien nv=new NhanVien();
-        try{
-            Connection conn=DBConnection.layKetNoi();
-            PreparedStatement pstt=conn.prepareStatement("select * from nhan_vien where nhanVienId=?");
-            pstt.setInt(1,id);
-            ResultSet rs=pstt.executeQuery();
-            if(rs.next()) nv=mapRow(rs);
-        }catch(Exception e){e.printStackTrace();}
+
+        NhanVien nv = nhanVienService.layTheoId(id);
+
         request.setAttribute("nv",nv);
-        request.getRequestDispatcher("SuaNhanVien.jsp").forward(request,response);
+
+        request.getRequestDispatcher("SuaNhanVien.jsp")
+                .forward(request,response);
     }
 
-    private void capNhatNhanVien(HttpServletRequest request,HttpServletResponse response) throws IOException {
-        try{
-            Connection conn=DBConnection.layKetNoi();
-            PreparedStatement pstt=conn.prepareStatement("update nhan_vien set hoTen=?,email=?,dienThoai=?,diaChi=? where nhanVienId=?");
-            pstt.setString(1,request.getParameter("hoTen"));
-            pstt.setString(2,request.getParameter("email"));
-            pstt.setString(3,request.getParameter("dienThoai"));
-            pstt.setString(4,request.getParameter("diaChi"));
-            pstt.setInt(5,Integer.parseInt(request.getParameter("nhanVienId")));
-            pstt.executeUpdate();
-        }catch(Exception e){e.printStackTrace();}
+    // ================= CẬP NHẬT =================
+
+    private void capNhatNhanVien(HttpServletRequest request,HttpServletResponse response)
+            throws IOException {
+
+        NhanVien nv = new NhanVien();
+
+        nv.setNhanVienId(Integer.parseInt(request.getParameter("nhanVienId")));
+        nv.setHoTen(request.getParameter("hoTen"));
+        nv.setEmail(request.getParameter("email"));
+        nv.setDienThoai(request.getParameter("dienThoai"));
+        nv.setDiaChi(request.getParameter("diaChi"));
+
+        nhanVienService.sua(nv,getSS(request,response).getNhanVienId());
+
         response.sendRedirect("nhanvien");
     }
 
-    private void xoaNhanVien(HttpServletRequest request,HttpServletResponse response) throws IOException {
-        try{
-            int id=Integer.parseInt(request.getParameter("id"));
-            Connection conn=DBConnection.layKetNoi();
-            PreparedStatement pstt=conn.prepareStatement("delete from nhan_vien where nhanVienId=?");
-            pstt.setInt(1,id);
-            pstt.executeUpdate();
-        }catch(Exception e){e.printStackTrace();}
-        response.sendRedirect("nhanvien");
-    }
+    // ================= XÓA =================
 
-    private void xemChiTiet(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
+    private void xoaNhanVien(HttpServletRequest request,HttpServletResponse response)
+            throws IOException {
+
         int id=Integer.parseInt(request.getParameter("id"));
-        NhanVien nv=new NhanVien();
-        try{
-            Connection conn=DBConnection.layKetNoi();
-            PreparedStatement pstt=conn.prepareStatement("select * from nhan_vien where nhanVienId=?");
-            pstt.setInt(1,id);
-            ResultSet rs=pstt.executeQuery();
-            if(rs.next()) nv=mapRow(rs);
-        }catch(Exception e){e.printStackTrace();}
-        request.setAttribute("nv",nv);
-        request.getRequestDispatcher("ChiTietNhanVien.jsp").forward(request,response);
-    }
-    private NhanVien mapRow(ResultSet rs) throws SQLException {
-        NhanVien nv=new NhanVien();
-        nv.setNhanVienId(rs.getInt("nhanVienId"));
-        nv.setMaNhanVien(rs.getString("maNhanVien"));
-        nv.setHoTen(rs.getString("hoTen"));
-        nv.setEmail(rs.getString("email"));
-        nv.setDienThoai(rs.getString("dienThoai"));
-        nv.setDiaChi(rs.getString("diaChi"));
-        return nv;
+
+        nhanVienService.xoa(id);
+
+        response.sendRedirect("nhanvien");
     }
 
-    private List<NhanVien> mapList(ResultSet rs) throws SQLException {
-        List<NhanVien> list=new ArrayList<>();
-        while(rs.next()) list.add(mapRow(rs));
-        return list;
+    // ================= CHI TIẾT =================
+
+    private void xemChiTiet(HttpServletRequest request,HttpServletResponse response)
+            throws ServletException, IOException {
+
+        int id=Integer.parseInt(request.getParameter("id"));
+
+        NhanVien nv = nhanVienService.layTheoId(id);
+
+        request.setAttribute("nv",nv);
+
+        request.getRequestDispatcher("ChiTietNhanVien.jsp")
+                .forward(request,response);
+    }
+    private TaiKhoan getSS(HttpServletRequest request, HttpServletResponse response){
+        HttpSession session=(HttpSession) request.getSession(false);
+        TaiKhoan tk= (TaiKhoan) session.getAttribute("taiKhoanDangDangNhap");
+        return tk;
     }
 }

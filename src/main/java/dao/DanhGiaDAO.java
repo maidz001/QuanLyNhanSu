@@ -62,6 +62,105 @@ public class DanhGiaDAO {
         } catch (SQLException e) { e.printStackTrace(); }
         return false;
     }
+    public List<DanhGia> searchDanhGia(String keyword, String thangStr, String namStr, String xepLoai) {
+
+        List<DanhGia> list = new ArrayList<>();
+
+        StringBuilder sql = new StringBuilder(
+                "SELECT dg.*, nv.ho_ten, nd.ho_ten AS ten_nguoi_danh_gia " +
+                        "FROM danh_gia dg " +
+                        "LEFT JOIN nhan_vien nv ON dg.nhan_vien_id = nv.nhan_vien_id " +
+                        "LEFT JOIN nhan_vien nd ON dg.nguoi_danh_gia = nd.nhan_vien_id " +
+                        "WHERE 1=1 "
+        );
+
+        List<Object> params = new ArrayList<>();
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql.append("AND nv.ho_ten LIKE ? ");
+            params.add("%" + keyword.trim() + "%");
+        }
+
+        if (thangStr != null && !thangStr.isEmpty()) {
+            sql.append("AND dg.thang = ? ");
+            params.add(Integer.parseInt(thangStr));
+        }
+
+        if (namStr != null && !namStr.isEmpty()) {
+            sql.append("AND dg.nam = ? ");
+            params.add(Integer.parseInt(namStr));
+        }
+
+        if (xepLoai != null && !xepLoai.isEmpty()) {
+            sql.append("AND dg.xep_loai = ? ");
+            params.add(xepLoai);
+        }
+
+        sql.append("ORDER BY dg.danh_gia_id DESC");
+
+        try {
+
+            Connection conn = DBConnection.layKetNoi();
+
+            PreparedStatement pstt = conn.prepareStatement(sql.toString());
+
+            for (int i = 0; i < params.size(); i++) {
+                pstt.setObject(i + 1, params.get(i));
+            }
+
+            ResultSet rs = pstt.executeQuery();
+
+            while (rs.next()) {
+                list.add(mapRow(rs));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    public List<DanhGia> layTheoNhanVienId(int nhanVienId) {
+        List<DanhGia> list = new ArrayList<>();
+
+        String sql = "SELECT dg.*, nv.ho_ten, ndg.ho_ten AS ten_nguoi_danh_gia " +
+                "FROM danh_gia dg " +
+                "LEFT JOIN nhan_vien nv ON dg.nhan_vien_id = nv.nhan_vien_id " +
+                "LEFT JOIN nhan_vien ndg ON dg.nguoi_danh_gia = ndg.nhan_vien_id " +
+                "WHERE dg.nhan_vien_id = ? " +
+                "ORDER BY dg.nam DESC, dg.thang DESC";
+
+        try (Connection conn = DBConnection.layKetNoi();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, nhanVienId);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                DanhGia dg = new DanhGia();
+
+                dg.setDanhGiaId(rs.getInt("danh_gia_id"));
+                dg.setNhanVienId(rs.getInt("nhan_vien_id"));
+                dg.setThang(rs.getInt("thang"));
+                dg.setNam(rs.getInt("nam"));
+                dg.setTongDiem(rs.getBigDecimal("tong_diem"));
+                dg.setXepLoai(rs.getString("xep_loai"));
+                dg.setNhanXet(rs.getString("nhan_xet"));
+                dg.setNguoiDanhGia(rs.getInt("nguoi_danh_gia"));
+                dg.setNgayDanhGia(rs.getDate("ngay_danh_gia"));
+                dg.setHoTen(rs.getString("ho_ten"));
+                dg.setTenNguoiDanhGia(rs.getString("ten_nguoi_danh_gia"));
+
+                list.add(dg);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
 
     private DanhGia mapRow(ResultSet rs) throws SQLException {
         DanhGia dg = new DanhGia();
