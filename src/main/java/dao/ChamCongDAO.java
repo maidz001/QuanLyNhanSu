@@ -193,7 +193,7 @@ public class ChamCongDAO {
         try {
             Connection connection=DBConnection.layKetNoi();
             PreparedStatement pstt=connection.prepareStatement(sql);
-            pstt.setString(1,"Nghi phep");
+            pstt.setString(1,"Nghi khong phep");
             pstt.setInt(2,idNhanVien);
             ResultSet rs=pstt.executeQuery();
             while (rs.next())

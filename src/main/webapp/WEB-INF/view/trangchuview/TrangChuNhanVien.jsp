@@ -630,8 +630,8 @@
                                 <label>Loại phép</label>
                                 <select name="loaiPhep" required>
                                     <option value="">-- Chọn loại --</option>
-                                    <option value="Phep nam">Phép năm</option>
-                                    <option value="Phep om">Phép ốm</option>
+
+                                    <option value="Phep thang">Phép tháng(không quá 2 ngày 1 tháng/không quá 12 ngày 1 năm)</option>
                                     <option value="Phep khac">Phép khác</option>
                                 </select>
                             </div>
@@ -666,11 +666,13 @@
             <div class="box">
                 <div class="box-header">
                     <h3><svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>Danh sách đơn nghỉ phép</h3>
+                    <a class="view-all" href="${pageContext.request.contextPath}/nghiphep?action=xoadondacu&nhanVienId=${tk.nhanVienId}" >- Xóa các đơn cũ</a>
                     <a class="view-all" onclick="showPanel('xinnghiphep',null)">+ Tạo đơn mới</a>
+
                 </div>
                 <div class="box-body" style="padding:0">
                     <table class="data-table">
-                        <thead><tr><th>#</th><th>Loại phép</th><th>Từ ngày</th><th>Đến ngày</th><th>Số ngày</th><th>Lý do</th><th>Trạng thái</th><th>Người duyệt</th></tr></thead>
+                        <thead><tr><th>#</th><th>Loại phép</th><th>Từ ngày</th><th>Đến ngày</th><th>Số ngày</th><th>Lý do</th><th>Trạng thái</th><th>Người duyệt</th><th>Khác</th></tr></thead>
                         <tbody>
                             <c:choose>
                                 <c:when test="${not empty listNghiPhep}">
@@ -688,7 +690,12 @@
                                             </span>
                                         </td>
                                         <td>${not empty np.tenNguoiDuyet ? np.tenNguoiDuyet : '--'}</td>
-                                    </tr>
+<td>
+    <c:if test="${np.trangThai == 'Cho duyet'}">
+        <a href="${pageContext.request.contextPath}/nghiphep?action=xoatheoid&nghiPhepId=${np.nghiPhepId}"
+           style="font-size:0.72rem;color:var(--primary-light)">Xóa</a>
+    </c:if>
+</td>                                    </tr>
                                     </c:forEach>
                                 </c:when>
                                 <c:otherwise>
@@ -834,7 +841,11 @@
         <!-- ═══ THÔNG BÁO ═══ -->
         <div class="panel" id="panel-thongbao">
             <div class="box">
-                <div class="box-header"><h3><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>Tất cả thông báo</h3></div>
+                <div class="box-header"><h3><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>Tất cả thông báo</h3>
+                                    <a class="view-all" href="${pageContext.request.contextPath}/thongbao?action=danhdautatcaladadoc&nhanVienId=${tk.nhanVienId}" >Đánh dấu tất cả là đã đọc</a>
+
+                </div>
+
                 <div class="box-body" style="padding:0">
                     <table class="data-table">
                         <thead><tr><th>Tiêu đề</th><th>Nội dung</th><th>Loại</th><th>Ngày</th><th>Trạng thái</th><th></th></tr></thead>
@@ -850,7 +861,7 @@
                                         <td><span class="badge ${tb.daDoc == 1 ? 'badge-green' : 'badge-orange'}">${tb.daDoc == 1 ? 'Đã đọc' : 'Chưa đọc'}</span></td>
                                         <td>
                                             <c:if test="${tb.daDoc == 0}">
-                                                <a href="${pageContext.request.contextPath}/thongbao?action=doc&id=${tb.thongBaoId}" style="font-size:0.72rem;color:var(--primary-light)">Đánh dấu đọc</a>
+                                                <a href="${pageContext.request.contextPath}/thongbao?action=danhdaudadoc&id=${tb.thongBaoId}" style="font-size:0.72rem;color:var(--primary-light)">Đánh dấu đọc</a>
                                             </c:if>
                                         </td>
                                     </tr>
@@ -870,7 +881,7 @@
 </div><!-- /main -->
 
 <script>
-    // Clock
+    // ── Clock ──
     function updateClock() {
         const n = new Date();
         const pad = v => String(v).padStart(2, '0');
@@ -883,7 +894,7 @@
     updateClock();
     setInterval(updateClock, 1000);
 
-    // Panel switcher
+    // ── Panel switcher ──
     const titles = {
         dashboard: 'Dashboard', profile: 'Thông tin cá nhân', doimatkhau: 'Đổi mật khẩu',
         checkin: 'Check-in / Check-out', lichcong: 'Lịch chấm công', luong: 'Bảng lương',
@@ -899,68 +910,52 @@
         if (el) el.classList.add('active');
     }
 
+    // ── Message alert ──
+    var msg = "<%= request.getAttribute("message") %>";
+    if (msg != "null") { alert(msg); }
 
+    // ── Calendar ──
+    const chamCongData = {};
+    <c:forEach var="cc" items="${listChamCong}">
+        chamCongData["${cc.ngayChamCong}"] = "${cc.trangThai}";
+    </c:forEach>
 
-        var msg = "<%= request.getAttribute("message") %>";
-        if(msg != "null"){
-            alert(msg);
+    (function renderCalendar() {
+        const grid = document.getElementById('calendarGrid');
+        if (!grid) return;
+        const now = new Date();
+        const y = now.getFullYear(), m = now.getMonth();
+        const firstDay = new Date(y, m, 1).getDay();
+        const totalDays = new Date(y, m + 1, 0).getDate();
+        const offset = firstDay === 0 ? 6 : firstDay - 1;
+
+        for (let i = 0; i < offset; i++) {
+            const d = document.createElement('div');
+            d.className = 'cc-day empty';
+            grid.appendChild(d);
         }
 
+        for (let d = 1; d <= totalDays; d++) {
+            const cell = document.createElement('div');
+            const dow = new Date(y, m, d).getDay();
+            const dateKey = y + '-' + String(m + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+            const trangThai = chamCongData[dateKey];
 
-</script>
-<%-- Đặt trước thẻ </body> hoặc trước script hiện tại --%>
-<script>
-// Build map từ data server
-const chamCongData = {};
-<c:forEach var="cc" items="${listChamCong}">
-    chamCongData["${cc.ngayChamCong}"] = "${cc.trangThai}";
-</c:forEach>
+            let cls = 'cc-day';
+            if (dow === 0 || dow === 6) cls += ' weekend';
+            if (d === now.getDate()) cls += ' today';
 
-(function renderCalendar() {
-    const grid = document.getElementById('calendarGrid');
-    if (!grid) return;
+            if (trangThai === 'Di lam')              cls += ' dilam';
+            else if (trangThai === 'Nghi phep')       cls += ' nghiphep';
+            else if (trangThai === 'Nghi khong phep') cls += ' nghikhongphep';
 
-    const now = new Date();
-    const y = now.getFullYear(), m = now.getMonth();
-    const firstDay = new Date(y, m, 1).getDay();
-    const totalDays = new Date(y, m + 1, 0).getDate();
-    const offset = firstDay === 0 ? 6 : firstDay - 1;
-
-    // Ô trống đầu tháng
-    for (let i = 0; i < offset; i++) {
-        const d = document.createElement('div');
-        d.className = 'cc-day empty';
-        grid.appendChild(d);
-    }
-
-    // Render từng ngày
-    for (let d = 1; d <= totalDays; d++) {
-        const cell = document.createElement('div');
-        const dow = new Date(y, m, d).getDay(); // 0=CN, 6=T7
-
-        // Key khớp với định dạng ngayChamCong trong DB
-        const dateKey = y + '-'
-            + String(m + 1).padStart(2, '0') + '-'
-            + String(d).padStart(2, '0');
-
-        const trangThai = chamCongData[dateKey];
-
-        let cls = 'cc-day';
-        if (dow === 0 || dow === 6) cls += ' weekend';
-        if (d === now.getDate()) cls += ' today';
-
-        // Tô màu theo data thật từ server
-        if (trangThai === 'Di lam')               cls += ' dilam';
-        else if (trangThai === 'Nghi phep')        cls += ' nghiphep';
-        else if (trangThai === 'Nghi khong phep')  cls += ' nghikhongphep';
-        // Không có data => không tô màu
-
-        cell.className = cls;
-        cell.textContent = d;
-        cell.title = trangThai || (dow === 0 || dow === 6 ? 'Cuối tuần' : 'Chưa có dữ liệu');
-        grid.appendChild(cell);
-    }
-})();
+            cell.className = cls;
+            cell.textContent = d;
+            cell.title = trangThai || (dow === 0 || dow === 6 ? 'Cuối tuần' : 'Chưa có dữ liệu');
+            grid.appendChild(cell);
+        }
+    })();
 </script>
 </body>
 </html>
+

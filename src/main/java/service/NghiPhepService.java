@@ -14,7 +14,6 @@ import java.util.concurrent.TimeUnit;
 public class NghiPhepService {
     private NghiPhepDAO nghiPhepDAO = new NghiPhepDAO();
     private ThongBaoDAO thongBaoDAO = new ThongBaoDAO();
-
     public List<NghiPhep> layTatCa() { return nghiPhepDAO.layTatCa(); }
     public List<NghiPhep> layTheoNhanVien(int nhanVienId) { return nghiPhepDAO.layTheoNhanVien(nhanVienId); }
     public List<NghiPhep> layChoDuyet() { return nghiPhepDAO.layChoDuyet(); }
@@ -28,8 +27,24 @@ public class NghiPhepService {
         long soNgay = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
 
         ngayNghiPhep += soNgay + 1;
+
         np.setSoNgay(BigDecimal.valueOf(ngayNghiPhep));
-        return nghiPhepDAO.them(np);
+        if(nghiPhepDAO.demSoNgayNghiTrongThang(np.getNhanVienId()).compareTo(BigDecimal.valueOf(2))>=0){
+              return false;
+        }
+        if(nghiPhepDAO.demSoNgayNghiTrongNam(np.getNhanVienId()).compareTo(BigDecimal.valueOf(12))>=0)
+        return false;
+
+        if(ngayNghiPhep>2){
+            nghiPhepDAO.them(np);
+            nghiPhepDAO.tuChoiTuDong(np.getNghiPhepId());
+            thongBaoDAO.guiThongBaoTuDongTuChoiNP(np.getNhanVienId());
+
+        }
+        else{
+            nghiPhepDAO.them(np);
+        }
+        return true;
     }
 
     public boolean duyet(int id, int nguoiDuyet) {
@@ -71,5 +86,11 @@ public class NghiPhepService {
     public boolean them(NghiPhep np){
         return nghiPhepDAO.them(np);
     }
-    public boolean xoa(int id) { return nghiPhepDAO.xoa(id); }
+    public boolean kiemTraTrungNgay(NghiPhep np){
+        return nghiPhepDAO.kiemTraTrungNgay(np);
+    }
+    public boolean xoa(int id) { return nghiPhepDAO.xoaDonDaLau(id); }
+    public boolean xoaTheoID(int id){
+        return nghiPhepDAO.xoa(id);
+    }
 }
