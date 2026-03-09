@@ -136,7 +136,7 @@ public class TaiKhoanServlet extends HttpServlet {
 
 
         TaiKhoan tk=taiKhoanService.layTheoId(id);
-        if(request.getParameter("matKhauCu").equals(tk.getMatKhau())){
+        if(!request.getParameter("matKhauCu").equals(tk.getMatKhau())){
             request.setAttribute("message","Mật khẩu cũ không đúng!");
             goiDangNhapChoNV(request,response,tk);
         }
