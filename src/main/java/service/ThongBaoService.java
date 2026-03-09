@@ -16,4 +16,8 @@ public class ThongBaoService {
     public ThongBao layTheoId(int id) {
         return thongBaoDAO.layTheoId(id);
     }
+
+    public boolean xoaTatCaThongBaoDaDocChoNhanVien(int id) {
+        return thongBaoDAO.xoaTatCaThongBaoDaDocChoNhanVien(id);
+    }
 }

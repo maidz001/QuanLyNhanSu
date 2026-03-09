@@ -43,7 +43,7 @@ public class DashboardServlet extends HttpServlet {
         ChucVu chucVu=chucVuService.layTheoId(nhanVienService.layTheoId(tk.getNhanVienId()).getChucVuId());
         List<DanhGia> listDanhGia=danhGiaService.layTheoNhanVien(tk.getNhanVienId());
         HopDong hopdong=hopDongService.layHopDongHieuLuc(tk.getNhanVienId());
-        List<NghiPhep> listNghiPhep=nghiPhepService.layTheoNhanVien(tk.getNhanVienId());
+        List<NghiPhep> listNghiPhep=nghiPhepService.layTheoNhanVienDaDuyet(tk.getNhanVienId());
         PhongBan phongBan=phongBanService.layTheoId(nhanVienService.layTheoId(tk.getNhanVienId()).getPhongBanId());
         List<ThongBao> listThongBao=thongBaoService.layTheoNguoiNhan(tk.getNhanVienId());
         LocalDate now=LocalDate.now();

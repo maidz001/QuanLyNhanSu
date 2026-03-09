@@ -19,6 +19,23 @@ public class ThongBaoDAO {
         } catch (SQLException e) { e.printStackTrace(); }
         return ds;
     }
+
+    public boolean xoaTatCaThongBaoDaDocChoNhanVien(int nguoiNhan) {
+        String sql = "DELETE FROM thong_bao WHERE nguoi_nhan = ? AND da_doc = 1";
+
+        try (Connection conn = DBConnection.layKetNoi();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, nguoiNhan);
+            return ps.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
     public ThongBao layTheoId(int id) {
 
         ThongBao tb = null;

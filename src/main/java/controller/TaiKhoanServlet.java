@@ -55,7 +55,7 @@ public class TaiKhoanServlet extends HttpServlet {
         switch(action){
             case "dangnhap": dangNhap(request,response); break;
             case "dangky": dangKy(request,response); break;
-            case "sua": capNhatTaiKhoan(request,response); break;
+            case "doiMatKhau": capNhatTaiKhoan(request,response); break;
         }
     }
 
@@ -127,20 +127,35 @@ public class TaiKhoanServlet extends HttpServlet {
 
     // ================= CẬP NHẬT =================
 
-    private void capNhatTaiKhoan(HttpServletRequest request,HttpServletResponse response)
-            throws IOException {
+    private boolean capNhatTaiKhoan(HttpServletRequest request,HttpServletResponse response)
+            throws IOException, ServletException {
 
-        TaiKhoan tk = new TaiKhoan();
+        int id=Integer.parseInt(request.getParameter("idTaiKhoan"));
+        HttpSession session=(HttpSession) request.getSession(false);
+        TaiKhoan tkss= (TaiKhoan) session.getAttribute("taiKhoanDangDangNhap");
 
-        tk.setTaiKhoanId(Integer.parseInt(request.getParameter("taiKhoanId")));
-        tk.setTenDangNhap(request.getParameter("tenDangNhap"));
-        tk.setMatKhau(request.getParameter("matKhau"));
-        tk.setVaiTro(request.getParameter("vaiTro"));
-        tk.setTrangThai(Integer.parseInt(request.getParameter("trangThai")));
+
+        TaiKhoan tk=taiKhoanService.layTheoId(id);
+        if(request.getParameter("matKhauCu").equals(tk.getMatKhau())){
+            request.setAttribute("message","Mật khẩu cũ không đúng!");
+            goiDangNhapChoNV(request,response,tk);
+        }
+
+            if(tkss.getTaiKhoanId()!=id) {
+                request.setAttribute("message","không được phép tấn công tài khoản người khác!");
+                session.setAttribute("taiKhoanDangDangNhap","");
+                request.getRequestDispatcher("/WEB-INF/view/thongbaoview/ThongBao.jsp").forward(request,response);
+
+            }
+        String xacNhanMK=request.getParameter("xacNhanMatKhau");
+       String mkM =request.getParameter("matKhauMoi");
+       if(xacNhanMK.equals(mkM)){
+        tk.setMatKhau(request.getParameter("matKhauMoi"));}
 
         taiKhoanService.sua(tk);
 
-        response.sendRedirect("taikhoan");
+        goiDangNhapChoNV(request,response,tk);
+        return true;
     }
 
     // ================= XÓA =================

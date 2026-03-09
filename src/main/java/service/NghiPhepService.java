@@ -15,6 +15,8 @@ public class NghiPhepService {
     private NghiPhepDAO nghiPhepDAO = new NghiPhepDAO();
     private ThongBaoDAO thongBaoDAO = new ThongBaoDAO();
     public List<NghiPhep> layTatCa() { return nghiPhepDAO.layTatCa(); }
+    public List<NghiPhep> layTheoNhanVienDaDuyet(int nhanVienId) { return nghiPhepDAO.layTheoNhanVienDaDuyet(nhanVienId); }
+
     public List<NghiPhep> layTheoNhanVien(int nhanVienId) { return nghiPhepDAO.layTheoNhanVien(nhanVienId); }
     public List<NghiPhep> layChoDuyet() { return nghiPhepDAO.layChoDuyet(); }
     public NghiPhep layTheoId(int id) { return nghiPhepDAO.layTheoId(id); }

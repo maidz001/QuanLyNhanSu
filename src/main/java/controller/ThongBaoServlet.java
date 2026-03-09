@@ -32,6 +32,10 @@ public class ThongBaoServlet extends HttpServlet {
             case "danhdautatcaladadoc":
                 danhDauTatCaLaDaDoc(request, response);
                 break;
+            case "xoatatcathongbaodadoc":
+                xoaTatCaThongBaoDaDoc(request, response);
+                break;
+
 
             default:
                 danhSachThongBao(request, response);
@@ -98,6 +102,15 @@ public class ThongBaoServlet extends HttpServlet {
         int thongBaoId = Integer.parseInt(request.getParameter("nhanVienId"));
 
         thongBaoService.docTatCa(thongBaoId);
+        taiKhoanServlet.goiDangNhapChoNV(request,response,tk);
+    }
+    private void xoaTatCaThongBaoDaDoc(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        TaiKhoan tk = (TaiKhoan) request.getSession(false).getAttribute("taiKhoanDangDangNhap");
+        int id = Integer.parseInt(request.getParameter("nhanVienId"));
+
+        thongBaoService.xoaTatCaThongBaoDaDocChoNhanVien(id);
+        request.setAttribute("message","Xóa thành công");
         taiKhoanServlet.goiDangNhapChoNV(request,response,tk);
     }
 }
