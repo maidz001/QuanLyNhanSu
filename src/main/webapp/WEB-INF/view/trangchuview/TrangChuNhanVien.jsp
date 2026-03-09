@@ -456,12 +456,12 @@
                             <div class="checkin-btns">
                                 <form action="${pageContext.request.contextPath}/chamcong" method="post" style="display:inline">
                                     <input type="hidden" name="action" value="checkin"/>
-                                    <input type="hidden" name="nhanVienId" value="${tk.nhanVienId}"/>
+                                    <input type="hidden" name="idNhanVien" value="${tk.nhanVienId}"/>
                                     <button type="submit" class="btn-checkin in">✓ Check-in</button>
                                 </form>
                                 <form action="${pageContext.request.contextPath}/chamcong" method="post" style="display:inline">
                                     <input type="hidden" name="action" value="checkout"/>
-                                    <input type="hidden" name="nhanVienId" value="${tk.nhanVienId}"/>
+                                    <input type="hidden" name="idNhanVien" value="${tk.nhanVienId}"/>
                                     <button type="submit" class="btn-checkin out">✗ Check-out</button>
                                 </form>
                             </div>
@@ -485,7 +485,7 @@
                         <div class="luong-row"><span class="luong-lbl">Giờ làm thêm</span><span class="luong-val">${soGioLamThem != null ? soGioLamThem : '--'} giờ</span></div>
                         <div style="margin-top:14px">
                             <div style="display:flex;justify-content:space-between;font-size:0.72rem;color:var(--muted);margin-bottom:5px">
-                                <span>Tiến độ ngày công</span><span>${statNgayCong != null ? statNgayCong : '--'}/22 ngày</span>
+                                <span>Tiến độ ngày công</span><span>${soNgayCong != null ? soNgayCong : '0'}/22 ngày</span>
                             </div>
                             <div class="progress-bar"><div class="progress-fill green" style="width:60%"></div></div>
                         </div>
@@ -556,7 +556,7 @@
         <div class="panel" id="panel-luong">
             <div class="grid-2">
                 <div class="box">
-                    <div class="box-header"><h3><svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Chi tiết lương tháng này</h3></div>
+                    <div class="box-header"><h3><svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Chi tiết lương tháng nhận gần đây nhất</h3></div>
                     <div class="box-body">
                         <c:choose>
                             <c:when test="${not empty bangLuong}">
@@ -623,8 +623,8 @@
                         <div class="alert alert-success">✓ ${messageNP}</div>
                     </c:if>
                     <form action="${pageContext.request.contextPath}/nghiphep" method="post">
-                        <input type="hidden" name="action" value="xin"/>
-                        <input type="hidden" name="nhanVienId" value="${tk.nhanVienId}"/>
+                        <input type="hidden" name="action" value="xinNghiPhep"/>
+                        <input type="hidden" name="idNhanVien" value="${tk.nhanVienId}"/>
                         <div class="form-grid">
                             <div class="form-group">
                                 <label>Loại phép</label>
@@ -636,8 +636,8 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label>Số ngày</label>
-                                <input type="number" name="soNgay" min="0.5" step="0.5" placeholder="1.0" required/>
+                                <label>Người xin nghỉ</label>
+                                <input type="text" name="soNgay" value="${nhanVien.hoTen}" placeholder="1.0" required/>
                             </div>
                             <div class="form-group">
                                 <label>Ngày bắt đầu</label>
@@ -899,32 +899,68 @@
         if (el) el.classList.add('active');
     }
 
-    // Calendar render
-    (function renderCalendar() {
-        const grid = document.getElementById('calendarGrid');
-        if (!grid) return;
-        const now = new Date();
-        const y = now.getFullYear(), m = now.getMonth();
-        const firstDay = new Date(y, m, 1).getDay();
-        const totalDays = new Date(y, m + 1, 0).getDate();
-        const offset = firstDay === 0 ? 6 : firstDay - 1;
-        for (let i = 0; i < offset; i++) {
-            const d = document.createElement('div');
-            d.className = 'cc-day empty';
-            grid.appendChild(d);
+
+
+        var msg = "<%= request.getAttribute("message") %>";
+        if(msg != "null"){
+            alert(msg);
         }
-        for (let d = 1; d <= totalDays; d++) {
-            const cell = document.createElement('div');
-            const dow = new Date(y, m, d).getDay();
-            let cls = 'cc-day';
-            if (dow === 0 || dow === 6) cls += ' weekend';
-            if (d === now.getDate()) cls += ' today dilam';
-            else if (dow !== 0 && dow !== 6) cls += d % 5 === 0 ? ' nghiphep' : ' dilam';
-            cell.className = cls;
-            cell.textContent = d;
-            grid.appendChild(cell);
-        }
-    })();
+
+
+</script>
+<%-- Đặt trước thẻ </body> hoặc trước script hiện tại --%>
+<script>
+// Build map từ data server
+const chamCongData = {};
+<c:forEach var="cc" items="${listChamCong}">
+    chamCongData["${cc.ngayChamCong}"] = "${cc.trangThai}";
+</c:forEach>
+
+(function renderCalendar() {
+    const grid = document.getElementById('calendarGrid');
+    if (!grid) return;
+
+    const now = new Date();
+    const y = now.getFullYear(), m = now.getMonth();
+    const firstDay = new Date(y, m, 1).getDay();
+    const totalDays = new Date(y, m + 1, 0).getDate();
+    const offset = firstDay === 0 ? 6 : firstDay - 1;
+
+    // Ô trống đầu tháng
+    for (let i = 0; i < offset; i++) {
+        const d = document.createElement('div');
+        d.className = 'cc-day empty';
+        grid.appendChild(d);
+    }
+
+    // Render từng ngày
+    for (let d = 1; d <= totalDays; d++) {
+        const cell = document.createElement('div');
+        const dow = new Date(y, m, d).getDay(); // 0=CN, 6=T7
+
+        // Key khớp với định dạng ngayChamCong trong DB
+        const dateKey = y + '-'
+            + String(m + 1).padStart(2, '0') + '-'
+            + String(d).padStart(2, '0');
+
+        const trangThai = chamCongData[dateKey];
+
+        let cls = 'cc-day';
+        if (dow === 0 || dow === 6) cls += ' weekend';
+        if (d === now.getDate()) cls += ' today';
+
+        // Tô màu theo data thật từ server
+        if (trangThai === 'Di lam')               cls += ' dilam';
+        else if (trangThai === 'Nghi phep')        cls += ' nghiphep';
+        else if (trangThai === 'Nghi khong phep')  cls += ' nghikhongphep';
+        // Không có data => không tô màu
+
+        cell.className = cls;
+        cell.textContent = d;
+        cell.title = trangThai || (dow === 0 || dow === 6 ? 'Cuối tuần' : 'Chưa có dữ liệu');
+        grid.appendChild(cell);
+    }
+})();
 </script>
 </body>
 </html>

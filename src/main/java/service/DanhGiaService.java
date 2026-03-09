@@ -26,7 +26,13 @@ public class DanhGiaService {
     public List<DanhGia> searchDanhGia(String keyword, String thang, String nam, String xepLoai) {
         return danhGiaDAO.searchDanhGia(keyword,thang,nam,xepLoai);
     }
-
+    public double tongDiemTheoNhanVien(List<DanhGia> listDanhGia){
+        double diem=0;
+        for(DanhGia dg:listDanhGia){
+            diem=diem+dg.getTongDiem().doubleValue();
+        }
+        return diem;
+    }
     public List<DanhGia> layTheoNhanVien(int nhanVienId) {
         return danhGiaDAO.layTheoNhanVienId(nhanVienId);
     }

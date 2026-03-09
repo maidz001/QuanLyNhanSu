@@ -13,8 +13,18 @@ public class ChamCong {
     private BigDecimal gioLamThem;
     private String trangThai;
     private String ghiChu;
-    private String hoTen;
-    private String maNhanVien;
+
+    public ChamCong(int chamCongId, int nhanVienId, Date ngayChamCong, String gioVao, String gioRa, BigDecimal soGioLamViec, BigDecimal gioLamThem, String trangThai, String ghiChu) {
+        this.chamCongId = chamCongId;
+        this.nhanVienId = nhanVienId;
+        this.ngayChamCong = ngayChamCong;
+        this.gioVao = gioVao;
+        this.gioRa = gioRa;
+        this.soGioLamViec = soGioLamViec;
+        this.gioLamThem = gioLamThem;
+        this.trangThai = trangThai;
+        this.ghiChu = ghiChu;
+    }
 
     public ChamCong() {}
 
@@ -36,8 +46,5 @@ public class ChamCong {
     public void setTrangThai(String trangThai) { this.trangThai = trangThai; }
     public String getGhiChu() { return ghiChu; }
     public void setGhiChu(String ghiChu) { this.ghiChu = ghiChu; }
-    public String getHoTen() { return hoTen; }
-    public void setHoTen(String hoTen) { this.hoTen = hoTen; }
-    public String getMaNhanVien() { return maNhanVien; }
-    public void setMaNhanVien(String maNhanVien) { this.maNhanVien = maNhanVien; }
+
 }

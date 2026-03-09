@@ -10,7 +10,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
 
 @WebServlet("/taikhoan")
 public class TaiKhoanServlet extends HttpServlet {
@@ -72,25 +74,7 @@ public class TaiKhoanServlet extends HttpServlet {
             HttpSession session=request.getSession();
             session.setAttribute("taiKhoanDangDangNhap",tk);
             if(tk.getVaiTro().equalsIgnoreCase("nhanvien")) {
-                NhanVien nhanVien=nhanVienService.layTheoId(tk.getNhanVienId());
-                List<BangLuong> listBangLuong = bangLuongService.layTheoNhanVien(tk.getNhanVienId());
-                List<ChamCong>listChamCong=chamCongService.layTheoNhanVien(tk.getNhanVienId());
-                ChucVu chucVu=chucVuService.layTheoId(nhanVienService.layTheoId(tk.getNhanVienId()).getChucVuId());
-                List<DanhGia> listDanhGia=danhGiaService.layTheoNhanVien(tk.getNhanVienId());
-                HopDong hopdong=hopDongService.layHopDongHieuLuc(tk.getNhanVienId());
-                List<NghiPhep> listNghiPhep=nghiPhepService.layTheoNhanVien(tk.getNhanVienId());
-                PhongBan phongBan=phongBanService.layTheoId(nhanVienService.layTheoId(tk.getNhanVienId()).getPhongBanId());
-                List<ThongBao> listThongBao=thongBaoService.layTheoNguoiNhan(tk.getNhanVienId());
-                dashboardServlet.nhanVienDas(request,response,tk);
-                request.setAttribute("nhanVien",nhanVien);
-                request.setAttribute("listBangLuong",listBangLuong);
-                request.setAttribute("listChamCong",listChamCong);
-                request.setAttribute("chucVu",chucVu);
-                request.setAttribute("listDanhGia",listDanhGia);
-                request.setAttribute("hopDong",hopdong);
-                request.setAttribute("listNghiPhep",listNghiPhep);
-                request.setAttribute("listThongBao",listThongBao);
-                request.getRequestDispatcher("/WEB-INF/view/trangchuview/TrangChuNhanVien.jsp").forward(request,response);
+                goiDangNhapChoNV(request,response,tk);
             }
 
             else
@@ -184,5 +168,30 @@ public class TaiKhoanServlet extends HttpServlet {
 
         request.getRequestDispatcher("ChiTietTaiKhoan.jsp")
                 .forward(request,response);
+    }
+    public void goiDangNhapChoNV(HttpServletRequest request,HttpServletResponse response,TaiKhoan tk)
+            throws ServletException, IOException{
+
+            NhanVien nhanVien=nhanVienService.layTheoId(tk.getNhanVienId());
+            List<BangLuong> listBangLuong = bangLuongService.layTheoNhanVien(tk.getNhanVienId());
+            List<ChamCong>listChamCong=chamCongService.layTheoNhanVien(tk.getNhanVienId());
+            ChucVu chucVu=chucVuService.layTheoId(nhanVienService.layTheoId(tk.getNhanVienId()).getChucVuId());
+            List<DanhGia> listDanhGia=danhGiaService.layTheoNhanVien(tk.getNhanVienId());
+            HopDong hopdong=hopDongService.layHopDongHieuLuc(tk.getNhanVienId());
+            List<NghiPhep> listNghiPhep=nghiPhepService.layTheoNhanVien(tk.getNhanVienId());
+            request.setAttribute("soNgayVangKhongPhep",chamCongService.layChamCongNghiKhongPhep(tk.getNhanVienId()).size());
+        LocalDate now=LocalDate.now();
+            List<ThongBao> listThongBao=thongBaoService.layTheoNguoiNhan(tk.getNhanVienId());
+            dashboardServlet.nhanVienDas(request,response,tk);
+            request.setAttribute("bangLuong",bangLuongService.getBangLuongMoiNhatByNhanVien(tk.getNhanVienId()));
+            request.setAttribute("nhanVien",nhanVien);
+            request.setAttribute("listBangLuong",listBangLuong);
+            request.setAttribute("listChamCong",listChamCong);
+            request.setAttribute("chucVu",chucVu);
+            request.setAttribute("listDanhGia",listDanhGia);
+            request.setAttribute("hopDong",hopdong);
+            request.setAttribute("listNghiPhep",listNghiPhep);
+            request.setAttribute("listThongBao",listThongBao);
+            request.getRequestDispatcher("/WEB-INF/view/trangchuview/TrangChuNhanVien.jsp").forward(request,response);
     }
 }

@@ -154,23 +154,10 @@ public class DashboardServlet extends HttpServlet {
         PhongBan phongBan=phongBanService.layTheoId(nhanVienService.layTheoId(tk.getNhanVienId()).getPhongBanId());
         List<ThongBao> listThongBao=thongBaoService.layTheoNguoiNhan(tk.getNhanVienId());
         LocalDate now=LocalDate.now();
-        int ngayNghiPhep = 0;
-
-        for (NghiPhep np : listNghiPhep) {
-
-            long diff = np.getNgayKetThuc().getTime() - np.getNgayBatDau().getTime();
-
-            long soNgay = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
-
-            ngayNghiPhep += soNgay + 1;
-        }
-        double diem=0;
-        for(DanhGia dg:listDanhGia){
-            diem=diem+dg.getTongDiem().doubleValue();
-        }
         request.setAttribute("soNgayCong",chamCongService.demNgayDiLam(tk.getNhanVienId(),now.getMonthValue(),now.getYear()));
         request.setAttribute("luongGanNhat", bangLuongService.getBangLuongMoiNhatByNhanVien(tk.getNhanVienId()).getLuongThucLanh());
-request.setAttribute("soDonNghiPhep",ngayNghiPhep);
-request.setAttribute("diemDanhGia",diem/listDanhGia.size());
+request.setAttribute("soDonNghiPhep",nghiPhepService.soNgayNghiPhep(listNghiPhep));
+request.setAttribute("diemDanhGia",danhGiaService.tongDiemTheoNhanVien(listDanhGia)/listDanhGia.size());
+request.setAttribute("soGioLamThem",chamCongService.tinhGioLamThem(tk.getNhanVienId(), now.getMonthValue(), now.getYear()));
     }
 }
