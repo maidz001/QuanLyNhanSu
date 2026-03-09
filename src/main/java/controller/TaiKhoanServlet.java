@@ -1,19 +1,36 @@
 package controller;
 
-import ConnDatabase.DBConnection;
+import dao.ThongBaoDAO;
+import model.*;
+import service.*;
+import until.DashboardServlet;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
-import model.TaiKhoan;
 
 import java.io.IOException;
-import java.sql.*;
-import java.util.*;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Locale;
 
 @WebServlet("/taikhoan")
 public class TaiKhoanServlet extends HttpServlet {
+   private final DashboardServlet dashboardServlet=new DashboardServlet();
+    private TaiKhoanService taiKhoanService = new TaiKhoanService();
+    private BangLuongService bangLuongService=new BangLuongService();
+   private ChamCongService chamCongService=new ChamCongService();
+    private ChucVuService chucVuService=new ChucVuService();
+    private DanhGiaService danhGiaService=new DanhGiaService();
+    private HopDongService hopDongService=new HopDongService();
+    private NghiPhepService nghiPhepService=new NghiPhepService();
+    private NhanVienService nhanVienService=new NhanVienService();
+    private PhongBanService phongBanService=new PhongBanService();
+    private ThongBaoService thongBaoService=new ThongBaoService();
 
-    protected void doGet(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
+
+    protected void doGet(HttpServletRequest request,HttpServletResponse response)
+            throws ServletException, IOException {
 
         String action=request.getParameter("action");
         if(action==null) action="";
@@ -27,9 +44,10 @@ public class TaiKhoanServlet extends HttpServlet {
         }
     }
 
+    protected void doPost(HttpServletRequest request,HttpServletResponse response)
+            throws ServletException, IOException {
 
-
-    protected void doPost(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
 
         String action=request.getParameter("action");
         if(action==null) action="";
@@ -41,83 +59,37 @@ public class TaiKhoanServlet extends HttpServlet {
         }
     }
 
+    // ================= ĐĂNG NHẬP =================
 
-    private void dangNhap(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
+    private void dangNhap(HttpServletRequest request,HttpServletResponse response)
+            throws ServletException, IOException {
 
-        try{
+        String taiKhoan=request.getParameter("taiKhoan");
+        String matKhau=request.getParameter("matKhau");
 
-            String taiKhoan=request.getParameter("taiKhoan");
-            String matKhau=request.getParameter("matKhau");
+        TaiKhoan tk = taiKhoanService.dangNhap(taiKhoan,matKhau);
 
-            Connection conn=DBConnection.layKetNoi();
+        if(tk!=null){
 
-            PreparedStatement pstt=conn.prepareStatement(
-                    "select * from tai_khoan where ten_dang_nhap=? and mat_khau=?"
-            );
-
-            pstt.setString(1,taiKhoan);
-            pstt.setString(2,matKhau);
-
-            ResultSet rs=pstt.executeQuery();
-
-            TaiKhoan tk=null;
-
-            if(rs.next()) tk=mapRow(rs);
-
-            if(tk!=null){
-
-                HttpSession session=request.getSession();
-                session.setAttribute("taiKhoanDangDangNhap",tk);
-
-                if(tk.getVaiTro().equalsIgnoreCase("nhanvien"))
-                    response.sendRedirect(request.getContextPath()+"/TrangChuNhanVien.jsp");
-                else
-                    response.sendRedirect(request.getContextPath()+"/TrangChuQuanLy.jsp");
-
-            }else{
-
-                request.setAttribute("message","Tài khoản không tồn tại trên hệ thống");
-
-                request.getRequestDispatcher("/WEB-INF/view/taikhoanview/LogIn.jsp")
-                        .forward(request,response);
+            HttpSession session=request.getSession();
+            session.setAttribute("taiKhoanDangDangNhap",tk);
+            if(tk.getVaiTro().equalsIgnoreCase("nhanvien")) {
+                goiDangNhapChoNV(request,response,tk);
             }
 
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-    }
-    private void moFormSignIn(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
+            else
+                response.sendRedirect(request.getContextPath()+"/WEB-INF/view/trangchuview/TrangChuQuanLy.jsp");
 
-        request.getRequestDispatcher("/WEB-INF/view/taikhoanview/SignIn.jsp")
-                .forward(request, response);
-    }
+        }else{
 
-    private void dangKy(HttpServletRequest request,HttpServletResponse response) throws IOException, ServletException {
+            request.setAttribute("message","Tài khoản không tồn tại trên hệ thống");
 
-        try{
-
-            Connection conn=DBConnection.layKetNoi();
-
-            PreparedStatement pstt=conn.prepareStatement(
-                    "insert into tai_khoan(nhan_vien_id,ten_dang_nhap,mat_khau,vai_tro,trang_thai) values(?,?,?,?,?)"
-            );
-
-            pstt.setInt(1,Integer.parseInt(request.getParameter("nhanVienId")));
-            pstt.setString(2,request.getParameter("tenDangNhap"));
-            pstt.setString(3,request.getParameter("matKhau"));
-            pstt.setString(4,request.getParameter("vaiTro"));
-            pstt.setInt(5,Integer.parseInt(request.getParameter("trangThai")));
-
-            pstt.executeUpdate();
-
-            response.sendRedirect(request.getContextPath()+"/taikhoan?action=login");
-
-        }catch(Exception e){
-            e.printStackTrace();
+            request.getRequestDispatcher("/WEB-INF/view/taikhoanview/LogIn.jsp")
+                    .forward(request,response);
         }
     }
 
+    // ================= MỞ FORM LOGIN =================
 
     private void moFormLogin(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
@@ -126,110 +98,100 @@ public class TaiKhoanServlet extends HttpServlet {
                 .forward(request, response);
     }
 
+    // ================= MỞ FORM SIGNIN =================
 
-    private void capNhatTaiKhoan(HttpServletRequest request,HttpServletResponse response) throws IOException {
+    private void moFormSignIn(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
 
-        try{
+        request.getRequestDispatcher("/WEB-INF/view/taikhoanview/SignIn.jsp")
+                .forward(request, response);
+    }
 
-            Connection conn=DBConnection.layKetNoi();
+    // ================= ĐĂNG KÝ =================
 
-            PreparedStatement pstt=conn.prepareStatement(
-                    "update tai_khoan set ten_dang_nhap=?,mat_khau=?,vai_tro=?,trang_thai=? where tai_khoan_id=?"
-            );
+    private void dangKy(HttpServletRequest request,HttpServletResponse response)
+            throws IOException {
 
-            pstt.setString(1,request.getParameter("tenDangNhap"));
-            pstt.setString(2,request.getParameter("matKhau"));
-            pstt.setString(3,request.getParameter("vaiTro"));
-            pstt.setInt(4,Integer.parseInt(request.getParameter("trangThai")));
-            pstt.setInt(5,Integer.parseInt(request.getParameter("taiKhoanId")));
+        TaiKhoan tk = new TaiKhoan();
 
-            pstt.executeUpdate();
+        tk.setNhanVienId(Integer.parseInt(request.getParameter("nhanVienId")));
+        tk.setTenDangNhap(request.getParameter("tenDangNhap"));
+        tk.setMatKhau(request.getParameter("matKhau"));
+        tk.setVaiTro(request.getParameter("vaiTro"));
+        tk.setTrangThai(Integer.parseInt(request.getParameter("trangThai")));
 
-        }catch(Exception e){
-            e.printStackTrace();
-        }
+        taiKhoanService.them(tk);
+
+        response.sendRedirect(request.getContextPath()+"/taikhoan?action=login");
+    }
+
+    // ================= CẬP NHẬT =================
+
+    private void capNhatTaiKhoan(HttpServletRequest request,HttpServletResponse response)
+            throws IOException {
+
+        TaiKhoan tk = new TaiKhoan();
+
+        tk.setTaiKhoanId(Integer.parseInt(request.getParameter("taiKhoanId")));
+        tk.setTenDangNhap(request.getParameter("tenDangNhap"));
+        tk.setMatKhau(request.getParameter("matKhau"));
+        tk.setVaiTro(request.getParameter("vaiTro"));
+        tk.setTrangThai(Integer.parseInt(request.getParameter("trangThai")));
+
+        taiKhoanService.sua(tk);
 
         response.sendRedirect("taikhoan");
     }
 
+    // ================= XÓA =================
 
-    private void xoaTaiKhoan(HttpServletRequest request,HttpServletResponse response) throws IOException {
-
-        try{
-
-            int id=Integer.parseInt(request.getParameter("id"));
-
-            Connection conn=DBConnection.layKetNoi();
-
-            PreparedStatement pstt=conn.prepareStatement(
-                    "delete from tai_khoan where tai_khoan_id=?"
-            );
-
-            pstt.setInt(1,id);
-
-            pstt.executeUpdate();
-
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-
-        response.sendRedirect("taikhoan");
-    }
-
-
-    private void xemChiTiet(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
+    private void xoaTaiKhoan(HttpServletRequest request,HttpServletResponse response)
+            throws IOException {
 
         int id=Integer.parseInt(request.getParameter("id"));
 
-        TaiKhoan tk=null;
+        taiKhoanService.xoa(id);
 
-        try{
+        response.sendRedirect("taikhoan");
+    }
 
-            Connection conn=DBConnection.layKetNoi();
+    // ================= XEM CHI TIẾT =================
 
-            PreparedStatement pstt=conn.prepareStatement(
-                    "select * from tai_khoan where tai_khoan_id=?"
-            );
+    private void xemChiTiet(HttpServletRequest request,HttpServletResponse response)
+            throws ServletException, IOException {
 
-            pstt.setInt(1,id);
+        int id=Integer.parseInt(request.getParameter("id"));
 
-            ResultSet rs=pstt.executeQuery();
-
-            if(rs.next()) tk=mapRow(rs);
-
-        }catch(Exception e){
-            e.printStackTrace();
-        }
+        TaiKhoan tk = taiKhoanService.layTheoId(id);
 
         request.setAttribute("tk",tk);
 
         request.getRequestDispatcher("ChiTietTaiKhoan.jsp")
                 .forward(request,response);
     }
+    public void goiDangNhapChoNV(HttpServletRequest request,HttpServletResponse response,TaiKhoan tk)
+            throws ServletException, IOException{
 
-
-    private List<TaiKhoan> mapList(ResultSet rs) throws SQLException {
-
-        List<TaiKhoan> listTK=new ArrayList<>();
-
-        while(rs.next()) listTK.add(mapRow(rs));
-
-        return listTK;
-    }
-
-
-    private TaiKhoan mapRow(ResultSet rs) throws SQLException {
-
-        return new TaiKhoan(
-
-                rs.getInt("tai_khoan_id"),
-                rs.getInt("nhan_vien_id"),
-                rs.getString("ten_dang_nhap"),
-                rs.getString("mat_khau"),
-                rs.getString("vai_tro"),
-                rs.getInt("trang_thai"),
-                rs.getTimestamp("ngay_tao")
-
-        );
+            NhanVien nhanVien=nhanVienService.layTheoId(tk.getNhanVienId());
+            List<BangLuong> listBangLuong = bangLuongService.layTheoNhanVien(tk.getNhanVienId());
+            List<ChamCong>listChamCong=chamCongService.layTheoNhanVien(tk.getNhanVienId());
+            ChucVu chucVu=chucVuService.layTheoId(nhanVienService.layTheoId(tk.getNhanVienId()).getChucVuId());
+            List<DanhGia> listDanhGia=danhGiaService.layTheoNhanVien(tk.getNhanVienId());
+            HopDong hopdong=hopDongService.layHopDongHieuLuc(tk.getNhanVienId());
+            List<NghiPhep> listNghiPhep=nghiPhepService.layTheoNhanVien(tk.getNhanVienId());
+            request.setAttribute("soNgayVangKhongPhep",chamCongService.layChamCongNghiKhongPhep(tk.getNhanVienId()).size());
+        LocalDate now=LocalDate.now();
+            List<ThongBao> listThongBao=thongBaoService.layTheoNguoiNhan(tk.getNhanVienId());
+            dashboardServlet.nhanVienDas(request,response,tk);
+            request.setAttribute("bangLuong",bangLuongService.getBangLuongMoiNhatByNhanVien(tk.getNhanVienId()));
+            request.setAttribute("nhanVien",nhanVien);
+            request.setAttribute("listBangLuong",listBangLuong);
+            request.setAttribute("listChamCong",listChamCong);
+            request.setAttribute("chucVu",chucVu);
+            request.setAttribute("listDanhGia",listDanhGia);
+            request.setAttribute("hopDong",hopdong);
+            request.setAttribute("listNghiPhep",listNghiPhep);
+            request.setAttribute("listThongBao",listThongBao);
+            request.getRequestDispatcher("/WEB-INF/view/trangchuview/TrangChuNhanVien.jsp").forward(request,response);
     }
 }

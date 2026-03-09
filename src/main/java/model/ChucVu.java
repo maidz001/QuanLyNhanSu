@@ -7,8 +7,7 @@ public class ChucVu {
     private String maChucVu;
     private String tenChucVu;
     private int capBac;
-    private BigDecimal luongCoBanMin;
-    private BigDecimal luongCoBanMax;
+    private BigDecimal luongCoBan;
     private String moTa;
     private int trangThai;
 
@@ -22,10 +21,9 @@ public class ChucVu {
     public void setTenChucVu(String tenChucVu) { this.tenChucVu = tenChucVu; }
     public int getCapBac() { return capBac; }
     public void setCapBac(int capBac) { this.capBac = capBac; }
-    public BigDecimal getLuongCoBanMin() { return luongCoBanMin; }
-    public void setLuongCoBanMin(BigDecimal luongCoBanMin) { this.luongCoBanMin = luongCoBanMin; }
-    public BigDecimal getLuongCoBanMax() { return luongCoBanMax; }
-    public void setLuongCoBanMax(BigDecimal luongCoBanMax) { this.luongCoBanMax = luongCoBanMax; }
+    public BigDecimal getluongCoBan() { return luongCoBan; }
+    public void setluongCoBan(BigDecimal luongCoBan) { this.luongCoBan = luongCoBan; }
+
     public String getMoTa() { return moTa; }
     public void setMoTa(String moTa) { this.moTa = moTa; }
     public int getTrangThai() { return trangThai; }

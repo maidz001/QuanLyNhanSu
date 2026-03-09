@@ -42,13 +42,13 @@ public class AuthFilter implements Filter {
             res.sendRedirect(context + "/taikhoan?action=login");
             return;
         }
-        if (tk.getVaiTro().toLowerCase(Locale.ROOT).equals("quanly")) {
+        if (tk.getVaiTro().toLowerCase(Locale.ROOT).equals("nhanvien")) {
             if (uri.contains("chuyenphongban")
                     || uri.contains("danhgia")
                     || uri.contains("duyetnghiphep")
                     || uri.contains("tinhluong")) {
-                req.setAttribute("message", "ban khong co quyen");
-                req.getRequestDispatcher("/ThongBao.jsp").forward(request, response);
+                req.setAttribute("message", "Bạn không có quyền thực hiện hành vi này!");
+                req.getRequestDispatcher("/WEB-INF/view/thongbaoview/ThongBao.jsp").forward(request, response);
                 return;
             }
         }

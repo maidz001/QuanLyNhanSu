@@ -30,4 +30,8 @@ public class HopDongService {
     }
 
     public boolean xoa(int id) { return hopDongDAO.xoa(id); }
+
+    public List<HopDong> searchHopDong(String keyword, String loai, String trangThai) {
+        return hopDongDAO.searchHopDong(keyword,loai,trangThai);
+    }
 }

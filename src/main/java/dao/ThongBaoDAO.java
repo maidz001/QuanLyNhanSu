@@ -18,6 +18,37 @@ public class ThongBaoDAO {
         } catch (SQLException e) { e.printStackTrace(); }
         return ds;
     }
+    public ThongBao layTheoId(int id) {
+
+        ThongBao tb = null;
+
+        String sql = """
+        SELECT tb.*, nv.ho_ten AS ten_nguoi_gui
+        FROM thong_bao tb
+        LEFT JOIN nhan_vien nv 
+            ON tb.nguoi_gui = nv.nhan_vien_id
+        WHERE tb.thong_bao_id = ?
+        """;
+
+        try (Connection conn = DBConnection.layKetNoi();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, id);
+
+            try (ResultSet rs = ps.executeQuery()) {
+
+                if (rs.next()) {
+                    tb = mapRow(rs);
+                }
+
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return tb;
+    }
 
     public int demChuaDoc(int nguoiNhan) {
         String sql = "SELECT COUNT(*) FROM thong_bao WHERE nguoi_nhan=? AND da_doc=0";

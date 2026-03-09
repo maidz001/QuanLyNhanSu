@@ -23,10 +23,8 @@ public class BangLuong {
     private BigDecimal luongThucLanh;
     private Date ngayThanhToan;
     private String trangThai;
-    private String hoTen;
-    private String maNhanVien;
 
-    public BangLuong(int bangLuongId, int nhanVienId, int thang, int nam, BigDecimal soNgayLamViec, BigDecimal soNgayThucTe, BigDecimal gioLamThem, BigDecimal luongCoBan, BigDecimal phuCap, BigDecimal luongLamThem, BigDecimal thuong, BigDecimal tongThuNhap, BigDecimal baoHiemXaHoi, BigDecimal baoHiemYTe, BigDecimal tamUng, BigDecimal tongKhauTru, BigDecimal luongThucLanh, Date ngayThanhToan, String trangThai, String hoTen, String maNhanVien) {
+    public BangLuong(int bangLuongId, int nhanVienId, int thang, int nam, BigDecimal soNgayLamViec, BigDecimal soNgayThucTe, BigDecimal gioLamThem, BigDecimal luongCoBan, BigDecimal phuCap, BigDecimal luongLamThem, BigDecimal thuong, BigDecimal tongThuNhap, BigDecimal baoHiemXaHoi, BigDecimal baoHiemYTe, BigDecimal tamUng, BigDecimal tongKhauTru, BigDecimal luongThucLanh, Date ngayThanhToan, String trangThai) {
         this.bangLuongId = bangLuongId;
         this.nhanVienId = nhanVienId;
         this.thang = thang;
@@ -46,8 +44,6 @@ public class BangLuong {
         this.luongThucLanh = luongThucLanh;
         this.ngayThanhToan = ngayThanhToan;
         this.trangThai = trangThai;
-        this.hoTen = hoTen;
-        this.maNhanVien = maNhanVien;
     }
 
     public BangLuong() {}
@@ -90,8 +86,4 @@ public class BangLuong {
     public void setNgayThanhToan(Date ngayThanhToan) { this.ngayThanhToan = ngayThanhToan; }
     public String getTrangThai() { return trangThai; }
     public void setTrangThai(String trangThai) { this.trangThai = trangThai; }
-    public String getHoTen() { return hoTen; }
-    public void setHoTen(String hoTen) { this.hoTen = hoTen; }
-    public String getMaNhanVien() { return maNhanVien; }
-    public void setMaNhanVien(String maNhanVien) { this.maNhanVien = maNhanVien; }
-}
+ }
