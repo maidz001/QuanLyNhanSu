@@ -3,6 +3,7 @@ package dao;
 import model.ThongBao;
 import ConnDatabase.DBConnection;
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +19,23 @@ public class ThongBaoDAO {
         } catch (SQLException e) { e.printStackTrace(); }
         return ds;
     }
+
+    public boolean xoaTatCaThongBaoDaDocChoNhanVien(int nguoiNhan) {
+        String sql = "DELETE FROM thong_bao WHERE nguoi_nhan = ? AND da_doc = 1";
+
+        try (Connection conn = DBConnection.layKetNoi();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, nguoiNhan);
+            return ps.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
     public ThongBao layTheoId(int id) {
 
         ThongBao tb = null;
@@ -61,13 +79,14 @@ public class ThongBaoDAO {
     }
 
     public boolean them(ThongBao tb) {
-        String sql = "INSERT INTO thong_bao (nguoi_gui,nguoi_nhan,tieu_de,noi_dung,loai,da_doc) VALUES (?,?,?,?,?,0)";
+        String sql = "INSERT INTO thong_bao (nguoi_gui,nguoi_nhan,tieu_de,noi_dung,loai,da_doc,ngay_tao) VALUES (?,?,?,?,?,0,?)";
         try (Connection conn = DBConnection.layKetNoi(); PreparedStatement ps = conn.prepareStatement(sql)) {
             if (tb.getNguoiGui() != null) ps.setInt(1, tb.getNguoiGui()); else ps.setNull(1, Types.INTEGER);
             if (tb.getNguoiNhan() != null) ps.setInt(2, tb.getNguoiNhan()); else ps.setNull(2, Types.INTEGER);
             ps.setString(3, tb.getTieuDe());
             ps.setString(4, tb.getNoiDung());
             ps.setString(5, tb.getLoai());
+            ps.setDate(6,new java.sql.Date(tb.getNgayTao().getTime()));
             return ps.executeUpdate() > 0;
         } catch (SQLException e) { e.printStackTrace(); }
         return false;
@@ -98,6 +117,17 @@ public class ThongBaoDAO {
         tb.setTieuDe(tieuDe);
         tb.setNoiDung(noiDung);
         tb.setLoai(loai);
+        them(tb);
+    }
+    public void guiThongBaoTuDongTuChoiNP(int idNguoiNhan) {
+        ThongBao tb = new ThongBao();
+        tb.setNguoiGui(2);
+        tb.setNguoiNhan(idNguoiNhan);
+        tb.setTieuDe("Nghỉ phép");
+        tb.setNoiDung("Đơn xin nghỉ phép bị từ chối vì vượt quá quy định của công ty");
+        tb.setLoai("Từ chối nghỉ phép");
+        LocalDate now=LocalDate.now();
+        tb.setNgayTao(Date.valueOf(now));
         them(tb);
     }
 

@@ -8,7 +8,25 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
+.loading-overlay {
+        display: none;
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: rgba(0,0,0,0.45);
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+    }
+    .loading-overlay.show { display: flex; }
+    .spinner {
+        width: 48px; height: 48px;
+        border: 5px solid rgba(255,255,255,0.3);
+        border-top-color: #fff;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
     body {
       min-height: 100vh;
       display: flex;
@@ -193,6 +211,13 @@
     </form>
   </div>
 </div>
-
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+</div>
 </body>
+<script>
+    document.querySelector('form').addEventListener('submit', function() {
+        document.getElementById('loadingOverlay').classList.add('show');
+    });
+</script>
 </html>

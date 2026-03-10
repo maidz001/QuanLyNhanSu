@@ -314,7 +314,7 @@
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon orange"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></div>
-                    <div class="stat-info"><div class="val">${soDonNghiPhep != null ? soDonNghiPhep : '--'}</div><div class="lbl">Đơn nghỉ phép</div></div>
+                    <div class="stat-info"><div class="val">${soDonNghiPhep != null ? soDonNghiPhep : '--'}</div><div class="lbl">Số ngày nghỉ phép</div></div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon red"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
@@ -435,6 +435,7 @@
                     </c:if>
                     <form action="${pageContext.request.contextPath}/taikhoan" method="post">
                         <input type="hidden" name="action" value="doiMatKhau"/>
+                        <input type="hidden" name="idTaiKhoan" value="${tk.taiKhoanId}"/>
                         <div class="form-group" style="margin-bottom:14px"><label>Mật khẩu hiện tại</label><input type="password" name="matKhauCu" placeholder="••••••••" required/></div>
                         <div class="form-group" style="margin-bottom:14px"><label>Mật khẩu mới</label><input type="password" name="matKhauMoi" placeholder="••••••••" required/></div>
                         <div class="form-group" style="margin-bottom:14px"><label>Xác nhận mật khẩu mới</label><input type="password" name="xacNhanMatKhau" placeholder="••••••••" required/></div>
@@ -630,8 +631,8 @@
                                 <label>Loại phép</label>
                                 <select name="loaiPhep" required>
                                     <option value="">-- Chọn loại --</option>
-                                    <option value="Phep nam">Phép năm</option>
-                                    <option value="Phep om">Phép ốm</option>
+
+                                    <option value="Phep thang">Phép tháng(không quá 2 ngày 1 tháng/không quá 12 ngày 1 năm)</option>
                                     <option value="Phep khac">Phép khác</option>
                                 </select>
                             </div>
@@ -666,11 +667,13 @@
             <div class="box">
                 <div class="box-header">
                     <h3><svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>Danh sách đơn nghỉ phép</h3>
+                    <a class="view-all" href="${pageContext.request.contextPath}/nghiphep?action=xoadondacu&nhanVienId=${tk.nhanVienId}" >- Xóa các đơn cũ</a>
                     <a class="view-all" onclick="showPanel('xinnghiphep',null)">+ Tạo đơn mới</a>
+
                 </div>
                 <div class="box-body" style="padding:0">
                     <table class="data-table">
-                        <thead><tr><th>#</th><th>Loại phép</th><th>Từ ngày</th><th>Đến ngày</th><th>Số ngày</th><th>Lý do</th><th>Trạng thái</th><th>Người duyệt</th></tr></thead>
+                        <thead><tr><th>#</th><th>Loại phép</th><th>Từ ngày</th><th>Đến ngày</th><th>Số ngày</th><th>Lý do</th><th>Trạng thái</th><th>Người duyệt</th><th>Khác</th></tr></thead>
                         <tbody>
                             <c:choose>
                                 <c:when test="${not empty listNghiPhep}">
@@ -688,7 +691,12 @@
                                             </span>
                                         </td>
                                         <td>${not empty np.tenNguoiDuyet ? np.tenNguoiDuyet : '--'}</td>
-                                    </tr>
+<td>
+    <c:if test="${np.trangThai == 'Cho duyet'}">
+        <a href="${pageContext.request.contextPath}/nghiphep?action=xoatheoid&nghiPhepId=${np.nghiPhepId}"
+           style="font-size:0.72rem;color:var(--primary-light)">Hủy</a>
+    </c:if>
+</td>                                    </tr>
                                     </c:forEach>
                                 </c:when>
                                 <c:otherwise>
@@ -701,41 +709,95 @@
             </div>
         </div>
 
-        <!-- ═══ HỢP ĐỒNG ═══ -->
-        <div class="panel" id="panel-hopdong">
-            <div class="box">
-                <div class="box-header"><h3><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Hợp đồng lao động</h3></div>
-                <div class="box-body">
-                    <c:choose>
-                        <c:when test="${not empty listHopDong}">
-                            <c:forEach var="hd" items="${listHopDong}">
-                            <div class="hd-card">
-                                <div class="hd-title">
-                                    <span>📄 Hợp đồng: ${hd.soHopDong}</span>
-                                    <span class="badge ${hd.trangThai == 'Hieu luc' ? 'badge-green' : hd.trangThai == 'Het han' ? 'badge-orange' : 'badge-red'}">${hd.trangThai}</span>
-                                </div>
-                                <div class="hd-info-grid">
-                                    <div class="hd-info-item"><div class="hd-lbl">Loại hợp đồng</div><div class="hd-val">${hd.loaiHopDong}</div></div>
-                                    <div class="hd-info-item"><div class="hd-lbl">Lương cơ bản</div><div class="hd-val"><fmt:formatNumber value="${hd.luongCoBan}" pattern="#,###"/> đ</div></div>
-                                    <div class="hd-info-item"><div class="hd-lbl">Ngày bắt đầu</div><div class="hd-val">${hd.ngayBatDau}</div></div>
-                                    <div class="hd-info-item"><div class="hd-lbl">Phụ cấp</div><div class="hd-val"><fmt:formatNumber value="${hd.phuCap}" pattern="#,###"/> đ</div></div>
-                                    <div class="hd-info-item"><div class="hd-lbl">Ngày kết thúc</div><div class="hd-val">${not empty hd.ngayKetThuc ? hd.ngayKetThuc : 'Không xác định'}</div></div>
-                                    <div class="hd-info-item"><div class="hd-lbl">Ghi chú</div><div class="hd-val">${not empty hd.ghiChu ? hd.ghiChu : '--'}</div></div>
-                                </div>
-                            </div>
-                            </c:forEach>
-                        </c:when>
-                        <c:otherwise>
-                            <div class="empty-state">
-                                <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/></svg>
-                                <p>Chưa có hợp đồng</p>
-                            </div>
-                        </c:otherwise>
-                    </c:choose>
-                </div>
-            </div>
+<!-- ═══ HỢP ĐỒNG ═══ -->
+<div class="panel" id="panel-hopdong">
+    <div class="box">
+        <div class="box-header">
+            <h3>
+                <svg viewBox="0 0 24 24">
+                    <path d="M9 11l3 3L22 4"/>
+                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                </svg>
+                Hợp đồng lao động
+            </h3>
         </div>
 
+        <div class="box-body">
+            <c:choose>
+
+                <c:when test="${not empty hopDong}">
+                    <div class="hd-card">
+
+                        <div class="hd-title">
+                            <span>📄 Hợp đồng: ${hopDong.soHopDong}</span>
+
+                            <span class="badge
+                                ${hopDong.trangThai == 'Hieu luc' ? 'badge-green' :
+                                  hopDong.trangThai == 'Het han' ? 'badge-orange' :
+                                  'badge-red'}">
+
+                                ${hopDong.trangThai}
+                            </span>
+                        </div>
+
+                        <div class="hd-info-grid">
+
+                            <div class="hd-info-item">
+                                <div class="hd-lbl">Loại hợp đồng</div>
+                                <div class="hd-val">${hopDong.loaiHopDong}</div>
+                            </div>
+
+                            <div class="hd-info-item">
+                                <div class="hd-lbl">Lương cơ bản</div>
+                                <div class="hd-val">
+                                    <fmt:formatNumber value="${hopDong.luongCoBan}" pattern="#,###"/> đ
+                                </div>
+                            </div>
+
+                            <div class="hd-info-item">
+                                <div class="hd-lbl">Ngày bắt đầu</div>
+                                <div class="hd-val">${hopDong.ngayBatDau}</div>
+                            </div>
+
+                            <div class="hd-info-item">
+                                <div class="hd-lbl">Phụ cấp</div>
+                                <div class="hd-val">
+                                    <fmt:formatNumber value="${hopDong.phuCap}" pattern="#,###"/> đ
+                                </div>
+                            </div>
+
+                            <div class="hd-info-item">
+                                <div class="hd-lbl">Ngày kết thúc</div>
+                                <div class="hd-val">
+                                    ${not empty hopDong.ngayKetThuc ? hopDong.ngayKetThuc : 'Không xác định'}
+                                </div>
+                            </div>
+
+                            <div class="hd-info-item">
+                                <div class="hd-lbl">Ghi chú</div>
+                                <div class="hd-val">
+                                    ${not empty hopDong.ghiChu ? hopDong.ghiChu : '--'}
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </c:when>
+
+                <c:otherwise>
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M9 11l3 3L22 4"/>
+                        </svg>
+                        <p>Chưa có hợp đồng</p>
+                    </div>
+                </c:otherwise>
+
+            </c:choose>
+        </div>
+    </div>
+</div>
         <!-- ═══ ĐÁNH GIÁ ═══ -->
         <div class="panel" id="panel-danhgia">
             <div class="box">
@@ -796,18 +858,46 @@
 
                         <!-- Hợp đồng hiện tại -->
                         <div>
-                            <div style="font-size:0.75rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px">Hợp đồng hiện tại</div>
+                            <div style="font-size:0.75rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px">
+                                Hợp đồng hiện tại
+                            </div>
+
                             <c:choose>
-                                <c:when test="${not empty listHopDong}">
-                                    <c:set var="hdCurrent" value="${listHopDong[0]}"/>
-                                    <div class="profile-row"><span class="lbl">Số HĐ</span><span class="val">${hdCurrent.soHopDong}</span></div>
-                                    <div class="profile-row"><span class="lbl">Loại</span><span class="val">${hdCurrent.loaiHopDong}</span></div>
-                                    <div class="profile-row"><span class="lbl">Lương CB</span><span class="val"><fmt:formatNumber value="${hdCurrent.luongCoBan}" pattern="#,###"/> đ</span></div>
-                                    <div class="profile-row"><span class="lbl">Trạng thái</span><span class="val"><span class="badge badge-green">${hdCurrent.trangThai}</span></span></div>
+
+                                <c:when test="${not empty hopDong}">
+
+                                    <div class="profile-row">
+                                        <span class="lbl">Số HĐ</span>
+                                        <span class="val">${hopDong.soHopDong}</span>
+                                    </div>
+
+                                    <div class="profile-row">
+                                        <span class="lbl">Loại</span>
+                                        <span class="val">${hopDong.loaiHopDong}</span>
+                                    </div>
+
+                                    <div class="profile-row">
+                                        <span class="lbl">Lương CB</span>
+                                        <span class="val">
+                                            <fmt:formatNumber value="${hopDong.luongCoBan}" pattern="#,###"/> đ
+                                        </span>
+                                    </div>
+
+                                    <div class="profile-row">
+                                        <span class="lbl">Trạng thái</span>
+                                        <span class="val">
+                                            <span class="badge badge-green">${hopDong.trangThai}</span>
+                                        </span>
+                                    </div>
+
                                 </c:when>
+
                                 <c:otherwise>
-                                    <div class="empty-state" style="padding:10px 0">Chưa có hợp đồng</div>
+                                    <div class="empty-state" style="padding:10px 0">
+                                        Chưa có hợp đồng
+                                    </div>
                                 </c:otherwise>
+
                             </c:choose>
                         </div>
 
@@ -834,11 +924,34 @@
         <!-- ═══ THÔNG BÁO ═══ -->
         <div class="panel" id="panel-thongbao">
             <div class="box">
-                <div class="box-header"><h3><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>Tất cả thông báo</h3></div>
+                <div class="box-header">
+                <h3>Tất cả thông báo</h3>
+
+                <a class="view-all"
+                href="${pageContext.request.contextPath}/thongbao?action=danhdautatcaladadoc&nhanVienId=${tk.nhanVienId}">
+                Đánh dấu tất cả là đã đọc
+                </a>
+
+                <a class="view-all"
+                href="${pageContext.request.contextPath}/thongbao?action=xoatatcathongbaodadoc&nhanVienId=${tk.nhanVienId}"
+                style="color:red">
+                Xóa tất cả thông báo đã đọc
+                </a>
+
+                </div>
+
                 <div class="box-body" style="padding:0">
                     <table class="data-table">
-                        <thead><tr><th>Tiêu đề</th><th>Nội dung</th><th>Loại</th><th>Ngày</th><th>Trạng thái</th><th></th></tr></thead>
-                        <tbody>
+<thead>
+<tr>
+<th>Tiêu đề</th>
+<th>Nội dung</th>
+<th>Loại</th>
+<th>Ngày</th>
+<th>Trạng thái</th>
+<th>Khác</th>
+</tr>
+</thead>                        <tbody>
                             <c:choose>
                                 <c:when test="${not empty listThongBao}">
                                     <c:forEach var="tb" items="${listThongBao}">
@@ -848,9 +961,16 @@
                                         <td><span class="badge badge-blue">${not empty tb.loai ? tb.loai : '--'}</span></td>
                                         <td><c:choose><c:when test="${not empty tb.ngayTao}"><fmt:formatDate value="${tb.ngayTao}" pattern="yyyy-MM-dd"/></c:when><c:otherwise>--</c:otherwise></c:choose></td>
                                         <td><span class="badge ${tb.daDoc == 1 ? 'badge-green' : 'badge-orange'}">${tb.daDoc == 1 ? 'Đã đọc' : 'Chưa đọc'}</span></td>
+
                                         <td>
                                             <c:if test="${tb.daDoc == 0}">
-                                                <a href="${pageContext.request.contextPath}/thongbao?action=doc&id=${tb.thongBaoId}" style="font-size:0.72rem;color:var(--primary-light)">Đánh dấu đọc</a>
+                                                <a href="${pageContext.request.contextPath}/thongbao?action=danhdaudadoc&id=${tb.thongBaoId}"
+                                                   style="font-size:0.72rem;color:var(--primary-light)">Đánh dấu đọc</a>
+                                            </c:if>
+
+                                            <c:if test="${tb.daDoc == 1}">
+                                                <a href="${pageContext.request.contextPath}/thongbao?action=xoathongbao&id=${tb.thongBaoId}"
+                                                   style="font-size:0.72rem;color:red">Xóa</a>
                                             </c:if>
                                         </td>
                                     </tr>
@@ -870,7 +990,7 @@
 </div><!-- /main -->
 
 <script>
-    // Clock
+    // ── Clock ──
     function updateClock() {
         const n = new Date();
         const pad = v => String(v).padStart(2, '0');
@@ -883,7 +1003,7 @@
     updateClock();
     setInterval(updateClock, 1000);
 
-    // Panel switcher
+    // ── Panel switcher ──
     const titles = {
         dashboard: 'Dashboard', profile: 'Thông tin cá nhân', doimatkhau: 'Đổi mật khẩu',
         checkin: 'Check-in / Check-out', lichcong: 'Lịch chấm công', luong: 'Bảng lương',
@@ -899,68 +1019,52 @@
         if (el) el.classList.add('active');
     }
 
+    // ── Message alert ──
+    var msg = "<%= request.getAttribute("message") %>";
+    if (msg != "null") { alert(msg); }
 
+    // ── Calendar ──
+    const chamCongData = {};
+    <c:forEach var="cc" items="${listChamCong}">
+        chamCongData["${cc.ngayChamCong}"] = "${cc.trangThai}";
+    </c:forEach>
 
-        var msg = "<%= request.getAttribute("message") %>";
-        if(msg != "null"){
-            alert(msg);
+    (function renderCalendar() {
+        const grid = document.getElementById('calendarGrid');
+        if (!grid) return;
+        const now = new Date();
+        const y = now.getFullYear(), m = now.getMonth();
+        const firstDay = new Date(y, m, 1).getDay();
+        const totalDays = new Date(y, m + 1, 0).getDate();
+        const offset = firstDay === 0 ? 6 : firstDay - 1;
+
+        for (let i = 0; i < offset; i++) {
+            const d = document.createElement('div');
+            d.className = 'cc-day empty';
+            grid.appendChild(d);
         }
 
+        for (let d = 1; d <= totalDays; d++) {
+            const cell = document.createElement('div');
+            const dow = new Date(y, m, d).getDay();
+            const dateKey = y + '-' + String(m + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+            const trangThai = chamCongData[dateKey];
 
-</script>
-<%-- Đặt trước thẻ </body> hoặc trước script hiện tại --%>
-<script>
-// Build map từ data server
-const chamCongData = {};
-<c:forEach var="cc" items="${listChamCong}">
-    chamCongData["${cc.ngayChamCong}"] = "${cc.trangThai}";
-</c:forEach>
+            let cls = 'cc-day';
+            if (dow === 0 || dow === 6) cls += ' weekend';
+            if (d === now.getDate()) cls += ' today';
 
-(function renderCalendar() {
-    const grid = document.getElementById('calendarGrid');
-    if (!grid) return;
+            if (trangThai === 'Di lam')              cls += ' dilam';
+            else if (trangThai === 'Nghi phep')       cls += ' nghiphep';
+            else if (trangThai === 'Nghi khong phep') cls += ' nghikhongphep';
 
-    const now = new Date();
-    const y = now.getFullYear(), m = now.getMonth();
-    const firstDay = new Date(y, m, 1).getDay();
-    const totalDays = new Date(y, m + 1, 0).getDate();
-    const offset = firstDay === 0 ? 6 : firstDay - 1;
-
-    // Ô trống đầu tháng
-    for (let i = 0; i < offset; i++) {
-        const d = document.createElement('div');
-        d.className = 'cc-day empty';
-        grid.appendChild(d);
-    }
-
-    // Render từng ngày
-    for (let d = 1; d <= totalDays; d++) {
-        const cell = document.createElement('div');
-        const dow = new Date(y, m, d).getDay(); // 0=CN, 6=T7
-
-        // Key khớp với định dạng ngayChamCong trong DB
-        const dateKey = y + '-'
-            + String(m + 1).padStart(2, '0') + '-'
-            + String(d).padStart(2, '0');
-
-        const trangThai = chamCongData[dateKey];
-
-        let cls = 'cc-day';
-        if (dow === 0 || dow === 6) cls += ' weekend';
-        if (d === now.getDate()) cls += ' today';
-
-        // Tô màu theo data thật từ server
-        if (trangThai === 'Di lam')               cls += ' dilam';
-        else if (trangThai === 'Nghi phep')        cls += ' nghiphep';
-        else if (trangThai === 'Nghi khong phep')  cls += ' nghikhongphep';
-        // Không có data => không tô màu
-
-        cell.className = cls;
-        cell.textContent = d;
-        cell.title = trangThai || (dow === 0 || dow === 6 ? 'Cuối tuần' : 'Chưa có dữ liệu');
-        grid.appendChild(cell);
-    }
-})();
+            cell.className = cls;
+            cell.textContent = d;
+            cell.title = trangThai || (dow === 0 || dow === 6 ? 'Cuối tuần' : 'Chưa có dữ liệu');
+            grid.appendChild(cell);
+        }
+    })();
 </script>
 </body>
 </html>
+
