@@ -283,8 +283,8 @@
                                         <td>${not empty nv.tenChucVu ? nv.tenChucVu : '--'}</td>
                                         <td><span class="badge ${nv.trangThai == 'Dang lam viec' ? 'bg' : nv.trangThai == 'Nghi viec' ? 'br' : 'bo'}">${nv.trangThai}</span></td>
                                         <td style="white-space:nowrap">
-                                            <a href="${pageContext.request.contextPath}/nhanvien?action=chi-tiet&id=${nv.nhanVienId}" class="btn bo2 bsm">Xem</a>
-                                            <a href="${pageContext.request.contextPath}/nhanvien?action=sua&id=${nv.nhanVienId}" class="btn bp2 bsm">Sửa</a>
+                                            <a href="${pageContext.request.contextPath}/nhanvien?action=xemchitiet&id=${nv.nhanVienId}" class="btn bo2 bsm">Xem</a>
+
                                             <a href="${pageContext.request.contextPath}/nhanvien?action=xoa&id=${nv.nhanVienId}" class="btn bd bsm" onclick="return confirm('Xác nhận xóa?')">Xóa</a>
                                         </td>
                                     </tr>

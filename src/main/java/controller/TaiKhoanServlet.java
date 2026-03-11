@@ -225,7 +225,7 @@ public class TaiKhoanServlet extends HttpServlet {
             request.setAttribute("listThongBao",listThongBao);
             request.getRequestDispatcher("/WEB-INF/view/trangchuview/TrangChuNhanVien.jsp").forward(request,response);
     }
-    private void goiDangNhapChoQuanLy(HttpServletRequest request, HttpServletResponse response, TaiKhoan tk)
+    public void goiDangNhapChoQuanLy(HttpServletRequest request, HttpServletResponse response, TaiKhoan tk)
             throws ServletException, IOException {
 
         List<NhanVien> listNhanVien = nhanVienService.layTatCa();
