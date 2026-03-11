@@ -110,6 +110,7 @@ public class NhanVienDAO {
 
     private NhanVien mapRow(ResultSet rs) throws SQLException {
         NhanVien nv = new NhanVien();
+
         nv.setNhanVienId(rs.getInt("nhan_vien_id"));
         nv.setMaNhanVien(rs.getString("ma_nhan_vien"));
         nv.setHoTen(rs.getString("ho_ten"));

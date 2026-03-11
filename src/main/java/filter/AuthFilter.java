@@ -15,12 +15,16 @@ public class AuthFilter implements Filter {
 
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
+        res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        res.setHeader("Pragma", "no-cache");
+        res.setDateHeader("Expires", 0);
         String uri = req.getRequestURI();
         String context = req.getContextPath();
         HttpSession session = req.getSession(false);
         TaiKhoan tk = null;
         if (session != null) {
-            tk = (TaiKhoan) session.getAttribute("taiKhoanDangDangNhap");
+            Object attr = session.getAttribute("taiKhoanDangDangNhap");
+            tk = (attr instanceof TaiKhoan) ? (TaiKhoan) attr : null;
         }
         boolean daDangNhap = tk != null;
         boolean publicPage =

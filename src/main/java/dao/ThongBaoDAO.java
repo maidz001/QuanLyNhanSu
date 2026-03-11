@@ -116,6 +116,7 @@ public class ThongBaoDAO {
         tb.setNguoiNhan(nguoiNhan);
         tb.setTieuDe(tieuDe);
         tb.setNoiDung(noiDung);
+        tb.setNgayTao(new java.util.Date());
         tb.setLoai(loai);
         them(tb);
     }

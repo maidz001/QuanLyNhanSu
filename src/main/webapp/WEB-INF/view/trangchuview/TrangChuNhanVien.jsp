@@ -298,8 +298,19 @@
                     <h2>Xin chào, ${nhanVien.hoTen}! 👋</h2>
                     <p>Chào mừng bạn quay trở lại hệ thống quản lý nhân sự.</p>
                 </div>
-                <div class="banner-icon">
-                    <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+
+                <div style="display:flex;justify-content:flex-end;margin-top:4px;">
+                    <a href="${pageContext.request.contextPath}/taikhoan?action=logout"
+                       style="display:flex;align-items:center;gap:6px;padding:5px 13px;border-radius:7px;background:#fdedec;border:1px solid #f5b7b1;color:#e74c3c;font-size:0.74rem;font-weight:500;text-decoration:none;transition:all 0.2s;margin-left:auto;"
+                       onmouseover="this.style.background='#e74c3c';this.style.color='#fff'"
+                       onmouseout="this.style.background='#fdedec';this.style.color='#e74c3c'">
+                        <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.8;">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                            <polyline points="16 17 21 12 16 7"/>
+                            <line x1="21" y1="12" x2="9" y2="12"/>
+                        </svg>
+                        Đăng xuất
+                    </a>
                 </div>
             </div>
 
@@ -372,34 +383,78 @@
                     </div>
                 </div>
             </div>
+
         </div>
 
         <!-- ═══ THÔNG TIN CÁ NHÂN ═══ -->
-        <div class="panel" id="panel-profile">
-            <div class="box">
-                <div class="box-header"><h3><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>Thông tin tài khoản</h3></div>
-                <div class="box-body">
-                    <div class="grid-2" style="margin-bottom:0">
-                        <div>
-                            <div class="profile-row"><span class="lbl">Mã nhân viên</span><span class="val">#${tk.nhanVienId}</span></div>
-                            <div class="profile-row"><span class="lbl">Tên đăng nhập</span><span class="val">${tk.tenDangNhap}</span></div>
-                            <div class="profile-row"><span class="lbl">Vai trò</span><span class="val"><span class="badge badge-blue">${tk.vaiTro}</span></span></div>
-                        </div>
-                        <div>
-                            <div class="profile-row">
-                                <span class="lbl">Trạng thái TK</span>
-                                <span class="val">
-                                    <span class="badge ${tk.trangThai == 1 ? 'badge-green' : 'badge-red'}">${tk.trangThai == 1 ? 'Hoạt động' : 'Vô hiệu'}</span>
-                                </span>
-                            </div>
-                            <div class="profile-row"><span class="lbl">Ngày tạo</span><span class="val">
-                                <c:choose><c:when test="${not empty tk.ngayTao}"><fmt:formatDate value="${tk.ngayTao}" pattern="yyyy-MM-dd"/></c:when><c:otherwise>--</c:otherwise></c:choose>
-                            </span></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
+        <div class="panel" id="panel-profile">
+
+
+            <div class="box" style="max-width:320px;margin-bottom:18px;">
+                            <div class="box-header">
+                                <h3><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>Ảnh đại diện</h3>
+                            </div>
+                            <div class="box-body" style="display:flex;flex-direction:column;align-items:center;gap:16px;padding:24px;">
+
+                                <c:choose>
+                                    <c:when test="${not empty nhanVien.anhDaiDien}">
+                                        <img src="${pageContext.request.contextPath}/${nhanVien.anhDaiDien}"
+                                             alt="Ảnh đại diện"
+                                             style="width:110px;height:110px;border-radius:50%;object-fit:cover;border:3px solid var(--border);box-shadow:0 2px 12px rgba(30,58,95,0.1);"/>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <div style="width:110px;height:110px;border-radius:50%;background:#ebf4ff;border:3px solid var(--border);display:flex;align-items:center;justify-content:center;">
+                                            <svg viewBox="0 0 24 24" style="width:48px;height:48px;stroke:#2d6a9f;fill:none;stroke-width:1.4;">
+                                                <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+                                            </svg>
+                                        </div>
+                                    </c:otherwise>
+                                </c:choose>
+
+                                <div style="text-align:center;">
+                                    <div style="font-size:0.9rem;font-weight:600;color:var(--text);">${nhanVien.hoTen}</div>
+                                    <div style="font-size:0.75rem;color:var(--muted);margin-top:3px;">${nhanVien.tenChucVu} • ${nhanVien.tenPhongBan}</div>
+                                </div>
+
+                                <form action="${pageContext.request.contextPath}/nhanvien" method="post"
+                                      enctype="multipart/form-data"
+                                      style="width:100%;display:flex;flex-direction:column;gap:8px;">
+                                    <input type="hidden" name="action" value="capnhatanh"/>
+                                    <input type="hidden" name="nhanVienId" value="${nhanVien.nhanVienId}"/>
+                                    <input type="file" name="anhDaiDien" accept="image/*"
+                                           style="padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:0.78rem;background:#f8fafc;width:100%;"/>
+                                    <button type="submit"
+                                            style="padding:7px 14px;background:var(--primary);color:#fff;border:none;border-radius:7px;font-size:0.78rem;font-weight:500;cursor:pointer;">
+                                        Cập nhật ảnh
+                                    </button>
+                                </form>
+
+                            </div>
+            </div>
+            <div class="box">
+                            <div class="box-header"><h3><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>Thông tin tài khoản</h3></div>
+                            <div class="box-body">
+                                <div class="grid-2" style="margin-bottom:0">
+                                    <div>
+                                        <div class="profile-row"><span class="lbl">Mã nhân viên</span><span class="val">#${tk.nhanVienId}</span></div>
+                                        <div class="profile-row"><span class="lbl">Tên đăng nhập</span><span class="val">${tk.tenDangNhap}</span></div>
+                                        <div class="profile-row"><span class="lbl">Vai trò</span><span class="val"><span class="badge badge-blue">${tk.vaiTro}</span></span></div>
+                                    </div>
+                                    <div>
+                                        <div class="profile-row">
+                                            <span class="lbl">Trạng thái TK</span>
+                                            <span class="val">
+                                                <span class="badge ${tk.trangThai == 1 ? 'badge-green' : 'badge-red'}">${tk.trangThai == 1 ? 'Hoạt động' : 'Vô hiệu'}</span>
+                                            </span>
+                                        </div>
+                                        <div class="profile-row"><span class="lbl">Ngày tạo</span><span class="val">
+                                            <c:choose><c:when test="${not empty tk.ngayTao}"><fmt:formatDate value="${tk.ngayTao}" pattern="yyyy-MM-dd"/></c:when><c:otherwise>--</c:otherwise></c:choose>
+                                        </span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
             <c:if test="${not empty nhanVien}">
             <div class="box">
                 <div class="box-header"><h3><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Thông tin nhân viên</h3></div>
@@ -411,6 +466,7 @@
                             <div class="profile-row"><span class="lbl">Email</span><span class="val">${not empty nhanVien.email ? nhanVien.email : '--'}</span></div>
                             <div class="profile-row"><span class="lbl">Điện thoại</span><span class="val">${not empty nhanVien.dienThoai ? nhanVien.dienThoai : '--'}</span></div>
                             <div class="profile-row"><span class="lbl">Ngày sinh</span><span class="val">${not empty nhanVien.ngaySinh ? nhanVien.ngaySinh : '--'}</span></div>
+                            <div class="profile-row"><span class="lbl">Địa chỉ</span><span class="val">${not empty nhanVien.diaChi ? nhanVien.diaChi : '--'}</span></div>
                         </div>
                         <div>
                             <div class="profile-row"><span class="lbl">Giới tính</span><span class="val">${nhanVien.gioiTinh}</span></div>
@@ -418,8 +474,58 @@
                             <div class="profile-row"><span class="lbl">Phòng ban</span><span class="val">${not empty nhanVien.tenPhongBan ? nhanVien.tenPhongBan : '--'}</span></div>
                             <div class="profile-row"><span class="lbl">Chức vụ</span><span class="val">${not empty nhanVien.tenChucVu ? nhanVien.tenChucVu : '--'}</span></div>
                             <div class="profile-row"><span class="lbl">Ngày vào làm</span><span class="val">${not empty nhanVien.ngayVaoLam ? nhanVien.ngayVaoLam : '--'}</span></div>
+                            <div class="profile-row"><span class="lbl">Trạng thái</span><span class="val">${not empty nhanVien.trangThai ? nhanVien.trangThai : '--'}</span></div>
+
                         </div>
                     </div>
+                </div>
+            </div>
+            <!-- ═══ CẬP NHẬT THÔNG TIN CÁ NHÂN ═══ -->
+            <div class="box" style="max-width:560px;">
+                <div class="box-header">
+                    <h3>
+                        <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                        Cập nhật thông tin
+                    </h3>
+                </div>
+                <div class="box-body">
+                    <c:if test="${not empty messageCapNhat}">
+                        <div class="alert alert-success">✓ ${messageCapNhat}</div>
+                    </c:if>
+                    <form action="${pageContext.request.contextPath}/nhanvien" method="post">
+                        <input type="hidden" name="action" value="capnhatthongtincanhan"/>
+                        <input type="hidden" name="nhanVienId" value="${nhanVien.nhanVienId}"/>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Số điện thoại</label>
+                                <input type="text" name="dienThoai"
+                                       value="${not empty nhanVien.dienThoai ? nhanVien.dienThoai : ''}"
+                                       placeholder="Nhập số điện thoại..."/>
+                            </div>
+                            <div class="form-group">
+                                                            <label>Họ tên</label>
+                                                            <input type="text" name="hoTen"
+                                                                   value="${not empty nhanVien.hoTen ? nhanVien.hoTen : ''}"
+                                                                   placeholder="Nhập số họ tên..."/>
+                                                        </div>
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" name="email"
+                                       value="${not empty nhanVien.email ? nhanVien.email : ''}"
+                                       placeholder="Nhập email..."/>
+                            </div>
+                            <div class="form-group full">
+                                <label>Địa chỉ</label>
+                                <input type="text" name="diaChi"
+                                       value="${not empty nhanVien.diaChi ? nhanVien.diaChi : ''}"
+                                       placeholder="Nhập địa chỉ..."/>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="reset" class="btn btn-outline">Hủy thay đổi</button>
+                            <button type="submit" class="btn btn-primary">Lưu thông tin</button>
+                        </div>
+                    </form>
                 </div>
             </div>
             </c:if>
@@ -613,6 +719,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
 
         <!-- ═══ XIN NGHỈ PHÉP ═══ -->

@@ -27,6 +27,17 @@ public class TaiKhoanDAO {
         return null;
     }
 
+    public TaiKhoan layTheoTenDangNhap(String tenDangNhap) {
+        String sql = "SELECT * FROM tai_khoan WHERE ten_dang_nhap=?";
+        try (Connection conn = DBConnection.layKetNoi();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, tenDangNhap);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return mapRow(rs);
+        } catch (SQLException e) { e.printStackTrace(); }
+        return null;
+    }
+
 
     public boolean kiemTraTenDangNhapTonTai(String tenDangNhap) {
 

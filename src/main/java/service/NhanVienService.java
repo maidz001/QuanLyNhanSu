@@ -28,7 +28,7 @@ public class NhanVienService {
     public boolean sua(NhanVien nv, Integer nguoiThucHien) {
         boolean kq = nhanVienDAO.sua(nv);
         if (kq) {
-            thongBaoDAO.guiThongBaoChoNhanVien(nguoiThucHien, nv.getNhanVienId(), "Cap nhat thong tin", "Thong tin ho so cua ban vua duoc cap nhat boi quan tri vien.", "he_thong");
+            thongBaoDAO.guiThongBaoChoNhanVien(nguoiThucHien, nv.getNhanVienId(), "Cap nhat thong tin", "Thong tin ho so cua ban vua duoc cap nhat ", "he_thong");
         }
         return kq;
     }

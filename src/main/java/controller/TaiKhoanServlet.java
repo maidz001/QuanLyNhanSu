@@ -14,8 +14,11 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
 
+import static org.apache.taglibs.standard.functions.Functions.substring;
+
 @WebServlet("/taikhoan")
 public class TaiKhoanServlet extends HttpServlet {
+    private EmailService emailService=new EmailService();
    private final DashboardServlet dashboardServlet=new DashboardServlet();
     private TaiKhoanService taiKhoanService = new TaiKhoanService();
     private BangLuongService bangLuongService=new BangLuongService();
@@ -36,10 +39,18 @@ public class TaiKhoanServlet extends HttpServlet {
         if(action==null) action="";
 
         switch(action){
+            case "xacnhanotp":xacNhanOTP(request,response);break;
+            case "quenmatkhau":
+                request.getRequestDispatcher("/WEB-INF/view/taikhoanview/XacNhanTaiKhoan.jsp")
+                        .forward(request, response);
+                break;
+            case "xacnhantaikhoan":guiOTP(request,response);
+
             case "xoa": xoaTaiKhoan(request,response); break;
             case "xem": xemChiTiet(request,response); break;
             case "login": moFormLogin(request,response); break;
             case "signin": moFormSignIn(request,response); break;
+            case "logout": dangXuat(request,response);break;
             default: moFormLogin(request,response);
         }
     }
@@ -53,13 +64,16 @@ public class TaiKhoanServlet extends HttpServlet {
         if(action==null) action="";
 
         switch(action){
+            case "doimatkhauotp":datLaiMatKhau(request,response);break;
+            case "xacnhanotp":xacNhanOTP(request,response);break;
+            case "xacnhantaikhoan":guiOTP(request,response);break;
             case "dangnhap": dangNhap(request,response); break;
             case "dangky": dangKy(request,response); break;
             case "doiMatKhau": capNhatTaiKhoan(request,response); break;
         }
     }
 
-    // ================= ĐĂNG NHẬP =================
+
 
     private void dangNhap(HttpServletRequest request,HttpServletResponse response)
             throws ServletException, IOException {
@@ -143,7 +157,7 @@ public class TaiKhoanServlet extends HttpServlet {
 
             if(tkss.getTaiKhoanId()!=id) {
                 request.setAttribute("message","không được phép tấn công tài khoản người khác!");
-                session.setAttribute("taiKhoanDangDangNhap","");
+                session.invalidate();
                 request.getRequestDispatcher("/WEB-INF/view/thongbaoview/ThongBao.jsp").forward(request,response);
 
             }
@@ -208,5 +222,105 @@ public class TaiKhoanServlet extends HttpServlet {
             request.setAttribute("listNghiPhep",listNghiPhep);
             request.setAttribute("listThongBao",listThongBao);
             request.getRequestDispatcher("/WEB-INF/view/trangchuview/TrangChuNhanVien.jsp").forward(request,response);
+    }
+    public void dangXuat(HttpServletRequest request,HttpServletResponse response)
+            throws ServletException, IOException{
+        HttpSession session = request.getSession(false);
+        if (session != null) session.invalidate();
+        response.sendRedirect(request.getContextPath() + "/taikhoan?action=login");
+    }
+
+    // Hàm 1 - Tìm tài khoản → gửi OTP
+    private void guiOTP(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String tenTaiKhoan = request.getParameter("tentaiKhoan");
+        TaiKhoan tk = taiKhoanService.layTheoTenDangNhap(tenTaiKhoan);
+        if (tk == null) {
+            request.setAttribute("message", "Tài khoản không tồn tại");
+            request.getRequestDispatcher("/WEB-INF/view/taikhoanview/XacNhanTaiKhoan.jsp")
+                    .forward(request, response);
+            return;
+        }
+        NhanVien nhanVien = nhanVienService.layTheoId(tk.getNhanVienId());
+        String otp = emailService.taoMaOTP();
+        emailService.guiOTP(nhanVien.getEmail(), otp);
+
+        HttpSession session = request.getSession();
+        session.setAttribute("tenDangNhap", tk.getTenDangNhap());
+        session.setAttribute("otpCode", otp);
+        session.setAttribute("otpExpiry", System.currentTimeMillis() + 5 * 60 * 1000);
+        session.setAttribute("otpDaXacNhan", false);
+
+        request.setAttribute("message", "Đã gửi OTP về email "
+                + nhanVien.getEmail().substring(0, 2) + "**********"
+                + nhanVien.getEmail().substring(nhanVien.getEmail().length() - 11) + " của bạn!");
+        request.getRequestDispatcher("/WEB-INF/view/taikhoanview/XacNhanOtp.jsp")
+                .forward(request, response);
+    }
+
+    // Hàm 2 - Kiểm tra OTP → nếu đúng mới qua trang đổi mật khẩu
+    private void xacNhanOTP(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        HttpSession session = request.getSession(false);
+        String otpNhap = request.getParameter("otp");
+        String otpLuu  = (String) session.getAttribute("otpCode");
+        Long   expiry  = (Long)   session.getAttribute("otpExpiry");
+
+        if (expiry == null || System.currentTimeMillis() > expiry) {
+            request.setAttribute("message", "Mã OTP đã hết hạn, vui lòng thử lại!");
+            request.getRequestDispatcher("/WEB-INF/view/taikhoanview/XacNhanTaiKhoan.jsp")
+                    .forward(request, response);
+            return;
+        }
+        if (!otpNhap.equals(otpLuu)) {
+            request.setAttribute("message", "Mã OTP không đúng!");
+            request.getRequestDispatcher("/WEB-INF/view/taikhoanview/XacNhanOtp.jsp")
+                    .forward(request, response);
+            return;
+        }
+
+        session.setAttribute("otpDaXacNhan", true);
+        request.getRequestDispatcher("/WEB-INF/view/taikhoanview/DatLaiMatKhau.jsp")
+                .forward(request, response);
+    }
+
+    // Hàm 3 - Đổi mật khẩu mới
+    private void datLaiMatKhau(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        HttpSession session = request.getSession(false);
+
+        // Chặn truy cập trực tiếp không qua OTP
+        Boolean daXacNhan = (Boolean) session.getAttribute("otpDaXacNhan");
+        if (daXacNhan == null || !daXacNhan) {
+            response.sendRedirect(request.getContextPath() + "/taikhoan?action=quenMatKhau");
+            return;
+        }
+
+        String matKhauMoi = request.getParameter("matKhauMoi");
+        String xacNhan    = request.getParameter("xacNhanMatKhau");
+
+        if (!matKhauMoi.equals(xacNhan)) {
+            request.setAttribute("message", "Mật khẩu xác nhận không khớp!");
+            request.getRequestDispatcher("/WEB-INF/view/taikhoanview/DatLaiMatKhau.jsp")
+                    .forward(request, response);
+            return;
+        }
+
+        String tenDangNhap = session.getAttribute("tenDangNhap").toString();
+        TaiKhoan tk = taiKhoanService.layTheoTenDangNhap(tenDangNhap);
+        tk.setMatKhau(matKhauMoi);
+        taiKhoanService.sua(tk);
+
+        session.removeAttribute("otpCode");
+        session.removeAttribute("otpExpiry");
+        session.removeAttribute("otpDaXacNhan");
+        session.removeAttribute("tenDangNhap");
+
+        request.setAttribute("message", "Đổi mật khẩu thành công, vui lòng đăng nhập lại!");
+        request.getRequestDispatcher("/WEB-INF/view/taikhoanview/LogIn.jsp")
+                .forward(request, response);
     }
 }

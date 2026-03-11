@@ -22,7 +22,9 @@ public class TaiKhoanService {
         if (taiKhoanDAO.kiemTraTenDangNhapTonTai(tk.getTenDangNhap())) return false;
         return taiKhoanDAO.them(tk);
     }
-
+    public TaiKhoan layTheoTenDangNhap(String tenDangNhap) {
+        return taiKhoanDAO.layTheoTenDangNhap(tenDangNhap);
+    }
     public boolean sua(TaiKhoan tk) { return taiKhoanDAO.sua(tk); }
     public boolean xoa(int id) { return taiKhoanDAO.xoa(id); }
     public List<TaiKhoan> layTatCa() { return taiKhoanDAO.layTatCa(); }

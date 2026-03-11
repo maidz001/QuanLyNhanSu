@@ -168,8 +168,8 @@
       </svg>
     </div>
     <h2>Xin chào!</h2>
-    <p>Chưa có tài khoản?<br/>Đăng ký ngay để bắt đầu sử dụng hệ thống.</p>
-    <a href="taikhoan?action=signin" class="switch-btn">Đăng Ký</a>
+    <p>Chưa có tài khoản?<br/>Liên hệ ngay bộ phận công ty để được cấp tài khoản.</p>
+
   </div>
 
   <div class="panel-right">
@@ -204,7 +204,7 @@
         <label class="checkbox-wrap">
           <input type="checkbox" name="remember" value="true"/> Ghi nhớ đăng nhập
         </label>
-        <a href="#" class="forgot">Quên mật khẩu?</a>
+        <a href="taikhoan?action=quenmatkhau" class="forgot">Quên mật khẩu?</a>
       </div>
 
       <button type="submit" class="btn">Đăng Nhập</button>
