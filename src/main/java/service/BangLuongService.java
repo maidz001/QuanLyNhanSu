@@ -10,7 +10,9 @@ import model.HopDong;
 import model.NhanVien;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
 
 public class BangLuongService {
 
@@ -174,7 +176,15 @@ public class BangLuongService {
     }
 
 
-
+    public BigDecimal demTongLuongThangCuaCTy(){
+        LocalDate now=LocalDate.now();
+        List<BangLuong> list=bangLuongDAO.layTheoThangNam(now.getMonthValue(),now.getYear());
+        BigDecimal tongLuong=BigDecimal.ZERO;
+        for(BangLuong bl:list){
+            tongLuong=tongLuong.add(BigDecimal.valueOf(bl.getLuongThucLanh().doubleValue()));
+        }
+        return tongLuong;
+    }
     public boolean duyetBangLuong(int id, Integer nguoiThucHien) {
 
         BangLuong bl = bangLuongDAO.layTheoId(id);

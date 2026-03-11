@@ -2,6 +2,7 @@ package until;
 
 import model.*;
 import ConnDatabase.DBConnection;
+import org.apache.commons.math3.geometry.spherical.oned.LimitAngle;
 import service.*;
 
 import javax.servlet.*;
@@ -38,19 +39,28 @@ public class DashboardServlet extends HttpServlet {
     }
     public void nhanVienDas(HttpServletRequest request,HttpServletResponse response,TaiKhoan tk){
         NhanVien nhanVien=nhanVienService.layTheoId(tk.getNhanVienId());
-        List<BangLuong> listBangLuong = bangLuongService.layTheoNhanVien(tk.getNhanVienId());
-        List<ChamCong>listChamCong=chamCongService.layTheoNhanVien(tk.getNhanVienId());
-        ChucVu chucVu=chucVuService.layTheoId(nhanVienService.layTheoId(tk.getNhanVienId()).getChucVuId());
         List<DanhGia> listDanhGia=danhGiaService.layTheoNhanVien(tk.getNhanVienId());
-        HopDong hopdong=hopDongService.layHopDongHieuLuc(tk.getNhanVienId());
         List<NghiPhep> listNghiPhep=nghiPhepService.layTheoNhanVienDaDuyet(tk.getNhanVienId());
-        PhongBan phongBan=phongBanService.layTheoId(nhanVienService.layTheoId(tk.getNhanVienId()).getPhongBanId());
-        List<ThongBao> listThongBao=thongBaoService.layTheoNguoiNhan(tk.getNhanVienId());
         LocalDate now=LocalDate.now();
         request.setAttribute("soNgayCong",chamCongService.demNgayDiLam(tk.getNhanVienId(),now.getMonthValue(),now.getYear()));
         request.setAttribute("luongGanNhat", bangLuongService.getBangLuongMoiNhatByNhanVien(tk.getNhanVienId()).getLuongThucLanh());
 request.setAttribute("soDonNghiPhep",nghiPhepService.soNgayNghiPhep(listNghiPhep));
 request.setAttribute("diemDanhGia",danhGiaService.tongDiemTheoNhanVien(listDanhGia)/listDanhGia.size());
 request.setAttribute("soGioLamThem",chamCongService.tinhGioLamThem(tk.getNhanVienId(), now.getMonthValue(), now.getYear()));
+    }
+    public void quanLyDas(HttpServletRequest request,HttpServletResponse response,TaiKhoan tk){
+
+        List<NhanVien> listNhanVien  = nhanVienService.layTatCa();
+        List<NghiPhep> listChoDuyet  = nghiPhepService.layChoDuyet();
+        List<PhongBan> listPhongBan  = phongBanService.layTatCa();
+        request.setAttribute("tongNhanVien", listNhanVien.size());
+        request.setAttribute("nvDangLam",    nhanVienService.demTong());
+        request.setAttribute("tongPhongBan", listPhongBan.size());
+        request.setAttribute("donChoDuyet",  listChoDuyet.size());
+        request.setAttribute("tongQuyLuong", bangLuongService.demTongLuongThangCuaCTy());
+        request.setAttribute("listPhongBan",         listPhongBan);
+        request.setAttribute("listNghiPhepChoDuyet", listChoDuyet);
+
+
     }
 }

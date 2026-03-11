@@ -104,6 +104,39 @@ public class NghiPhepDAO {
         } catch (SQLException e) { e.printStackTrace(); }
         return ds;
     }
+    public List<NghiPhep> layDaDuyet() {
+        List<NghiPhep> ds = new ArrayList<>();
+        String sql = "SELECT np.*, nv.ho_ten, nv.ma_nhan_vien, nd.ho_ten as ten_nguoi_duyet " +
+                "FROM nghi_phep np " +
+                "LEFT JOIN nhan_vien nv ON np.nhan_vien_id = nv.nhan_vien_id " +
+                "LEFT JOIN nhan_vien nd ON np.nguoi_duyet = nd.nhan_vien_id " +
+                "WHERE np.trang_thai = 'Da duyet' " +
+                "AND (np.ghi_chu IS NULL OR np.ghi_chu != 'Da xoa') " +
+                "ORDER BY np.nghi_phep_id DESC";
+        try (Connection conn = DBConnection.layKetNoi();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) ds.add(mapRow(rs));
+        } catch (SQLException e) { e.printStackTrace(); }
+        return ds;
+    }
+
+    public List<NghiPhep> layTuChoi() {
+        List<NghiPhep> ds = new ArrayList<>();
+        String sql = "SELECT np.*, nv.ho_ten, nv.ma_nhan_vien, nd.ho_ten as ten_nguoi_duyet " +
+                "FROM nghi_phep np " +
+                "LEFT JOIN nhan_vien nv ON np.nhan_vien_id = nv.nhan_vien_id " +
+                "LEFT JOIN nhan_vien nd ON np.nguoi_duyet = nd.nhan_vien_id " +
+                "WHERE np.trang_thai = 'Tu choi' " +
+                "AND (np.ghi_chu IS NULL OR np.ghi_chu != 'Da xoa') " +
+                "ORDER BY np.nghi_phep_id DESC";
+        try (Connection conn = DBConnection.layKetNoi();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) ds.add(mapRow(rs));
+        } catch (SQLException e) { e.printStackTrace(); }
+        return ds;
+    }
     public List<NghiPhep> layTheoNhanVienDaDuyet(int nhanVienId) {
         List<NghiPhep> ds = new ArrayList<>();
 

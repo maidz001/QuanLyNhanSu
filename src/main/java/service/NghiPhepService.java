@@ -95,4 +95,6 @@ public class NghiPhepService {
     public boolean xoaTheoID(int id){
         return nghiPhepDAO.xoa(id);
     }
+    public List<NghiPhep> layDaDuyet() { return nghiPhepDAO.layDaDuyet(); }
+    public List<NghiPhep> layTuChoi()  { return nghiPhepDAO.layTuChoi(); }
 }

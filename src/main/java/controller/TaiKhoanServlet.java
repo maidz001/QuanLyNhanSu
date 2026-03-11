@@ -92,7 +92,8 @@ public class TaiKhoanServlet extends HttpServlet {
             }
 
             else
-                response.sendRedirect(request.getContextPath()+"/WEB-INF/view/trangchuview/TrangChuQuanLy.jsp");
+                goiDangNhapChoQuanLy(request,response,tk);
+
 
         }else{
 
@@ -102,6 +103,7 @@ public class TaiKhoanServlet extends HttpServlet {
                     .forward(request,response);
         }
     }
+
 
     // ================= MỞ FORM LOGIN =================
 
@@ -222,6 +224,26 @@ public class TaiKhoanServlet extends HttpServlet {
             request.setAttribute("listNghiPhep",listNghiPhep);
             request.setAttribute("listThongBao",listThongBao);
             request.getRequestDispatcher("/WEB-INF/view/trangchuview/TrangChuNhanVien.jsp").forward(request,response);
+    }
+    private void goiDangNhapChoQuanLy(HttpServletRequest request, HttpServletResponse response, TaiKhoan tk)
+            throws ServletException, IOException {
+
+        List<NhanVien> listNhanVien = nhanVienService.layTatCa();
+       dashboardServlet.quanLyDas(request,response,tk);
+        request.setAttribute("listNhanVien",        listNhanVien);
+        request.setAttribute("listChucVu",          chucVuService.layTatCa());
+        request.setAttribute("listTaiKhoan",        taiKhoanService.layTatCa());
+        request.setAttribute("listNghiPhepDaDuyet", nghiPhepService.layDaDuyet());
+        request.setAttribute("listNghiPhepTuChoi",  nghiPhepService.layTuChoi());
+        request.setAttribute("listHopDong",         hopDongService.layTatCa());
+        request.setAttribute("listBangLuongAll",    bangLuongService.layTatCa());
+        request.setAttribute("listDanhGiaAll",      danhGiaService.layTatCa());
+        request.setAttribute("listThongBaoAll",     thongBaoService.layTheoNguoiNhan(tk.getNhanVienId()));
+        request.setAttribute("listChamCongAll",     chamCongService.layTatCa());
+
+
+        request.getRequestDispatcher("/WEB-INF/view/trangchuview/TrangChuQuanLy.jsp")
+                .forward(request, response);
     }
     public void dangXuat(HttpServletRequest request,HttpServletResponse response)
             throws ServletException, IOException{

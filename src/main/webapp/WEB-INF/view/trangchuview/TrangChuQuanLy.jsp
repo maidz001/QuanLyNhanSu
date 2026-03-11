@@ -76,12 +76,20 @@
         .bh .va{font-size:.71rem;color:var(--pl);cursor:pointer;text-decoration:none}
         .bh .ac{display:flex;gap:8px;align-items:center}
         .bb{padding:16px}
+        /* SEARCH BAR */
+        .search-bar{display:flex;gap:8px;padding:12px 16px;border-bottom:1px solid var(--border);flex-wrap:wrap;align-items:center;background:#fafbfc}
+        .search-bar input,.search-bar select{padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:.79rem;outline:none;background:#fff;font-family:'Inter',sans-serif;color:var(--text)}
+        .search-bar input:focus,.search-bar select:focus{border-color:var(--pl)}
+        .search-bar input[type="text"]{min-width:220px}
+        .search-count{font-size:.72rem;color:var(--muted);margin-left:auto;padding:4px 8px;background:#ebf4ff;border-radius:20px;display:none}
+        .search-count.show{display:inline-block}
         /* TABLE */
         .dt{width:100%;border-collapse:collapse;font-size:.79rem}
         .dt th{padding:8px 12px;text-align:left;font-size:.65rem;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;border-bottom:1px solid var(--border);background:#f8fafc}
         .dt td{padding:8px 12px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle}
         .dt tr:last-child td{border-bottom:none}
         .dt tr:hover td{background:#f8fafc}
+        .no-results{text-align:center;padding:24px;color:var(--muted);font-size:.78rem;display:none}
         /* BADGE */
         .badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:.66rem;font-weight:500}
         .bg{background:#eafaf1;color:var(--success)}.bo{background:#fef9e7;color:var(--warning)}
@@ -103,15 +111,6 @@
         .bo2{background:transparent;border:1.5px solid var(--border);color:var(--muted)}.bo2:hover{border-color:var(--pl);color:var(--primary)}
         .bsm{padding:4px 10px;font-size:.72rem}
         .fa{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;padding-top:13px;border-top:1px solid var(--border)}
-        /* SEARCH */
-        .sb2{display:flex;gap:8px;margin-bottom:14px;align-items:center;flex-wrap:wrap}
-        .sb2 input,.sb2 select{padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:.79rem;outline:none;background:#f8fafc}
-        .sb2 input:focus,.sb2 select:focus{border-color:var(--pl)}
-        .sb2 input[type="text"]{min-width:200px}
-        /* DEPT ITEM */
-        .di2{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border)}
-        .di2:last-child{border-bottom:none}
-        .di2 .dn{font-size:.81rem;font-weight:500;color:var(--text)}
         /* TABS */
         .tabb{display:flex;border-bottom:2px solid var(--border);margin-bottom:16px}
         .tbt{padding:8px 18px;font-size:.8rem;font-weight:500;color:var(--muted);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .2s}
@@ -120,6 +119,10 @@
         /* EMPTY */
         .es{text-align:center;padding:24px;color:var(--muted);font-size:.78rem}
         .es svg{width:32px;height:32px;stroke:#dce3ec;fill:none;stroke-width:1.2;margin:0 auto 7px;display:block}
+        /* DEPT ITEM */
+        .di2{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border)}
+        .di2:last-child{border-bottom:none}
+        .di2 .dn{font-size:.81rem;font-weight:500;color:var(--text)}
     </style>
 </head>
 <body>
@@ -190,65 +193,29 @@
                 </div>
                 <div class="bi"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
             </div>
-
             <div class="sg">
-                <div class="sc">
-                    <div class="sct"><div class="si blue"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div></div>
-                    <div class="val">${not empty tongNhanVien ? tongNhanVien : '--'}</div>
-                    <div class="lbl">Tổng nhân viên</div>
-                </div>
-                <div class="sc">
-                    <div class="sct"><div class="si green"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div></div>
-                    <div class="val">${not empty nvDangLam ? nvDangLam : '--'}</div>
-                    <div class="lbl">Đang làm việc</div>
-                </div>
-                <div class="sc">
-                    <div class="sct"><div class="si orange"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg></div></div>
-                    <div class="val">${not empty donChoDuyet ? donChoDuyet : '--'}</div>
-                    <div class="lbl">Đơn nghỉ phép chờ</div>
-                </div>
-                <div class="sc">
-                    <div class="sct"><div class="si purple"><svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div></div>
-                    <div class="val">${not empty tongQuyLuong ? tongQuyLuong : '--'}</div>
-                    <div class="lbl">Tổng quỹ lương</div>
-                </div>
-                <div class="sc">
-                    <div class="sct"><div class="si red"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></div></div>
-                    <div class="val">${not empty tongPhongBan ? tongPhongBan : '--'}</div>
-                    <div class="lbl">Phòng ban</div>
-                </div>
+                <div class="sc"><div class="sct"><div class="si blue"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div></div><div class="val">${not empty tongNhanVien ? tongNhanVien : '--'}</div><div class="lbl">Tổng nhân viên</div></div>
+                <div class="sc"><div class="sct"><div class="si green"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div></div><div class="val">${not empty nvDangLam ? nvDangLam : '--'}</div><div class="lbl">Đang làm việc</div></div>
+                <div class="sc"><div class="sct"><div class="si orange"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg></div></div><div class="val">${not empty donChoDuyet ? donChoDuyet : '--'}</div><div class="lbl">Đơn nghỉ phép chờ</div></div>
+                <div class="sc"><div class="sct"><div class="si purple"><svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div></div><div class="val">${not empty tongQuyLuong ? tongQuyLuong : '--'}</div><div class="lbl">Tổng quỹ lương</div></div>
+                <div class="sc"><div class="sct"><div class="si red"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></div></div><div class="val">${not empty tongPhongBan ? tongPhongBan : '--'}</div><div class="lbl">Phòng ban</div></div>
             </div>
-
             <div class="g2">
-                <!-- Nhân viên theo phòng ban -->
                 <div class="box">
-                    <div class="bh">
-                        <h3><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Nhân viên theo phòng ban</h3>
-                        <a class="va" onclick="showPanel('phongban',null)">Chi tiết</a>
-                    </div>
+                    <div class="bh"><h3><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Nhân viên theo phòng ban</h3><a class="va" onclick="showPanel('phongban',null)">Chi tiết</a></div>
                     <div class="bb">
                         <c:choose>
                             <c:when test="${not empty listPhongBan}">
                                 <c:forEach var="pb" items="${listPhongBan}">
-                                    <div class="di2">
-                                        <span class="dn">${pb.tenPhongBan}</span>
-                                        <span class="badge bb2">-- NV</span>
-                                    </div>
+                                    <div class="di2"><span class="dn">${pb.tenPhongBan}</span><span class="badge bb2">-- NV</span></div>
                                 </c:forEach>
                             </c:when>
-                            <c:otherwise>
-                                <div class="es"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7"/></svg><p>Chưa có dữ liệu</p></div>
-                            </c:otherwise>
+                            <c:otherwise><div class="es"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7"/></svg><p>Chưa có dữ liệu</p></div></c:otherwise>
                         </c:choose>
                     </div>
                 </div>
-
-                <!-- Đơn nghỉ phép chờ duyệt -->
                 <div class="box">
-                    <div class="bh">
-                        <h3><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Đơn nghỉ phép chờ duyệt</h3>
-                        <a class="va" onclick="showPanel('nghiphep',null)">Xem tất cả</a>
-                    </div>
+                    <div class="bh"><h3><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Đơn nghỉ phép chờ duyệt</h3><a class="va" onclick="showPanel('nghiphep',null)">Xem tất cả</a></div>
                     <table class="dt">
                         <thead><tr><th>Nhân viên</th><th>Loại</th><th>Số ngày</th><th>Thao tác</th></tr></thead>
                         <tbody>
@@ -266,9 +233,7 @@
                                         </tr>
                                     </c:forEach>
                                 </c:when>
-                                <c:otherwise>
-                                    <tr><td colspan="4"><div class="es">Không có đơn chờ duyệt</div></td></tr>
-                                </c:otherwise>
+                                <c:otherwise><tr><td colspan="4"><div class="es">Không có đơn chờ duyệt</div></td></tr></c:otherwise>
                             </c:choose>
                         </tbody>
                     </table>
@@ -282,37 +247,29 @@
                 <div class="bh">
                     <h3><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Danh sách nhân viên</h3>
                     <div class="ac">
-                        <a href="${pageContext.request.contextPath}/nhanvien?action=them" class="btn bp2 bsm">
-                            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Thêm mới
-                        </a>
-                        <a href="${pageContext.request.contextPath}/nhanvien?action=xuat-excel" class="btn bo2 bsm">
-                            <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Xuất Excel
-                        </a>
+                        <a href="${pageContext.request.contextPath}/nhanvien?action=them" class="btn bp2 bsm"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Thêm mới</a>
+                        <a href="${pageContext.request.contextPath}/nhanvien?action=xuat-excel" class="btn bo2 bsm"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Xuất Excel</a>
                     </div>
                 </div>
-                <div class="bb">
-                    <form action="${pageContext.request.contextPath}/nhanvien" method="get" class="sb2">
-                        <input type="hidden" name="action" value="tim-kiem"/>
-                        <input type="text" name="keyword" placeholder="Tìm theo tên, mã NV..."/>
-                        <select name="phongBanId">
-                            <option value="">-- Tất cả phòng ban --</option>
-                            <c:forEach var="pb" items="${listPhongBan}">
-                                <option value="${pb.phongBanId}">${pb.tenPhongBan}</option>
-                            </c:forEach>
-                        </select>
-                        <select name="trangThai">
-                            <option value="">-- Trạng thái --</option>
-                            <option value="Dang lam viec">Đang làm việc</option>
-                            <option value="Nghi viec">Nghỉ việc</option>
-                        </select>
-                        <button type="submit" class="btn bp2 bsm">Tìm kiếm</button>
-                    </form>
+                <!-- SEARCH NHÂN VIÊN -->
+                <div class="search-bar">
+                    <input type="text" id="s-nv" placeholder="🔍 Tìm tên, mã NV, email, SĐT..." oninput="filterNV()"/>
+                    <select id="sel-pb-nv" onchange="filterNV()">
+                        <option value="">-- Tất cả phòng ban --</option>
+                        <c:forEach var="pb" items="${listPhongBan}">
+                            <option value="${pb.tenPhongBan}">${pb.tenPhongBan}</option>
+                        </c:forEach>
+                    </select>
+                    <select id="sel-tt-nv" onchange="filterNV()">
+                        <option value="">-- Trạng thái --</option>
+                        <option value="Dang lam viec">Đang làm việc</option>
+                        <option value="Nghi viec">Nghỉ việc</option>
+                    </select>
+                    <span class="search-count" id="count-nv"></span>
                 </div>
                 <table class="dt">
-                    <thead>
-                        <tr><th>#</th><th>Mã NV</th><th>Họ tên</th><th>Email</th><th>SĐT</th><th>Phòng ban</th><th>Chức vụ</th><th>Trạng thái</th><th>Thao tác</th></tr>
-                    </thead>
-                    <tbody>
+                    <thead><tr><th>#</th><th>Mã NV</th><th>Họ tên</th><th>Email</th><th>SĐT</th><th>Phòng ban</th><th>Chức vụ</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+                    <tbody id="t-nv">
                         <c:choose>
                             <c:when test="${not empty listNhanVien}">
                                 <c:forEach var="nv" items="${listNhanVien}" varStatus="st">
@@ -324,11 +281,7 @@
                                         <td>${not empty nv.dienThoai ? nv.dienThoai : '--'}</td>
                                         <td>${not empty nv.tenPhongBan ? nv.tenPhongBan : '--'}</td>
                                         <td>${not empty nv.tenChucVu ? nv.tenChucVu : '--'}</td>
-                                        <td>
-                                            <span class="badge ${nv.trangThai == 'Dang lam viec' ? 'bg' : nv.trangThai == 'Nghi viec' ? 'br' : 'bo'}">
-                                                ${nv.trangThai}
-                                            </span>
-                                        </td>
+                                        <td><span class="badge ${nv.trangThai == 'Dang lam viec' ? 'bg' : nv.trangThai == 'Nghi viec' ? 'br' : 'bo'}">${nv.trangThai}</span></td>
                                         <td style="white-space:nowrap">
                                             <a href="${pageContext.request.contextPath}/nhanvien?action=chi-tiet&id=${nv.nhanVienId}" class="btn bo2 bsm">Xem</a>
                                             <a href="${pageContext.request.contextPath}/nhanvien?action=sua&id=${nv.nhanVienId}" class="btn bp2 bsm">Sửa</a>
@@ -337,12 +290,11 @@
                                     </tr>
                                 </c:forEach>
                             </c:when>
-                            <c:otherwise>
-                                <tr><td colspan="9"><div class="es">Không có dữ liệu nhân viên</div></td></tr>
-                            </c:otherwise>
+                            <c:otherwise><tr><td colspan="9"><div class="es">Không có dữ liệu nhân viên</div></td></tr></c:otherwise>
                         </c:choose>
                     </tbody>
                 </table>
+                <div class="no-results" id="no-nv">😔 Không tìm thấy nhân viên phù hợp</div>
             </div>
         </div>
 
@@ -350,13 +302,15 @@
         <div class="panel" id="panel-phongban">
             <div class="g2">
                 <div class="box">
-                    <div class="bh">
-                        <h3><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Danh sách phòng ban</h3>
-                        <a href="${pageContext.request.contextPath}/phongban?action=them" class="btn bp2 bsm">+ Thêm</a>
+                    <div class="bh"><h3><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Danh sách phòng ban</h3><a href="${pageContext.request.contextPath}/phongban?action=them" class="btn bp2 bsm">+ Thêm</a></div>
+                    <!-- SEARCH PHÒNG BAN -->
+                    <div class="search-bar">
+                        <input type="text" id="s-pb" placeholder="🔍 Tìm tên, mã phòng ban..." oninput="filterTable('t-pb',this.value,[0,1,2],'count-pb','no-pb')"/>
+                        <span class="search-count" id="count-pb"></span>
                     </div>
                     <table class="dt">
                         <thead><tr><th>Mã PB</th><th>Tên phòng ban</th><th>Trưởng phòng</th><th>T.Thái</th><th>Thao tác</th></tr></thead>
-                        <tbody>
+                        <tbody id="t-pb">
                             <c:choose>
                                 <c:when test="${not empty listPhongBan}">
                                     <c:forEach var="pb" items="${listPhongBan}">
@@ -364,11 +318,7 @@
                                             <td><strong>${pb.maPhongBan}</strong></td>
                                             <td>${pb.tenPhongBan}</td>
                                             <td>${not empty pb.tenTruongPhong ? pb.tenTruongPhong : '--'}</td>
-                                            <td>
-                                                <span class="badge ${pb.trangThai == 1 ? 'bg' : 'br'}">
-                                                    ${pb.trangThai == 1 ? 'Hoạt động' : 'Dừng'}
-                                                </span>
-                                            </td>
+                                            <td><span class="badge ${pb.trangThai == 1 ? 'bg' : 'br'}">${pb.trangThai == 1 ? 'Hoạt động' : 'Dừng'}</span></td>
                                             <td>
                                                 <a href="${pageContext.request.contextPath}/phongban?action=sua&id=${pb.phongBanId}" class="btn bp2 bsm">Sửa</a>
                                                 <a href="${pageContext.request.contextPath}/phongban?action=xoa&id=${pb.phongBanId}" class="btn bd bsm" onclick="return confirm('Xóa phòng ban?')">Xóa</a>
@@ -376,14 +326,12 @@
                                         </tr>
                                     </c:forEach>
                                 </c:when>
-                                <c:otherwise>
-                                    <tr><td colspan="5"><div class="es">Chưa có phòng ban</div></td></tr>
-                                </c:otherwise>
+                                <c:otherwise><tr><td colspan="5"><div class="es">Chưa có phòng ban</div></td></tr></c:otherwise>
                             </c:choose>
                         </tbody>
                     </table>
+                    <div class="no-results" id="no-pb">😔 Không tìm thấy phòng ban phù hợp</div>
                 </div>
-
                 <div class="box">
                     <div class="bh"><h3><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Thêm phòng ban mới</h3></div>
                     <div class="bb fm">
@@ -392,22 +340,8 @@
                             <div class="fg">
                                 <div><label>Mã phòng ban</label><input type="text" name="maPhongBan" placeholder="PB06" required/></div>
                                 <div><label>Tên phòng ban</label><input type="text" name="tenPhongBan" placeholder="Tên phòng ban" required/></div>
-                                <div>
-                                    <label>Phòng ban cha</label>
-                                    <select name="phongBanChaId">
-                                        <option value="">-- Không có --</option>
-                                        <c:forEach var="pb" items="${listPhongBan}">
-                                            <option value="${pb.phongBanId}">${pb.tenPhongBan}</option>
-                                        </c:forEach>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label>Trạng thái</label>
-                                    <select name="trangThai">
-                                        <option value="1">Hoạt động</option>
-                                        <option value="0">Dừng</option>
-                                    </select>
-                                </div>
+                                <div><label>Phòng ban cha</label><select name="phongBanChaId"><option value="">-- Không có --</option><c:forEach var="pb" items="${listPhongBan}"><option value="${pb.phongBanId}">${pb.tenPhongBan}</option></c:forEach></select></div>
+                                <div><label>Trạng thái</label><select name="trangThai"><option value="1">Hoạt động</option><option value="0">Dừng</option></select></div>
                                 <div class="full"><label>Mô tả</label><textarea name="moTa" placeholder="Mô tả..."></textarea></div>
                             </div>
                             <div class="fa"><button type="submit" class="btn bp2">Thêm phòng ban</button></div>
@@ -421,13 +355,15 @@
         <div class="panel" id="panel-chucvu">
             <div class="g2">
                 <div class="box">
-                    <div class="bh">
-                        <h3><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>Danh sách chức vụ</h3>
-                        <a href="${pageContext.request.contextPath}/chucvu?action=them" class="btn bp2 bsm">+ Thêm</a>
+                    <div class="bh"><h3><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>Danh sách chức vụ</h3><a href="${pageContext.request.contextPath}/chucvu?action=them" class="btn bp2 bsm">+ Thêm</a></div>
+                    <!-- SEARCH CHỨC VỤ -->
+                    <div class="search-bar">
+                        <input type="text" id="s-cv" placeholder="🔍 Tìm tên, mã chức vụ..." oninput="filterTable('t-cv',this.value,[0,1],'count-cv','no-cv')"/>
+                        <span class="search-count" id="count-cv"></span>
                     </div>
                     <table class="dt">
                         <thead><tr><th>Mã CV</th><th>Tên chức vụ</th><th>Cấp bậc</th><th>Lương min</th><th>T.Thái</th><th>Thao tác</th></tr></thead>
-                        <tbody>
+                        <tbody id="t-cv">
                             <c:choose>
                                 <c:when test="${not empty listChucVu}">
                                     <c:forEach var="cv" items="${listChucVu}">
@@ -435,19 +371,8 @@
                                             <td><strong>${cv.maChucVu}</strong></td>
                                             <td>${cv.tenChucVu}</td>
                                             <td><span class="badge bb2">Cấp ${cv.capBac}</span></td>
-                                            <td>
-                                                <c:choose>
-                                                    <c:when test="${not empty cv.luongCoBan}">
-                                                        <fmt:formatNumber value="${cv.luongCoBan}" pattern="#,###"/> đ
-                                                    </c:when>
-                                                    <c:otherwise>--</c:otherwise>
-                                                </c:choose>
-                                            </td>
-                                            <td>
-                                                <span class="badge ${cv.trangThai == 1 ? 'bg' : 'br'}">
-                                                    ${cv.trangThai == 1 ? 'Hoạt động' : 'Dừng'}
-                                                </span>
-                                            </td>
+                                            <td><c:choose><c:when test="${not empty cv.luongCoBan}"><fmt:formatNumber value="${cv.luongCoBan}" pattern="#,###"/> đ</c:when><c:otherwise>--</c:otherwise></c:choose></td>
+                                            <td><span class="badge ${cv.trangThai == 1 ? 'bg' : 'br'}">${cv.trangThai == 1 ? 'Hoạt động' : 'Dừng'}</span></td>
                                             <td>
                                                 <a href="${pageContext.request.contextPath}/chucvu?action=sua&id=${cv.chucVuId}" class="btn bp2 bsm">Sửa</a>
                                                 <a href="${pageContext.request.contextPath}/chucvu?action=xoa&id=${cv.chucVuId}" class="btn bd bsm" onclick="return confirm('Xóa?')">Xóa</a>
@@ -455,14 +380,12 @@
                                         </tr>
                                     </c:forEach>
                                 </c:when>
-                                <c:otherwise>
-                                    <tr><td colspan="6"><div class="es">Chưa có chức vụ</div></td></tr>
-                                </c:otherwise>
+                                <c:otherwise><tr><td colspan="6"><div class="es">Chưa có chức vụ</div></td></tr></c:otherwise>
                             </c:choose>
                         </tbody>
                     </table>
+                    <div class="no-results" id="no-cv">😔 Không tìm thấy chức vụ phù hợp</div>
                 </div>
-
                 <div class="box">
                     <div class="bh"><h3><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Thêm chức vụ mới</h3></div>
                     <div class="bb fm">
@@ -496,15 +419,20 @@
                         <a href="${pageContext.request.contextPath}/chamcong?action=xuat-excel" class="btn bo2 bsm">Xuất Excel</a>
                     </div>
                 </div>
+                <!-- SEARCH CHẤM CÔNG -->
+                <div class="search-bar">
+                    <input type="text" placeholder="🔍 Tìm tên, mã nhân viên..." oninput="filterTable('t-cc',this.value,[0,1],'count-cc','no-cc')"/>
+                    <span class="search-count" id="count-cc"></span>
+                </div>
                 <table class="dt">
                     <thead><tr><th>Mã NV</th><th>Họ tên</th><th>Ngày</th><th>Giờ vào</th><th>Giờ ra</th><th>Số giờ</th><th>Làm thêm</th><th>Trạng thái</th></tr></thead>
-                    <tbody>
+                    <tbody id="t-cc">
                         <c:choose>
                             <c:when test="${not empty listChamCongAll}">
                                 <c:forEach var="cc" items="${listChamCongAll}">
                                     <tr>
-                                        <td>${not empty cc.maNhanVien ? cc.maNhanVien : '--'}</td>
-                                        <td>${not empty cc.hoTen ? cc.hoTen : '--'}</td>
+                                        <td>${cc.nhanVienId}</td>
+                                        <td>--</td>
                                         <td>${cc.ngayChamCong}</td>
                                         <td>${not empty cc.gioVao ? cc.gioVao : '--'}</td>
                                         <td>${not empty cc.gioRa ? cc.gioRa : '--'}</td>
@@ -520,6 +448,7 @@
                         </c:choose>
                     </tbody>
                 </table>
+                <div class="no-results" id="no-cc">😔 Không tìm thấy kết quả phù hợp</div>
             </div>
         </div>
 
@@ -528,17 +457,27 @@
             <div class="box">
                 <div class="bh"><h3><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/></svg>Quản lý đơn nghỉ phép</h3></div>
                 <div class="bb">
+                    <!-- SEARCH NGHỈ PHÉP -->
+                    <div class="search-bar" style="margin-bottom:12px;border-radius:8px;border:1px solid var(--border)">
+                        <input type="text" id="s-np" placeholder="🔍 Tìm tên nhân viên..." oninput="filterNP()"/>
+                        <select id="sel-loai-np" onchange="filterNP()">
+                            <option value="">-- Loại phép --</option>
+                            <option value="Phep nam">Phép năm</option>
+                            <option value="Nghi benh">Nghỉ bệnh</option>
+                            <option value="Viec rieng">Việc riêng</option>
+                        </select>
+                        <span class="search-count" id="count-np"></span>
+                    </div>
+
                     <div class="tabb">
                         <button class="tbt active" onclick="switchTab('t-cho',this)">Chờ duyệt</button>
                         <button class="tbt" onclick="switchTab('t-duyet',this)">Đã duyệt</button>
                         <button class="tbt" onclick="switchTab('t-tuchoi',this)">Từ chối</button>
                     </div>
-
-                    <!-- Tab chờ duyệt -->
                     <div id="t-cho" class="tc active">
                         <table class="dt">
                             <thead><tr><th>Nhân viên</th><th>Loại phép</th><th>Từ ngày</th><th>Đến ngày</th><th>Số ngày</th><th>Lý do</th><th>Thao tác</th></tr></thead>
-                            <tbody>
+                            <tbody id="t-np-cho">
                                 <c:choose>
                                     <c:when test="${not empty listNghiPhepChoDuyet}">
                                         <c:forEach var="np" items="${listNghiPhepChoDuyet}">
@@ -556,19 +495,16 @@
                                             </tr>
                                         </c:forEach>
                                     </c:when>
-                                    <c:otherwise>
-                                        <tr><td colspan="7"><div class="es">Không có đơn chờ duyệt</div></td></tr>
-                                    </c:otherwise>
+                                    <c:otherwise><tr><td colspan="7"><div class="es">Không có đơn chờ duyệt</div></td></tr></c:otherwise>
                                 </c:choose>
                             </tbody>
                         </table>
+                        <div class="no-results" id="no-np">😔 Không tìm thấy kết quả phù hợp</div>
                     </div>
-
-                    <!-- Tab đã duyệt -->
                     <div id="t-duyet" class="tc">
                         <table class="dt">
                             <thead><tr><th>Nhân viên</th><th>Loại phép</th><th>Từ ngày</th><th>Đến ngày</th><th>Số ngày</th><th>Người duyệt</th></tr></thead>
-                            <tbody>
+                            <tbody id="t-np-duyet">
                                 <c:choose>
                                     <c:when test="${not empty listNghiPhepDaDuyet}">
                                         <c:forEach var="np" items="${listNghiPhepDaDuyet}">
@@ -582,15 +518,11 @@
                                             </tr>
                                         </c:forEach>
                                     </c:when>
-                                    <c:otherwise>
-                                        <tr><td colspan="6"><div class="es">Chưa có đơn được duyệt</div></td></tr>
-                                    </c:otherwise>
+                                    <c:otherwise><tr><td colspan="6"><div class="es">Chưa có đơn được duyệt</div></td></tr></c:otherwise>
                                 </c:choose>
                             </tbody>
                         </table>
                     </div>
-
-                    <!-- Tab từ chối -->
                     <div id="t-tuchoi" class="tc">
                         <table class="dt">
                             <thead><tr><th>Nhân viên</th><th>Loại phép</th><th>Từ ngày</th><th>Đến ngày</th><th>Số ngày</th></tr></thead>
@@ -607,9 +539,7 @@
                                             </tr>
                                         </c:forEach>
                                     </c:when>
-                                    <c:otherwise>
-                                        <tr><td colspan="5"><div class="es">Không có đơn từ chối</div></td></tr>
-                                    </c:otherwise>
+                                    <c:otherwise><tr><td colspan="5"><div class="es">Không có đơn từ chối</div></td></tr></c:otherwise>
                                 </c:choose>
                             </tbody>
                         </table>
@@ -621,10 +551,7 @@
         <!-- ═══ HỢP ĐỒNG ═══ -->
         <div class="panel" id="panel-hopdong">
             <div class="box">
-                <div class="bh">
-                    <h3><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>Quản lý hợp đồng</h3>
-                    <a href="${pageContext.request.contextPath}/hopdong?action=them" class="btn bp2 bsm">+ Thêm</a>
-                </div>
+                <div class="bh"><h3><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>Quản lý hợp đồng</h3><a href="${pageContext.request.contextPath}/hopdong?action=them" class="btn bp2 bsm">+ Thêm</a></div>
                 <table class="dt">
                     <thead><tr><th>Số HĐ</th><th>Nhân viên</th><th>Loại HĐ</th><th>Ngày BĐ</th><th>Ngày KT</th><th>Lương CB</th><th>Phụ cấp</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
                     <tbody>
@@ -639,11 +566,7 @@
                                         <td>${not empty hd.ngayKetThuc ? hd.ngayKetThuc : 'Vô thời hạn'}</td>
                                         <td><fmt:formatNumber value="${hd.luongCoBan}" pattern="#,###"/> đ</td>
                                         <td><fmt:formatNumber value="${hd.phuCap}" pattern="#,###"/> đ</td>
-                                        <td>
-                                            <span class="badge ${hd.trangThai == 'Hieu luc' ? 'bg' : hd.trangThai == 'Het han' ? 'bo' : 'br'}">
-                                                ${hd.trangThai}
-                                            </span>
-                                        </td>
+                                        <td><span class="badge ${hd.trangThai == 'Hieu luc' ? 'bg' : hd.trangThai == 'Het han' ? 'bo' : 'br'}">${hd.trangThai}</span></td>
                                         <td>
                                             <a href="${pageContext.request.contextPath}/hopdong?action=sua&id=${hd.hopDongId}" class="btn bp2 bsm">Sửa</a>
                                             <a href="${pageContext.request.contextPath}/hopdong?action=xoa&id=${hd.hopDongId}" class="btn bd bsm" onclick="return confirm('Xóa?')">Xóa</a>
@@ -651,9 +574,7 @@
                                     </tr>
                                 </c:forEach>
                             </c:when>
-                            <c:otherwise>
-                                <tr><td colspan="9"><div class="es">Chưa có hợp đồng</div></td></tr>
-                            </c:otherwise>
+                            <c:otherwise><tr><td colspan="9"><div class="es">Chưa có hợp đồng</div></td></tr></c:otherwise>
                         </c:choose>
                     </tbody>
                 </table>
@@ -670,14 +591,31 @@
                         <a href="${pageContext.request.contextPath}/bangluong?action=xuat-excel" class="btn bo2 bsm">Xuất Excel</a>
                     </div>
                 </div>
+                <!-- SEARCH BẢNG LƯƠNG -->
+                <div class="search-bar">
+                    <input type="text" id="s-bl" placeholder="🔍 Tìm tên nhân viên..." oninput="filterBL()"/>
+                    <select id="sel-tt-bl" onchange="filterBL()">
+                        <option value="">-- Trạng thái --</option>
+                        <option value="Da thanh toan">Đã thanh toán</option>
+                        <option value="Da duyet">Đã duyệt</option>
+                        <option value="Cho duyet">Chờ duyệt</option>
+                    </select>
+                    <select id="sel-thang-bl" onchange="filterBL()">
+                        <option value="">-- Tháng --</option>
+                        <c:forEach begin="1" end="12" var="m">
+                            <option value="T${m}">Tháng ${m}</option>
+                        </c:forEach>
+                    </select>
+                    <span class="search-count" id="count-bl"></span>
+                </div>
                 <table class="dt">
                     <thead><tr><th>Nhân viên</th><th>Tháng</th><th>Năm</th><th>Ngày làm</th><th>Lương CB</th><th>Thưởng</th><th>Khấu trừ</th><th>Thực lãnh</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
-                    <tbody>
+                    <tbody id="t-bl">
                         <c:choose>
                             <c:when test="${not empty listBangLuongAll}">
                                 <c:forEach var="b" items="${listBangLuongAll}">
                                     <tr>
-                                        <td>${not empty b.hoTen ? b.hoTen : 'NV#'.concat(b.nhanVienId)}</td>
+                                        <td>NV#${b.nhanVienId}</td>          <%-- không có hoTen --%>
                                         <td>T${b.thang}</td>
                                         <td>${b.nam}</td>
                                         <td>${b.soNgayThucTe}/${b.soNgayLamViec}</td>
@@ -685,11 +623,7 @@
                                         <td><fmt:formatNumber value="${b.thuong}" pattern="#,###"/></td>
                                         <td><fmt:formatNumber value="${b.tongKhauTru}" pattern="#,###"/></td>
                                         <td><strong><fmt:formatNumber value="${b.luongThucLanh}" pattern="#,###"/></strong></td>
-                                        <td>
-                                            <span class="badge ${b.trangThai == 'Da thanh toan' ? 'bg' : b.trangThai == 'Da duyet' ? 'bb2' : 'bo'}">
-                                                ${b.trangThai}
-                                            </span>
-                                        </td>
+                                        <td><span class="badge ${b.trangThai == 'Da thanh toan' ? 'bg' : b.trangThai == 'Da duyet' ? 'bb2' : 'bo'}">${b.trangThai}</span></td>
                                         <td><a href="${pageContext.request.contextPath}/bangluong?action=xem&id=${b.bangLuongId}" class="btn bo2 bsm">Xem</a></td>
                                     </tr>
                                 </c:forEach>
@@ -700,19 +634,28 @@
                         </c:choose>
                     </tbody>
                 </table>
+                <div class="no-results" id="no-bl">😔 Không tìm thấy kết quả phù hợp</div>
             </div>
         </div>
 
         <!-- ═══ ĐÁNH GIÁ ═══ -->
         <div class="panel" id="panel-danhgia">
             <div class="box">
-                <div class="bh">
-                    <h3><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Quản lý đánh giá nhân viên</h3>
-                    <a href="${pageContext.request.contextPath}/danhgia?action=them" class="btn bp2 bsm">+ Thêm đánh giá</a>
+                <div class="bh"><h3><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Quản lý đánh giá nhân viên</h3><a href="${pageContext.request.contextPath}/danhgia?action=them" class="btn bp2 bsm">+ Thêm đánh giá</a></div>
+                <!-- SEARCH ĐÁNH GIÁ -->
+                <div class="search-bar">
+                    <input type="text" placeholder="🔍 Tìm tên nhân viên..." oninput="filterTable('t-dg',this.value,[0],'count-dg','no-dg')"/>
+                    <select onchange="filterBySelectDG(4,this.value)">
+                        <option value="">-- Xếp loại --</option>
+                        <option value="Xuat sac">Xuất sắc</option>
+                        <option value="Gioi">Giỏi</option>
+                        <option value="Kha">Khá</option>
+                    </select>
+                    <span class="search-count" id="count-dg"></span>
                 </div>
                 <table class="dt">
                     <thead><tr><th>Nhân viên</th><th>Tháng</th><th>Năm</th><th>Tổng điểm</th><th>Xếp loại</th><th>Nhận xét</th><th>Người đánh giá</th><th>Ngày</th><th>Thao tác</th></tr></thead>
-                    <tbody>
+                    <tbody id="t-dg">
                         <c:choose>
                             <c:when test="${not empty listDanhGiaAll}">
                                 <c:forEach var="dg" items="${listDanhGiaAll}">
@@ -721,46 +664,44 @@
                                         <td>T${dg.thang}</td>
                                         <td>${dg.nam}</td>
                                         <td><strong>${dg.tongDiem}</strong></td>
-                                        <td>
-                                            <span class="badge ${dg.xepLoai == 'Xuat sac' ? 'bg' : dg.xepLoai == 'Gioi' ? 'bb2' : dg.xepLoai == 'Kha' ? 'bo' : 'br'}">
-                                                ${not empty dg.xepLoai ? dg.xepLoai : '--'}
-                                            </span>
-                                        </td>
-                                        <td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
-                                            ${not empty dg.nhanXet ? dg.nhanXet : '--'}
-                                        </td>
+                                        <td><span class="badge ${dg.xepLoai == 'Xuat sac' ? 'bg' : dg.xepLoai == 'Gioi' ? 'bb2' : dg.xepLoai == 'Kha' ? 'bo' : 'br'}">${not empty dg.xepLoai ? dg.xepLoai : '--'}</span></td>
+                                        <td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${not empty dg.nhanXet ? dg.nhanXet : '--'}</td>
                                         <td>${not empty dg.tenNguoiDanhGia ? dg.tenNguoiDanhGia : '--'}</td>
-                                        <td>
-                                            <c:choose>
-                                                <c:when test="${not empty dg.ngayDanhGia}">
-                                                    <fmt:formatDate value="${dg.ngayDanhGia}" pattern="dd/MM/yyyy"/>
-                                                </c:when>
-                                                <c:otherwise>--</c:otherwise>
-                                            </c:choose>
-                                        </td>
+                                        <td><c:choose><c:when test="${not empty dg.ngayDanhGia}"><fmt:formatDate value="${dg.ngayDanhGia}" pattern="dd/MM/yyyy"/></c:when><c:otherwise>--</c:otherwise></c:choose></td>
                                         <td><a href="${pageContext.request.contextPath}/danhgia?action=sua&id=${dg.danhGiaId}" class="btn bp2 bsm">Sửa</a></td>
                                     </tr>
                                 </c:forEach>
                             </c:when>
-                            <c:otherwise>
-                                <tr><td colspan="9"><div class="es">Chưa có dữ liệu đánh giá</div></td></tr>
-                            </c:otherwise>
+                            <c:otherwise><tr><td colspan="9"><div class="es">Chưa có dữ liệu đánh giá</div></td></tr></c:otherwise>
                         </c:choose>
                     </tbody>
                 </table>
+                <div class="no-results" id="no-dg">😔 Không tìm thấy kết quả phù hợp</div>
             </div>
         </div>
 
         <!-- ═══ TÀI KHOẢN ═══ -->
         <div class="panel" id="panel-taikhoan">
             <div class="box">
-                <div class="bh">
-                    <h3><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Quản lý tài khoản</h3>
-                    <a href="${pageContext.request.contextPath}/taikhoan?action=them" class="btn bp2 bsm">+ Thêm tài khoản</a>
+                <div class="bh"><h3><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Quản lý tài khoản</h3><a href="${pageContext.request.contextPath}/taikhoan?action=them" class="btn bp2 bsm">+ Thêm tài khoản</a></div>
+                <!-- SEARCH TÀI KHOẢN -->
+                <div class="search-bar">
+                    <input type="text" id="s-tk" placeholder="🔍 Tìm tên đăng nhập..." oninput="filterTable('t-tk',this.value,[1,2],'count-tk','no-tk')"/>
+                    <select onchange="filterBySelectGen('t-tk',3,this.value,'count-tk','no-tk')">
+                        <option value="">-- Tất cả vai trò --</option>
+                        <option value="Quản lý">Quản lý</option>
+                        <option value="Nhân viên">Nhân viên</option>
+                    </select>
+                    <select onchange="filterBySelectGen('t-tk',4,this.value,'count-tk','no-tk')">
+                        <option value="">-- Trạng thái --</option>
+                        <option value="Hoạt động">Hoạt động</option>
+                        <option value="Khóa">Khóa</option>
+                    </select>
+                    <span class="search-count" id="count-tk"></span>
                 </div>
                 <table class="dt">
                     <thead><tr><th>#</th><th>Tên đăng nhập</th><th>Mã NV</th><th>Vai trò</th><th>Trạng thái</th><th>Ngày tạo</th><th>Thao tác</th></tr></thead>
-                    <tbody>
+                    <tbody id="t-tk">
                         <c:choose>
                             <c:when test="${not empty listTaiKhoan}">
                                 <c:forEach var="t" items="${listTaiKhoan}" varStatus="st">
@@ -769,19 +710,8 @@
                                         <td><strong>${t.tenDangNhap}</strong></td>
                                         <td>${t.nhanVienId}</td>
                                         <td><span class="badge bp">${t.vaiTro}</span></td>
-                                        <td>
-                                            <span class="badge ${t.trangThai == 1 ? 'bg' : 'br'}">
-                                                ${t.trangThai == 1 ? 'Hoạt động' : 'Khóa'}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <c:choose>
-                                                <c:when test="${not empty t.ngayTao}">
-                                                    <fmt:formatDate value="${t.ngayTao}" pattern="dd/MM/yyyy"/>
-                                                </c:when>
-                                                <c:otherwise>--</c:otherwise>
-                                            </c:choose>
-                                        </td>
+                                        <td><span class="badge ${t.trangThai == 1 ? 'bg' : 'br'}">${t.trangThai == 1 ? 'Hoạt động' : 'Khóa'}</span></td>
+                                        <td><c:choose><c:when test="${not empty t.ngayTao}"><fmt:formatDate value="${t.ngayTao}" pattern="dd/MM/yyyy"/></c:when><c:otherwise>--</c:otherwise></c:choose></td>
                                         <td>
                                             <a href="${pageContext.request.contextPath}/taikhoan?action=sua&id=${t.taiKhoanId}" class="btn bp2 bsm">Sửa</a>
                                             <a href="${pageContext.request.contextPath}/taikhoan?action=khoa&id=${t.taiKhoanId}" class="btn bw bsm">Khóa</a>
@@ -790,24 +720,31 @@
                                     </tr>
                                 </c:forEach>
                             </c:when>
-                            <c:otherwise>
-                                <tr><td colspan="7"><div class="es">Chưa có tài khoản</div></td></tr>
-                            </c:otherwise>
+                            <c:otherwise><tr><td colspan="7"><div class="es">Chưa có tài khoản</div></td></tr></c:otherwise>
                         </c:choose>
                     </tbody>
                 </table>
+                <div class="no-results" id="no-tk">😔 Không tìm thấy tài khoản phù hợp</div>
             </div>
         </div>
 
         <!-- ═══ THÔNG BÁO ═══ -->
         <div class="panel" id="panel-thongbao">
             <div class="box">
-                <div class="bh">
-                    <h3><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>Tất cả thông báo</h3>
+                <div class="bh"><h3><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>Tất cả thông báo</h3></div>
+                <!-- SEARCH THÔNG BÁO -->
+                <div class="search-bar">
+                    <input type="text" placeholder="🔍 Tìm tiêu đề, nội dung..." oninput="filterTable('t-tb',this.value,[0,1,2],'count-tb','no-tb')"/>
+                    <select onchange="filterBySelectGen('t-tb',5,this.value,'count-tb','no-tb')">
+                        <option value="">-- Trạng thái --</option>
+                        <option value="Đã đọc">Đã đọc</option>
+                        <option value="Chưa đọc">Chưa đọc</option>
+                    </select>
+                    <span class="search-count" id="count-tb"></span>
                 </div>
                 <table class="dt">
                     <thead><tr><th>Tiêu đề</th><th>Nội dung</th><th>Người nhận</th><th>Loại</th><th>Ngày</th><th>Trạng thái</th></tr></thead>
-                    <tbody>
+                    <tbody id="t-tb">
                         <c:choose>
                             <c:when test="${not empty listThongBaoAll}">
                                 <c:forEach var="tb" items="${listThongBaoAll}">
@@ -816,28 +753,16 @@
                                         <td>${tb.noiDung}</td>
                                         <td>${not empty tb.tenNguoiNhan ? tb.tenNguoiNhan : '--'}</td>
                                         <td><span class="badge bb2">${not empty tb.loai ? tb.loai : '--'}</span></td>
-                                        <td>
-                                            <c:choose>
-                                                <c:when test="${not empty tb.ngayTao}">
-                                                    <fmt:formatDate value="${tb.ngayTao}" pattern="dd/MM/yyyy"/>
-                                                </c:when>
-                                                <c:otherwise>--</c:otherwise>
-                                            </c:choose>
-                                        </td>
-                                        <td>
-                                            <span class="badge ${tb.daDoc == 1 ? 'bg' : 'bo'}">
-                                                ${tb.daDoc == 1 ? 'Đã đọc' : 'Chưa đọc'}
-                                            </span>
-                                        </td>
+                                        <td><c:choose><c:when test="${not empty tb.ngayTao}"><fmt:formatDate value="${tb.ngayTao}" pattern="dd/MM/yyyy"/></c:when><c:otherwise>--</c:otherwise></c:choose></td>
+                                        <td><span class="badge ${tb.daDoc == 1 ? 'bg' : 'bo'}">${tb.daDoc == 1 ? 'Đã đọc' : 'Chưa đọc'}</span></td>
                                     </tr>
                                 </c:forEach>
                             </c:when>
-                            <c:otherwise>
-                                <tr><td colspan="6"><div class="es">Chưa có thông báo</div></td></tr>
-                            </c:otherwise>
+                            <c:otherwise><tr><td colspan="6"><div class="es">Chưa có thông báo</div></td></tr></c:otherwise>
                         </c:choose>
                     </tbody>
                 </table>
+                <div class="no-results" id="no-tb">😔 Không tìm thấy thông báo phù hợp</div>
             </div>
         </div>
 
@@ -845,35 +770,149 @@
 </div><!-- /main -->
 
 <script>
+    // ── CLOCK ──
     function tick() {
         const n = new Date();
-        document.getElementById('currentDate').textContent = n.getDate() + '/' + (n.getMonth() + 1) + '/' + n.getFullYear();
+        document.getElementById('currentDate').textContent = n.getDate() + '/' + (n.getMonth()+1) + '/' + n.getFullYear();
     }
-    tick();
-    setInterval(tick, 60000);
+    tick(); setInterval(tick, 60000);
 
-    const titles = {
-        dashboard: 'Dashboard', nhanvien: 'Nhân viên', phongban: 'Phòng ban',
-        chucvu: 'Chức vụ', chamcong: 'Quản lý chấm công', nghiphep: 'Duyệt nghỉ phép',
-        hopdong: 'Hợp đồng', bangluong: 'Bảng lương', danhgia: 'Đánh giá nhân viên',
-        taikhoan: 'Tài khoản', thongbao: 'Thông báo'
-    };
-
-    function showPanel(name, el) {
-        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-        document.querySelectorAll('.ni').forEach(n => n.classList.remove('active'));
-        const p = document.getElementById('panel-' + name);
-        if (p) p.classList.add('active');
-        document.getElementById('topbarTitle').textContent = titles[name] || name;
-        if (el) el.classList.add('active');
+    // ── PANEL / TAB ──
+    const titles = {dashboard:'Dashboard',nhanvien:'Nhân viên',phongban:'Phòng ban',chucvu:'Chức vụ',chamcong:'Quản lý chấm công',nghiphep:'Duyệt nghỉ phép',hopdong:'Hợp đồng',bangluong:'Bảng lương',danhgia:'Đánh giá nhân viên',taikhoan:'Tài khoản',thongbao:'Thông báo'};
+    function showPanel(name,el){
+        document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+        document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+        const p=document.getElementById('panel-'+name);
+        if(p) p.classList.add('active');
+        document.getElementById('topbarTitle').textContent=titles[name]||name;
+        if(el) el.classList.add('active');
     }
-
-    function switchTab(id, btn) {
-        const parent = btn.closest('.bb');
-        parent.querySelectorAll('.tc').forEach(t => t.classList.remove('active'));
-        parent.querySelectorAll('.tbt').forEach(b => b.classList.remove('active'));
+    function switchTab(id,btn){
+        const parent=btn.closest('.bb');
+        parent.querySelectorAll('.tc').forEach(t=>t.classList.remove('active'));
+        parent.querySelectorAll('.tbt').forEach(b=>b.classList.remove('active'));
         document.getElementById(id).classList.add('active');
         btn.classList.add('active');
+    }
+
+    // ── SEARCH ENGINE ──
+    function updateCount(countId, noId, visible, total, hasFilter) {
+        const countEl = document.getElementById(countId);
+        const noEl    = document.getElementById(noId);
+        if (countEl) {
+            if (hasFilter) {
+                countEl.textContent = visible + '/' + total + ' kết quả';
+                countEl.classList.add('show');
+            } else {
+                countEl.textContent = '';
+                countEl.classList.remove('show');
+            }
+        }
+        if (noEl) noEl.style.display = (hasFilter && visible === 0) ? 'block' : 'none';
+    }
+
+    // Generic: filter by keyword on specified cols
+    function filterTable(tbodyId, keyword, cols, countId, noId) {
+        const tbody = document.getElementById(tbodyId);
+        if (!tbody) return;
+        const rows = tbody.querySelectorAll('tr');
+        const kw   = keyword.toLowerCase().trim();
+        let visible = 0, total = 0;
+        rows.forEach(row => {
+            if (!row.cells.length) return;
+            total++;
+            const match = !kw || cols.some(c => row.cells[c] && row.cells[c].textContent.toLowerCase().includes(kw));
+            row.style.display = match ? '' : 'none';
+            if (match) visible++;
+        });
+        updateCount(countId, noId, visible, total, !!kw);
+    }
+
+    // Generic: filter by select on one col
+    function filterBySelectGen(tbodyId, colIndex, value, countId, noId) {
+        const tbody = document.getElementById(tbodyId);
+        if (!tbody) return;
+        const rows = tbody.querySelectorAll('tr');
+        let visible = 0, total = 0;
+        rows.forEach(row => {
+            if (!row.cells.length) return;
+            total++;
+            const cell = row.cells[colIndex];
+            const match = !value || (cell && cell.textContent.trim().includes(value));
+            row.style.display = match ? '' : 'none';
+            if (match) visible++;
+        });
+        updateCount(countId, noId, visible, total, !!value);
+    }
+
+    // ── NHÂN VIÊN (multi-filter) ──
+    function filterNV() {
+        const tbody  = document.getElementById('t-nv');
+        if (!tbody) return;
+        const kw     = (document.getElementById('s-nv')?.value || '').toLowerCase().trim();
+        const pb     = document.getElementById('sel-pb-nv')?.value || '';
+        const tt     = document.getElementById('sel-tt-nv')?.value || '';
+        const rows   = tbody.querySelectorAll('tr');
+        let visible  = 0, total = 0;
+        rows.forEach(row => {
+            if (!row.cells.length) return;
+            total++;
+            const text   = row.textContent.toLowerCase();
+            const matchKw= !kw || text.includes(kw);
+            const matchPb= !pb || (row.cells[5] && row.cells[5].textContent.includes(pb));
+            const matchTt= !tt || (row.cells[7] && row.cells[7].textContent.includes(tt));
+            const show   = matchKw && matchPb && matchTt;
+            row.style.display = show ? '' : 'none';
+            if (show) visible++;
+        });
+        updateCount('count-nv','no-nv', visible, total, !!(kw||pb||tt));
+    }
+
+    // ── NGHỈ PHÉP (multi-filter) ──
+    function filterNP() {
+        const tbody  = document.getElementById('t-np-cho');
+        if (!tbody) return;
+        const kw     = (document.getElementById('s-np')?.value || '').toLowerCase().trim();
+        const loai   = document.getElementById('sel-loai-np')?.value || '';
+        const rows   = tbody.querySelectorAll('tr');
+        let visible  = 0, total = 0;
+        rows.forEach(row => {
+            if (!row.cells.length) return;
+            total++;
+            const matchKw  = !kw   || (row.cells[0] && row.cells[0].textContent.toLowerCase().includes(kw));
+            const matchLoai= !loai || (row.cells[1] && row.cells[1].textContent.includes(loai));
+            const show     = matchKw && matchLoai;
+            row.style.display = show ? '' : 'none';
+            if (show) visible++;
+        });
+        updateCount('count-np','no-np', visible, total, !!(kw||loai));
+    }
+
+    // ── BẢNG LƯƠNG (multi-filter) ──
+    function filterBL() {
+        const tbody  = document.getElementById('t-bl');
+        if (!tbody) return;
+        const kw     = (document.getElementById('s-bl')?.value || '').toLowerCase().trim();
+        const tt     = document.getElementById('sel-tt-bl')?.value || '';
+        const thang  = document.getElementById('sel-thang-bl')?.value || '';
+        const rows   = tbody.querySelectorAll('tr');
+        let visible  = 0, total = 0;
+        rows.forEach(row => {
+            if (!row.cells.length) return;
+            total++;
+            const matchKw   = !kw    || (row.cells[0] && row.cells[0].textContent.toLowerCase().includes(kw));
+            const matchTt   = !tt    || (row.cells[8] && row.cells[8].textContent.includes(tt));
+            const matchThang= !thang || (row.cells[1] && row.cells[1].textContent.trim() === thang);
+            const show      = matchKw && matchTt && matchThang;
+            row.style.display = show ? '' : 'none';
+            if (show) visible++;
+        });
+        updateCount('count-bl','no-bl', visible, total, !!(kw||tt||thang));
+    }
+
+    // ── ĐÁNH GIÁ select ──
+    function filterBySelectDG(colIndex, value) {
+        filterBySelectGen('t-dg', colIndex, value, 'count-dg', 'no-dg');
     }
 </script>
 </body>
