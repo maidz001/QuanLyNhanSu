@@ -207,7 +207,7 @@
                         <c:choose>
                             <c:when test="${not empty listPhongBan}">
                                 <c:forEach var="pb" items="${listPhongBan}">
-                                    <div class="di2"><span class="dn">${pb.tenPhongBan}</span><span class="badge bb2">-- NV</span></div>
+                                    <div class="di2"><span class="dn">${pb.tenPhongBan}</span><span class="badge bb2">${pb.soLuong} NV</span></div>
                                 </c:forEach>
                             </c:when>
                             <c:otherwise><div class="es"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7"/></svg><p>Chưa có dữ liệu</p></div></c:otherwise>
@@ -248,7 +248,7 @@
                     <h3><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Danh sách nhân viên</h3>
                     <div class="ac">
                         <a href="${pageContext.request.contextPath}/nhanvien?action=them" class="btn bp2 bsm"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Thêm mới</a>
-                        <a href="${pageContext.request.contextPath}/nhanvien?action=xuat-excel" class="btn bo2 bsm"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Xuất Excel</a>
+                        <a href="${pageContext.request.contextPath}/nhanvien?action=xuatexcel" class="btn bo2 bsm"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Xuất Excel</a>
                     </div>
                 </div>
                 <!-- SEARCH NHÂN VIÊN -->
@@ -309,7 +309,7 @@
                         <span class="search-count" id="count-pb"></span>
                     </div>
                     <table class="dt">
-                        <thead><tr><th>Mã PB</th><th>Tên phòng ban</th><th>Trưởng phòng</th><th>T.Thái</th><th>Thao tác</th></tr></thead>
+                        <thead><tr><th>Mã PB</th><th>Tên phòng ban</th><th>Trưởng phòng</th><th>Số lượng</th><th>T.Thái</th><th>Thao tác</th></tr></thead>
                         <tbody id="t-pb">
                             <c:choose>
                                 <c:when test="${not empty listPhongBan}">
@@ -318,6 +318,7 @@
                                             <td><strong>${pb.maPhongBan}</strong></td>
                                             <td>${pb.tenPhongBan}</td>
                                             <td>${not empty pb.tenTruongPhong ? pb.tenTruongPhong : '--'}</td>
+                                            <td>${not empty pb.soLuong ? pb.soLuong : '--'}</td>
                                             <td><span class="badge ${pb.trangThai == 1 ? 'bg' : 'br'}">${pb.trangThai == 1 ? 'Hoạt động' : 'Dừng'}</span></td>
                                             <td>
                                                 <a href="${pageContext.request.contextPath}/phongban?action=sua&id=${pb.phongBanId}" class="btn bp2 bsm">Sửa</a>
@@ -555,27 +556,62 @@
                 <table class="dt">
                     <thead><tr><th>Số HĐ</th><th>Nhân viên</th><th>Loại HĐ</th><th>Ngày BĐ</th><th>Ngày KT</th><th>Lương CB</th><th>Phụ cấp</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
                     <tbody>
-                        <c:choose>
-                            <c:when test="${not empty listHopDong}">
-                                <c:forEach var="hd" items="${listHopDong}">
-                                    <tr>
-                                        <td><strong>${hd.soHopDong}</strong></td>
-                                        <td>${not empty hd.hoTen ? hd.hoTen : 'NV#'.concat(hd.nhanVienId)}</td>
-                                        <td>${hd.loaiHopDong}</td>
-                                        <td>${hd.ngayBatDau}</td>
-                                        <td>${not empty hd.ngayKetThuc ? hd.ngayKetThuc : 'Vô thời hạn'}</td>
-                                        <td><fmt:formatNumber value="${hd.luongCoBan}" pattern="#,###"/> đ</td>
-                                        <td><fmt:formatNumber value="${hd.phuCap}" pattern="#,###"/> đ</td>
-                                        <td><span class="badge ${hd.trangThai == 'Hieu luc' ? 'bg' : hd.trangThai == 'Het han' ? 'bo' : 'br'}">${hd.trangThai}</span></td>
-                                        <td>
-                                            <a href="${pageContext.request.contextPath}/hopdong?action=sua&id=${hd.hopDongId}" class="btn bp2 bsm">Sửa</a>
-                                            <a href="${pageContext.request.contextPath}/hopdong?action=xoa&id=${hd.hopDongId}" class="btn bd bsm" onclick="return confirm('Xóa?')">Xóa</a>
-                                        </td>
-                                    </tr>
-                                </c:forEach>
-                            </c:when>
-                            <c:otherwise><tr><td colspan="9"><div class="es">Chưa có hợp đồng</div></td></tr></c:otherwise>
-                        </c:choose>
+                    <c:choose>
+                    <c:when test="${not empty listHopDong}">
+                    <c:forEach var="hd" items="${listHopDong}">
+                    <tr>
+
+                    <td><strong>${hd.soHopDong}</strong></td>
+
+                    <td>
+                    <c:set var="tenNV" value="" />
+                    <c:forEach var="nv" items="${listNhanVien}">
+                    <c:if test="${hd.nhanVienId == nv.nhanVienId}">
+                    <c:set var="tenNV" value="${nv.hoTen}" />
+                    </c:if>
+                    </c:forEach>
+
+                    <c:choose>
+                    <c:when test="${not empty tenNV}">
+                    ${tenNV}
+                    </c:when>
+                    <c:otherwise>
+                    NV#${hd.nhanVienId}
+                    </c:otherwise>
+                    </c:choose>
+                    </td>
+
+                    <td>${hd.loaiHopDong}</td>
+                    <td>${hd.ngayBatDau}</td>
+                    <td>${not empty hd.ngayKetThuc ? hd.ngayKetThuc : 'Vô thời hạn'}</td>
+
+                    <td><fmt:formatNumber value="${hd.luongCoBan}" pattern="#,###"/> đ</td>
+                    <td><fmt:formatNumber value="${hd.phuCap}" pattern="#,###"/> đ</td>
+
+                    <td>
+                    <span class="badge ${hd.trangThai == 'Hieu luc' ? 'bg' : hd.trangThai == 'Het han' ? 'bo' : 'br'}">
+                    ${hd.trangThai}
+                    </span>
+                    </td>
+
+                    <td>
+                    <a href="${pageContext.request.contextPath}/hopdong?action=sua&id=${hd.hopDongId}" class="btn bp2 bsm">Sửa</a>
+                    <a href="${pageContext.request.contextPath}/hopdong?action=xoa&id=${hd.hopDongId}" class="btn bd bsm" onclick="return confirm('Xóa?')">Xóa</a>
+                    </td>
+
+                    </tr>
+                    </c:forEach>
+                    </c:when>
+
+                    <c:otherwise>
+                    <tr>
+                    <td colspan="9">
+                    <div class="es">Chưa có hợp đồng</div>
+                    </td>
+                    </tr>
+                    </c:otherwise>
+
+                    </c:choose>
                     </tbody>
                 </table>
             </div>

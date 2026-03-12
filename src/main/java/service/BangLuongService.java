@@ -45,7 +45,7 @@ public class BangLuongService {
         if (bangLuongDAO.kiemTraDaTinhLuong(nhanVienId, thang, nam))
             return false;
 
-        HopDong hd = hopDongDAO.layHopDongHieuLuc(nhanVienId);
+        HopDong hd = (HopDong) hopDongDAO.layTheoNhanVienId(nhanVienId);
         if (hd == null)
             return false;
 

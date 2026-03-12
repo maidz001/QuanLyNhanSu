@@ -5,15 +5,15 @@ import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 
+import model.HopDong;
 import model.NhanVien;
 import model.TaiKhoan;
-import service.ChucVuService;
-import service.NhanVienService;
-import service.PhongBanService;
-import service.TaiKhoanService;
+import service.*;
+import until.XuatExcel;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.List;
 
 import static org.apache.poi.ss.util.DateParser.parseDate;
@@ -25,10 +25,10 @@ import static org.apache.poi.ss.util.DateParser.parseDate;
         maxRequestSize    = 1024 * 1024 * 10  // 10MB
 )
 public class NhanVienServlet extends HttpServlet {
-
+private XuatExcel xuatExcel=new XuatExcel();
     private NhanVienService nhanVienService = new NhanVienService();
     private TaiKhoanServlet taiKhoanServlet = new TaiKhoanServlet();
-    private TaiKhoanService taiKhoanService = new TaiKhoanService();
+private HopDongService hopDongService=new HopDongService();
     private PhongBanService phongBanService=new PhongBanService();
     private ChucVuService chucVuService=new ChucVuService();
 
@@ -36,11 +36,11 @@ public class NhanVienServlet extends HttpServlet {
             throws ServletException, IOException {
 
         String action = request.getParameter("action");
-        if (action == null) action = "list";
+        if (action == null) action = "";
 
         switch (action) {
             case "them":
-                request.getRequestDispatcher("ThemNhanVien.jsp").forward(request, response);
+                moFormThem(request,response);
                 break;
             case "sua":
                 suaForm(request, response);
@@ -51,11 +51,16 @@ public class NhanVienServlet extends HttpServlet {
             case "xemchitiet":
                 xemChiTiet(request, response);
                 break;
-
+            case "xuatexcel":
+                xuatExcel(request,response);
+                break;
             default:
                 danhSachNhanVien(request, response);
         }
     }
+
+
+
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -78,7 +83,16 @@ public class NhanVienServlet extends HttpServlet {
     }
 
     // ================= CẬP NHẬT ẢNH ĐẠI DIỆN =================
+    private void moFormThem(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setAttribute("listChucVu",chucVuService.layTatCa());
+        request.setAttribute("listPhongBan",phongBanService.layTatCa());
+        if(nhanVienService.layTatCa().size()<10)
+        request.setAttribute("soNhanVien","NV0"+(nhanVienService.layTatCa().size()+1));
+        else         request.setAttribute("soNhanVien","NV"+(nhanVienService.layTatCa().size()+1));
 
+        request.getRequestDispatcher("WEB-INF/view/nhanvienview/ThemNhanVien.jsp").forward(request, response);
+
+    }
     private void capNhatAnh(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -95,7 +109,6 @@ public class NhanVienServlet extends HttpServlet {
             return;
         }
 
-        // Kiểm tra định dạng
         String ext = fileName.substring(fileName.lastIndexOf(".")).toLowerCase();
         if (!ext.equals(".jpg") && !ext.equals(".jpeg")
                 && !ext.equals(".png") && !ext.equals(".gif")) {
@@ -104,7 +117,7 @@ public class NhanVienServlet extends HttpServlet {
             return;
         }
 
-        // Tên file theo nhanVienId → tránh trùng, ghi đè ảnh cũ
+        // Tên file theo nhanVienId
         String newFileName = "avatar_" + nvId + ext;
 
         // Lưu vào WebContent/uploads/avatars/
@@ -183,22 +196,7 @@ public class NhanVienServlet extends HttpServlet {
 
     // ================= THÊM =================
 
-    private void themNhanVien(HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
 
-        NhanVien nv = new NhanVien();
-        nv.setMaNhanVien(request.getParameter("maNhanVien"));
-        nv.setHoTen(request.getParameter("hoTen"));
-        nv.setEmail(request.getParameter("email"));
-        nv.setDienThoai(request.getParameter("dienThoai"));
-        nv.setDiaChi(request.getParameter("diaChi"));
-        nv.setPhongBanId(Integer.parseInt(request.getParameter("phongBanId")));
-        nv.setChucVuId(Integer.parseInt(request.getParameter("chucVuId")));
-        nv.setTrangThai("hoatdong");
-
-        nhanVienService.them(nv, getSS(request, response).getNhanVienId());
-        response.sendRedirect("nhanvien");
-    }
 
     // ================= FORM SỬA =================
 
@@ -241,11 +239,17 @@ public class NhanVienServlet extends HttpServlet {
     // ================= XÓA =================
 
     private void xoaNhanVien(HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
+            throws IOException, ServletException {
 
         int id = Integer.parseInt(request.getParameter("id"));
-        nhanVienService.xoa(id);
-        response.sendRedirect("nhanvien");
+        if(nhanVienService.setTrangThaiNghiViec(id)){
+            HopDong hd=hopDongService.layHopDongHieuLuc(id);
+            hd.setTrangThai("Da huy");
+            hopDongService.sua(hd,getSS(request,response).getNhanVienId());
+            phongBanService.setSoLuong(nhanVienService.layTheoId(id).getPhongBanId(),"giam");
+        request.setAttribute("message","Xóa thành công");}
+        else request.setAttribute("message","Thất bại");
+        taiKhoanServlet.goiDangNhapChoQuanLy(request,response,getSS(request,response));
     }
 
     // ================= CHI TIẾT =================
@@ -305,5 +309,87 @@ public class NhanVienServlet extends HttpServlet {
 
         request.setAttribute("messageCapNhat", "Cập nhật thông tin thành công!");
         taiKhoanServlet.goiDangNhapChoNV(request, response, tk);
+    }
+    private void themNhanVien(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+
+        // ══ NHÂN VIÊN ══
+        NhanVien nv = new NhanVien();
+        nv.setMaNhanVien(request.getParameter("maNhanVien"));
+        nv.setHoTen(request.getParameter("hoTen"));
+        nv.setEmail(request.getParameter("email"));
+        nv.setDienThoai(request.getParameter("dienThoai"));
+        nv.setDiaChi(request.getParameter("diaChi"));
+        nv.setGioiTinh(request.getParameter("gioiTinh"));
+        nv.setSoCmnd(request.getParameter("soCmnd"));
+        nv.setPhongBanId(Integer.parseInt(request.getParameter("phongBanId")));
+        phongBanService.setSoLuong(Integer.parseInt(request.getParameter("phongBanId")),"tang");
+        nv.setChucVuId(Integer.parseInt(request.getParameter("chucVuId")));
+        nv.setTrangThai(request.getParameter("trangThai"));
+
+        String ngaySinhStr = request.getParameter("ngaySinh");
+        if (ngaySinhStr != null && !ngaySinhStr.trim().isEmpty())
+            nv.setNgaySinh(java.sql.Date.valueOf(ngaySinhStr.trim()));
+
+        String ngayVaoLamStr = request.getParameter("ngayVaoLam");
+        if (ngayVaoLamStr != null && !ngayVaoLamStr.trim().isEmpty())
+            nv.setNgayVaoLam(java.sql.Date.valueOf(ngayVaoLamStr.trim()));
+
+        nhanVienService.them(nv, getSS(request,response).getNhanVienId());
+
+        //  HỢP ĐỒNG
+        NhanVien nvMoi = nhanVienService.layTheoMa(nv.getMaNhanVien());
+        if (nvMoi != null) {
+            HopDong hd = new HopDong();
+            hd.setNhanVienId(nvMoi.getNhanVienId());
+            hd.setLoaiHopDong(request.getParameter("loaiHopDong"));
+            hd.setGhiChu(request.getParameter("ghiChuHD"));
+            hd.setTrangThai("Hieu luc");
+
+            String luongStr  = request.getParameter("luongCoBan");
+
+            hd.setLuongCoBan(luongStr != null && !luongStr.trim().isEmpty()
+                    ? new java.math.BigDecimal(luongStr.trim())
+                    : java.math.BigDecimal.ZERO);
+
+
+
+            String ngayBDStr = request.getParameter("ngayBatDauHD");
+            java.sql.Date ngayBD = null;
+            if (ngayBDStr != null && !ngayBDStr.trim().isEmpty()) {
+                ngayBD = java.sql.Date.valueOf(ngayBDStr.trim());
+                hd.setNgayBatDau(ngayBD);
+            }
+            int thoiHanStr = 0;
+if(request.getParameter("thoiHanHD")!=null&&request.getParameter("thoiHanHD")!=""){
+    thoiHanStr = Integer.parseInt(request.getParameter("thoiHanHD"));}
+
+            if(thoiHanStr>3)hd.setPhuCap(BigDecimal.ONE);
+            else if (thoiHanStr==0) {
+                hd.setPhuCap(BigDecimal.valueOf(500000));
+            } else if (thoiHanStr==1||thoiHanStr==2) {
+                hd.setPhuCap(BigDecimal.valueOf(300000));
+            } else hd.setPhuCap(BigDecimal.ZERO);
+            if (ngayBD != null && thoiHanStr != 0) {
+                int soNam = thoiHanStr;
+                if (soNam > 0) {
+                    java.util.Calendar cal = java.util.Calendar.getInstance();
+                    cal.setTime(ngayBD);
+                    cal.add(java.util.Calendar.YEAR, soNam);
+                    cal.add(java.util.Calendar.DAY_OF_MONTH, -1);
+                    hd.setNgayKetThuc(new java.sql.Date(cal.getTimeInMillis()));
+                }
+
+            }
+
+            if(!hopDongService.them(hd, getSS(request,response).getNhanVienId()))
+                System.out.println("loi");
+        }
+
+        taiKhoanServlet.goiDangNhapChoQuanLy(request,response,getSS(request,response));
+    }
+    private void xuatExcel(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        xuatExcel.xuatDanhSachNhanVien(nhanVienService.layTatCa(),response);
+        taiKhoanServlet.goiDangNhapChoQuanLy(request,response,getSS(request,response));
     }
 }

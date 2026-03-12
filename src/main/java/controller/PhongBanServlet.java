@@ -65,9 +65,9 @@ public class PhongBanServlet extends HttpServlet {
         pb.setMaPhongBan(request.getParameter("maPhongBan"));
         pb.setTenPhongBan(request.getParameter("tenPhongBan"));
 
-        String cha = request.getParameter("phongBanChaId");
-        if(cha != null && !cha.isEmpty())
-            pb.setPhongBanChaId(Integer.parseInt(cha));
+        String soLuong = request.getParameter("soLuong");
+        if(soLuong != null && !soLuong.isEmpty())
+            pb.setSoLuong(Integer.parseInt(soLuong));
 
         String truongPhong = request.getParameter("truongPhongId");
         if(truongPhong != null && !truongPhong.isEmpty())
@@ -92,9 +92,9 @@ public class PhongBanServlet extends HttpServlet {
         pb.setMaPhongBan(request.getParameter("maPhongBan"));
         pb.setTenPhongBan(request.getParameter("tenPhongBan"));
 
-        String cha = request.getParameter("phongBanChaId");
-        if(cha != null && !cha.isEmpty())
-            pb.setPhongBanChaId(Integer.parseInt(cha));
+        String soLuong = request.getParameter("soLuong");
+        if(soLuong != null && !soLuong.isEmpty())
+            pb.setSoLuong(Integer.parseInt(soLuong));
 
         String truongPhong = request.getParameter("truongPhongId");
         if(truongPhong != null && !truongPhong.isEmpty())

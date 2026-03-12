@@ -4,7 +4,7 @@ public class PhongBan {
     private int phongBanId;
     private String maPhongBan;
     private String tenPhongBan;
-    private Integer phongBanChaId;
+    private int soLuong;
     private Integer truongPhongId;
     private String moTa;
     private int trangThai;
@@ -12,22 +12,80 @@ public class PhongBan {
 
     public PhongBan() {}
 
-    public int getPhongBanId() { return phongBanId; }
-    public void setPhongBanId(int phongBanId) { this.phongBanId = phongBanId; }
-    public String getMaPhongBan() { return maPhongBan; }
-    public void setMaPhongBan(String maPhongBan) { this.maPhongBan = maPhongBan; }
-    public String getTenPhongBan() { return tenPhongBan; }
-    public void setTenPhongBan(String tenPhongBan) { this.tenPhongBan = tenPhongBan; }
-    public Integer getPhongBanChaId() { return phongBanChaId; }
-    public void setPhongBanChaId(Integer phongBanChaId) { this.phongBanChaId = phongBanChaId; }
-    public Integer getTruongPhongId() { return truongPhongId; }
-    public void setTruongPhongId(Integer truongPhongId) { this.truongPhongId = truongPhongId; }
-    public String getMoTa() { return moTa; }
-    public void setMoTa(String moTa) { this.moTa = moTa; }
-    public int getTrangThai() { return trangThai; }
-    public void setTrangThai(int trangThai) { this.trangThai = trangThai; }
-    public String getTenTruongPhong() { return tenTruongPhong; }
-    public void setTenTruongPhong(String tenTruongPhong) { this.tenTruongPhong = tenTruongPhong; }
+    public PhongBan(int phongBanId, String maPhongBan, String tenPhongBan, int soLuong, Integer truongPhongId, String moTa, int trangThai, String tenTruongPhong) {
+        this.phongBanId = phongBanId;
+        this.maPhongBan = maPhongBan;
+        this.tenPhongBan = tenPhongBan;
+        this.soLuong = soLuong;
+        this.truongPhongId = truongPhongId;
+        this.moTa = moTa;
+        this.trangThai = trangThai;
+        this.tenTruongPhong = tenTruongPhong;
+    }
+
+    public void setPhongBanId(int phongBanId) {
+        this.phongBanId = phongBanId;
+    }
+
+    public void setMaPhongBan(String maPhongBan) {
+        this.maPhongBan = maPhongBan;
+    }
+
+    public void setTenPhongBan(String tenPhongBan) {
+        this.tenPhongBan = tenPhongBan;
+    }
+
+    public void setSoLuong(int soLuong) {
+        this.soLuong = soLuong;
+    }
+
+    public void setTruongPhongId(Integer truongPhongId) {
+        this.truongPhongId = truongPhongId;
+    }
+
+    public void setMoTa(String moTa) {
+        this.moTa = moTa;
+    }
+
+    public void setTrangThai(int trangThai) {
+        this.trangThai = trangThai;
+    }
+
+    public void setTenTruongPhong(String tenTruongPhong) {
+        this.tenTruongPhong = tenTruongPhong;
+    }
+
+    public int getPhongBanId() {
+        return phongBanId;
+    }
+
+    public String getMaPhongBan() {
+        return maPhongBan;
+    }
+
+    public String getTenPhongBan() {
+        return tenPhongBan;
+    }
+
+    public int getSoLuong() {
+        return soLuong;
+    }
+
+    public Integer getTruongPhongId() {
+        return truongPhongId;
+    }
+
+    public String getMoTa() {
+        return moTa;
+    }
+
+    public int getTrangThai() {
+        return trangThai;
+    }
+
+    public String getTenTruongPhong() {
+        return tenTruongPhong;
+    }
 }
 
 

@@ -108,6 +108,28 @@ public class NhanVienDAO {
         return 0;
     }
 
+    public NhanVien layTheoMa(String maNhanVien) {
+        NhanVien nv = null;
+        String sql = "SELECT * FROM nhan_vien WHERE ma_nhan_vien = ?";
+
+        try (Connection conn = DBConnection.layKetNoi();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, maNhanVien);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                nv=mapRow(rs);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return nv;
+    }
+
+
     private NhanVien mapRow(ResultSet rs) throws SQLException {
         NhanVien nv = new NhanVien();
 
@@ -128,5 +150,22 @@ public class NhanVienDAO {
         try { nv.setTenPhongBan(rs.getString("ten_phong_ban")); } catch (SQLException ignored) {}
         try { nv.setTenChucVu(rs.getString("ten_chuc_vu")); } catch (SQLException ignored) {}
         return nv;
+    }
+
+    public boolean setTrangThaiNghiViec(int nhanVienId) {
+        String sql = "UPDATE nhan_vien SET trang_thai = 'Nghi viec' WHERE nhan_vien_id = ?";
+
+        try (Connection conn = DBConnection.layKetNoi();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, nhanVienId);
+
+            return ps.executeUpdate() > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 }

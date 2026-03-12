@@ -11,9 +11,13 @@ public class HopDongService {
 
     public List<HopDong> layTatCa() { return hopDongDAO.layTatCa(); }
     public HopDong layTheoId(int id) { return hopDongDAO.layTheoId(id); }
-    public HopDong layHopDongHieuLuc(int nhanVienId) { return hopDongDAO.layHopDongHieuLuc(nhanVienId); }
+    public HopDong layHopDongHieuLuc(int nhanVienId) { return hopDongDAO.layTheoNhanVienId(nhanVienId); }
 
     public boolean them(HopDong hd, Integer nguoiThucHien) {
+        if(layTatCa().size()+1<10)
+        hd.setSoHopDong("HD0"+(layTatCa().size()+1));
+        else         hd.setSoHopDong("HD"+(layTatCa().size()+1));
+
         boolean kq = hopDongDAO.them(hd);
         if (kq) {
             thongBaoDAO.guiThongBaoChoNhanVien(nguoiThucHien, hd.getNhanVienId(), "Hop dong moi", "Hop dong " + hd.getSoHopDong() + " loai " + hd.getLoaiHopDong() + " da duoc tao cho ban.", "hop_dong");

@@ -28,12 +28,21 @@ public class PhongBanDAO {
     }
 
     public boolean them(PhongBan pb) {
-        String sql = "INSERT INTO phong_ban (ma_phong_ban,ten_phong_ban,phong_ban_cha_id,truong_phong_id,mo_ta,trang_thai) VALUES (?,?,?,?,?,?)";
+        String sql = "INSERT INTO phong_ban (ma_phong_ban,ten_phong_ban,so_luong,truong_phong_id,mo_ta,trang_thai) VALUES (?,?,?,?,?,?)";
         try (Connection conn = DBConnection.layKetNoi(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, pb.getMaPhongBan());
             ps.setString(2, pb.getTenPhongBan());
-            if (pb.getPhongBanChaId() != null) ps.setInt(3, pb.getPhongBanChaId()); else ps.setNull(3, Types.INTEGER);
-            if (pb.getTruongPhongId() != null) ps.setInt(4, pb.getTruongPhongId()); else ps.setNull(4, Types.INTEGER);
+
+            if (pb.getSoLuong() != 0) {
+                ps.setInt(3, pb.getSoLuong());
+            } else
+                ps.setNull(3, Types.INTEGER);
+
+            if (pb.getTruongPhongId() != null)
+                ps.setInt(4, pb.getTruongPhongId());
+            else
+                ps.setNull(4, Types.INTEGER);
+
             ps.setString(5, pb.getMoTa());
             ps.setInt(6, pb.getTrangThai());
             return ps.executeUpdate() > 0;
@@ -42,12 +51,21 @@ public class PhongBanDAO {
     }
 
     public boolean sua(PhongBan pb) {
-        String sql = "UPDATE phong_ban SET ma_phong_ban=?,ten_phong_ban=?,phong_ban_cha_id=?,truong_phong_id=?,mo_ta=?,trang_thai=? WHERE phong_ban_id=?";
+        String sql = "UPDATE phong_ban SET ma_phong_ban=?,ten_phong_ban=?,so_luong=?,truong_phong_id=?,mo_ta=?,trang_thai=? WHERE phong_ban_id=?";
         try (Connection conn = DBConnection.layKetNoi(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, pb.getMaPhongBan());
             ps.setString(2, pb.getTenPhongBan());
-            if (pb.getPhongBanChaId() != null) ps.setInt(3, pb.getPhongBanChaId()); else ps.setNull(3, Types.INTEGER);
-            if (pb.getTruongPhongId() != null) ps.setInt(4, pb.getTruongPhongId()); else ps.setNull(4, Types.INTEGER);
+
+            if (pb.getSoLuong() != 0)
+                ps.setInt(3, pb.getSoLuong());
+            else
+                ps.setNull(3, Types.INTEGER);
+
+            if (pb.getTruongPhongId() != null)
+                ps.setInt(4, pb.getTruongPhongId());
+            else
+                ps.setNull(4, Types.INTEGER);
+
             ps.setString(5, pb.getMoTa());
             ps.setInt(6, pb.getTrangThai());
             ps.setInt(7, pb.getPhongBanId());
@@ -66,15 +84,54 @@ public class PhongBanDAO {
     }
 
     private PhongBan mapRow(ResultSet rs) throws SQLException {
+
         PhongBan pb = new PhongBan();
+
         pb.setPhongBanId(rs.getInt("phong_ban_id"));
         pb.setMaPhongBan(rs.getString("ma_phong_ban"));
         pb.setTenPhongBan(rs.getString("ten_phong_ban"));
-        pb.setPhongBanChaId((Integer) rs.getObject("phong_ban_cha_id"));
-        pb.setTruongPhongId((Integer) rs.getObject("truong_phong_id"));
+
+        Object soLuong = rs.getObject("so_luong");
+        if(soLuong != null){
+            pb.setSoLuong(((Number) soLuong).intValue());
+        }
+
+        Object truongPhong = rs.getObject("truong_phong_id");
+        if(truongPhong != null){
+            pb.setTruongPhongId(((Number) truongPhong).intValue());
+        }
+
         pb.setMoTa(rs.getString("mo_ta"));
         pb.setTrangThai(rs.getInt("trang_thai"));
-        try { pb.setTenTruongPhong(rs.getString("ten_truong_phong")); } catch (SQLException ignored) {}
+
         return pb;
     }
+
+    public boolean tangHoacGiamSL(int idPB,String yeuCau) {
+        String sql = "UPDATE phong_ban SET ma_phong_ban=?,ten_phong_ban=?,so_luong=?,truong_phong_id=?,mo_ta=?,trang_thai=? WHERE phong_ban_id=?";
+        PhongBan pb=layTheoId(idPB);
+        try (Connection conn = DBConnection.layKetNoi(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, pb.getMaPhongBan());
+            ps.setString(2, pb.getTenPhongBan());
+
+            if (pb.getSoLuong() != 0&&yeuCau.equals("giam"))
+                ps.setInt(3, pb.getSoLuong()-1);
+            else if(pb.getSoLuong() != 0&&yeuCau.equals("tang"))
+                ps.setInt(3,pb.getSoLuong()+1);
+            else
+                ps.setNull(3, Types.INTEGER);
+
+            if (pb.getTruongPhongId() != null)
+                ps.setInt(4, pb.getTruongPhongId());
+            else
+                ps.setNull(4, Types.INTEGER);
+
+            ps.setString(5, pb.getMoTa());
+            ps.setInt(6, pb.getTrangThai());
+            ps.setInt(7, pb.getPhongBanId());
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) { e.printStackTrace(); }
+        return false;
+    }
+
 }

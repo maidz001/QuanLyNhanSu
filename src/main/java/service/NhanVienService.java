@@ -11,6 +11,7 @@ public class NhanVienService {
 
     public List<NhanVien> layTatCa() { return nhanVienDAO.layTatCa(); }
     public NhanVien layTheoId(int id) { return nhanVienDAO.layTheoId(id); }
+    public NhanVien layTheoMa(String ma) { return nhanVienDAO.layTheoMa(ma); }
     public List<NhanVien> timKiem(String tuKhoa) { return nhanVienDAO.timKiem(tuKhoa); }
     public int demTong() { return nhanVienDAO.demTongNhanVien(); }
 
@@ -41,6 +42,10 @@ public class NhanVienService {
             if (nv.getMaNhanVien().equals(ma)) return nv;
         }
         return null;
+    }
+
+    public boolean setTrangThaiNghiViec(int id) {
+        return nhanVienDAO.setTrangThaiNghiViec(id);
     }
 }
 

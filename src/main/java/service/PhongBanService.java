@@ -12,4 +12,7 @@ public class PhongBanService {
     public boolean them(PhongBan pb) { return phongBanDAO.them(pb); }
     public boolean sua(PhongBan pb) { return phongBanDAO.sua(pb); }
     public boolean xoa(int id) { return phongBanDAO.xoa(id); }
+    public boolean setSoLuong(int id,String yeuCau){
+        return phongBanDAO.tangHoacGiamSL(id,yeuCau);
+    }
 }
