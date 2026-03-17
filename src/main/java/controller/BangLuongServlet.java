@@ -5,19 +5,25 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import model.BangLuong;
+import model.NhanVien;
+import model.TaiKhoan;
 import service.BangLuongService;
 import service.NhanVienService;
+import until.XuatExcel;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 @WebServlet("/bangluong")
 public class BangLuongServlet extends HttpServlet {
-    NhanVienService nhanVienService=new NhanVienService();
-    BangLuongService bangLuongService = new BangLuongService();
-
+    private XuatExcel xuatExcel=new XuatExcel();
+   private NhanVienService nhanVienService=new NhanVienService();
+  private   BangLuongService bangLuongService = new BangLuongService();
+ private TaiKhoanServlet taiKhoanServlet=new TaiKhoanServlet();
     protected void doGet(HttpServletRequest request,HttpServletResponse response) throws ServletException,IOException{
 
         request.setCharacterEncoding("UTF-8");
@@ -35,14 +41,15 @@ public class BangLuongServlet extends HttpServlet {
                 suaForm(request,response);
                 break;
 
-            case "xoa":
-                xoaBangLuong(request,response);
+            case "tao":
+                tao(request,response);
                 break;
 
             case "xem":
                 xemChiTiet(request,response);
                 break;
-
+            case "xuatexcel":xuatExcel(request,response);
+                break;
             default:
                 danhSachBangLuong(request,response);
         }
@@ -190,16 +197,52 @@ public class BangLuongServlet extends HttpServlet {
     // CHI TIẾT
     // ================================
 
-    private void xemChiTiet(HttpServletRequest request,HttpServletResponse response) throws ServletException,IOException{
+    private void xemChiTiet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-        int id=Integer.parseInt(request.getParameter("id"));
+        int id = Integer.parseInt(request.getParameter("id"));
+        BangLuong bl = bangLuongService.layTheoId(id);
 
-        BangLuong bl=bangLuongService.layTheoId(id);
+        if (bl == null) {
+            response.sendRedirect("bangluong");
+            return;
+        }
 
-        request.setAttribute("bl",bl);
+        // Lấy thông tin nhân viên
+        NhanVien nv = nhanVienService.layTheoId(bl.getNhanVienId());
+        if (nv != null) {
+            request.setAttribute("tenNhanVien", nv.getHoTen());
+            request.setAttribute("maNhanVien",  nv.getMaNhanVien());
+            request.setAttribute("tenPhongBan", nv.getTenPhongBan());
+            request.setAttribute("tenChucVu",   nv.getTenChucVu());
+        }
 
-        request.getRequestDispatcher("/WEB-INF/view/luongview/ChiTietBangLuong.jsp")
-                .forward(request,response);
+        request.setAttribute("bangLuong", bl);
+        request.getRequestDispatcher("/WEB-INF/view/luongview/XemChiTietBangLuong.jsp")
+                .forward(request, response);
+    }
+    private void tao(HttpServletRequest request,HttpServletResponse response) throws ServletException,IOException{
+        int thang = LocalDate.now().getMonthValue();
+        int nam   = LocalDate.now().getYear();
+        List<Integer> dsNVId = nhanVienService.layTatCa()
+                .stream()
+                .filter(nv -> "Dang lam viec".equals(nv.getTrangThai()))
+                .map(nv -> nv.getNhanVienId())
+                .collect(java.util.stream.Collectors.toList());
+        bangLuongService.tinhLuongToanBoThang( thang, nam,getSS(request,response).getNhanVienId());
+        request.setAttribute("message", "Đã tính lương tháng " + thang + "/" + nam);
+taiKhoanServlet.goiDangNhapChoQuanLy(request,response,getSS(request,response));
+    }
+    private TaiKhoan getSS(HttpServletRequest request, HttpServletResponse response) {
+        HttpSession session = request.getSession(false);
+        return (TaiKhoan) session.getAttribute("taiKhoanDangDangNhap");
     }
 
+    private void xuatExcel(HttpServletRequest request,HttpServletResponse response) throws ServletException,IOException{
+        LocalDate now=LocalDate.now();
+
+        xuatExcel.xuatBangLuong(bangLuongService.layTheoThangNam(now.getMonthValue(),now.getYear()),now.getMonthValue(),now.getYear(),nhanVienService.layTatCa(),response);
+        taiKhoanServlet.goiDangNhapChoQuanLy(request,response,getSS(request,response));
+
+    }
 }

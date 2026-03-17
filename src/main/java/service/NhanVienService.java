@@ -1,13 +1,16 @@
 package service;
 
+import dao.ChucVuDAO;
 import dao.NhanVienDAO;
 import dao.ThongBaoDAO;
+import model.ChucVu;
 import model.NhanVien;
 import java.util.List;
 
 public class NhanVienService {
     private NhanVienDAO nhanVienDAO = new NhanVienDAO();
     private ThongBaoDAO thongBaoDAO = new ThongBaoDAO();
+    private ChucVuDAO chucVuDAO=new ChucVuDAO();
 
     public List<NhanVien> layTatCa() { return nhanVienDAO.layTatCa(); }
     public NhanVien layTheoId(int id) { return nhanVienDAO.layTheoId(id); }
@@ -24,6 +27,10 @@ public class NhanVienService {
             }
         }
         return kq;
+    }
+    public boolean isConLamViec(int nhanVienId) {
+        NhanVien nv = nhanVienDAO.layTheoId(nhanVienId);
+        return nv != null && "Dang lam viec".equals(nv.getTrangThai());
     }
 
     public boolean sua(NhanVien nv, Integer nguoiThucHien) {
@@ -46,6 +53,29 @@ public class NhanVienService {
 
     public boolean setTrangThaiNghiViec(int id) {
         return nhanVienDAO.setTrangThaiNghiViec(id);
+    }
+    public List<NhanVien> getNhanVienKhongPhaiTruongPhong(){
+        return nhanVienDAO.getNhanVienKhongPhaiTruongPhong();
+    }
+    public List<NhanVien> getNhanVienKhongPhaiTruongPhongTrongPB(int phongBanId){
+        return nhanVienDAO.getNhanVienKhongPhaiTruongPhongTrongPB(phongBanId);
+    }
+    public boolean setChucVuTruongPhong(int idNhanVien){
+        int idChucVu=0;
+        for(ChucVu cv:chucVuDAO.layTatCa()){
+            if(cv.getTenChucVu().toLowerCase().equals("truong phong"))
+                idChucVu=cv.getChucVuId();
+        }
+        return nhanVienDAO.setChucVuTruongPhong(idNhanVien,idChucVu);
+    }
+    public boolean setChucVu(int idNhanVien,String chucVu){
+
+        int idChucVu=0;
+        for(ChucVu cv:chucVuDAO.layTatCa()){
+            if(cv.getTenChucVu().toLowerCase().equals(chucVu.toLowerCase()))
+                idChucVu=cv.getChucVuId();
+        }
+        return nhanVienDAO.setChucVu(idNhanVien,idChucVu);
     }
 }
 

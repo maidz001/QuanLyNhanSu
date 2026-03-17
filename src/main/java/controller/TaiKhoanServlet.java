@@ -87,7 +87,7 @@ public class TaiKhoanServlet extends HttpServlet {
 
             HttpSession session=request.getSession();
             session.setAttribute("taiKhoanDangDangNhap",tk);
-            if(tk.getVaiTro().equalsIgnoreCase("nhanvien")) {
+            if(tk.getVaiTro().equalsIgnoreCase("nhanvien")||tk.getVaiTro().equalsIgnoreCase("nhan vien")) {
                 goiDangNhapChoNV(request,response,tk);
             }
 
@@ -241,7 +241,7 @@ public class TaiKhoanServlet extends HttpServlet {
         request.setAttribute("listThongBaoAll",     thongBaoService.layTheoNguoiNhan(tk.getNhanVienId()));
         request.setAttribute("listChamCongAll",     chamCongService.layTatCa());
 
-
+        request.setAttribute("listNhanVienKhongPhaiTruongPhong",nhanVienService.getNhanVienKhongPhaiTruongPhong());
         request.getRequestDispatcher("/WEB-INF/view/trangchuview/TrangChuQuanLy.jsp")
                 .forward(request, response);
     }

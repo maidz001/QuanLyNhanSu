@@ -1,8 +1,11 @@
 package controller;
 
 import model.ChamCong;
+import model.TaiKhoan;
 import service.ChamCongService;
+import service.NhanVienService;
 import service.TaiKhoanService;
+import until.XuatExcel;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -12,6 +15,8 @@ import java.util.List;
 
 @WebServlet("/chamcong")
 public class ChamCongServlet extends HttpServlet {
+    private XuatExcel xuatExcel=new XuatExcel();
+    NhanVienService nhanVienService=new NhanVienService();
     private TaiKhoanService taiKhoanService=new TaiKhoanService();
 private  ChamCongService chamCongService=new ChamCongService();
     private final TaiKhoanServlet taiKhoanServlet=new TaiKhoanServlet();
@@ -31,6 +36,8 @@ private  ChamCongService chamCongService=new ChamCongService();
 
             case "checkin":
                 checkIn(request,response);
+                break;
+            case "xuatexcel":xuatExcel(request,response);
                 break;
             default:
                 danhSachChamCong(request,response);
@@ -109,6 +116,13 @@ private  ChamCongService chamCongService=new ChamCongService();
         else
             request.setAttribute("message","CheckOut Thành Công");
         taiKhoanServlet.goiDangNhapChoNV(request,response,taiKhoanService.layTheoId(id));
+    }
+    private TaiKhoan getSS(HttpServletRequest request, HttpServletResponse response) {
+        HttpSession session = request.getSession(false);
+        return (TaiKhoan) session.getAttribute("taiKhoanDangDangNhap");
+    }
+    private void xuatExcel(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        taiKhoanServlet.goiDangNhapChoQuanLy(request,response,getSS(request,response));
     }
 
 }

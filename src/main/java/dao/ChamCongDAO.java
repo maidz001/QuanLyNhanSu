@@ -229,5 +229,26 @@ public class ChamCongDAO {
             ps.executeUpdate();
         } catch (SQLException e) { e.printStackTrace(); }
     }
+    // Thêm vào ChamCongDAO
+    public boolean insertVangCoPhep(int nhanVienId, LocalDate ngay) {
+        if (daCoRecord(nhanVienId, ngay)) {
+            String sql = "UPDATE cham_cong SET trang_thai = 'Nghi phep' WHERE nhan_vien_id = ? AND ngay_cham_cong = ?";
+            try (Connection conn = DBConnection.layKetNoi();
+                 PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setInt(1, nhanVienId);
+                ps.setDate(2, java.sql.Date.valueOf(ngay));
+                return ps.executeUpdate() > 0;
+            } catch (SQLException e) { e.printStackTrace(); }
+        } else {
+            String sql = "INSERT INTO cham_cong (nhan_vien_id, ngay_cham_cong, trang_thai) VALUES (?, ?, 'Nghi phep')";
+            try (Connection conn = DBConnection.layKetNoi();
+                 PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setInt(1, nhanVienId);
+                ps.setDate(2, java.sql.Date.valueOf(ngay));
+                return ps.executeUpdate() > 0;
+            } catch (SQLException e) { e.printStackTrace(); }
+        }
+        return false;
+    }
 
 }

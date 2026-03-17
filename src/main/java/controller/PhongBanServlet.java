@@ -1,6 +1,8 @@
 package controller;
 
 import model.PhongBan;
+import model.TaiKhoan;
+import service.NhanVienService;
 import service.PhongBanService;
 
 import javax.servlet.ServletException;
@@ -13,6 +15,8 @@ import java.util.List;
 public class PhongBanServlet extends HttpServlet {
 
     private PhongBanService phongBanService = new PhongBanService();
+    private TaiKhoanServlet taiKhoanServlet=new TaiKhoanServlet();
+    NhanVienService nhanVienService=new NhanVienService();
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -22,6 +26,8 @@ public class PhongBanServlet extends HttpServlet {
 
         switch(action){
             case "xoa": xoaPhongBan(request,response); break;
+            case "kichhoat":kichHoatPB(request,response);
+                break;
             case "xem": xemChiTiet(request,response); break;
             case "sua": moFormSua(request,response); break;
             default: danhSachPhongBan(request,response);
@@ -38,7 +44,7 @@ public class PhongBanServlet extends HttpServlet {
 
         switch(action){
             case "them": themPhongBan(request,response); break;
-            case "capnhat": capNhatPhongBan(request,response); break;
+            case "capnhat": suaPhongBan(request,response); break;
         }
     }
 
@@ -58,7 +64,7 @@ public class PhongBanServlet extends HttpServlet {
     // ================= THÊM =================
 
     private void themPhongBan(HttpServletRequest request,HttpServletResponse response)
-            throws IOException {
+            throws IOException, ServletException {
 
         PhongBan pb = new PhongBan();
 
@@ -70,54 +76,66 @@ public class PhongBanServlet extends HttpServlet {
             pb.setSoLuong(Integer.parseInt(soLuong));
 
         String truongPhong = request.getParameter("truongPhongId");
-        if(truongPhong != null && !truongPhong.isEmpty())
+        if(truongPhong != null && !truongPhong.isEmpty()){
             pb.setTruongPhongId(Integer.parseInt(truongPhong));
+        nhanVienService.setChucVuTruongPhong(Integer.parseInt(truongPhong));
+        }
+
 
         pb.setMoTa(request.getParameter("moTa"));
         pb.setTrangThai(Integer.parseInt(request.getParameter("trangThai")));
 
         phongBanService.them(pb);
-
-        response.sendRedirect("phongban");
+        taiKhoanServlet.goiDangNhapChoQuanLy(request,response,getSS(request,response));
     }
 
     // ================= CẬP NHẬT =================
 
-    private void capNhatPhongBan(HttpServletRequest request,HttpServletResponse response)
-            throws IOException {
+    private void suaPhongBan(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
 
-        PhongBan pb = new PhongBan();
+        int id = Integer.parseInt(request.getParameter("id"));
 
-        pb.setPhongBanId(Integer.parseInt(request.getParameter("phongBanId")));
-        pb.setMaPhongBan(request.getParameter("maPhongBan"));
+        PhongBan pb = phongBanService.layTheoId(id);
+
         pb.setTenPhongBan(request.getParameter("tenPhongBan"));
-
-        String soLuong = request.getParameter("soLuong");
-        if(soLuong != null && !soLuong.isEmpty())
-            pb.setSoLuong(Integer.parseInt(soLuong));
-
-        String truongPhong = request.getParameter("truongPhongId");
-        if(truongPhong != null && !truongPhong.isEmpty())
-            pb.setTruongPhongId(Integer.parseInt(truongPhong));
-
         pb.setMoTa(request.getParameter("moTa"));
         pb.setTrangThai(Integer.parseInt(request.getParameter("trangThai")));
 
+        String truongPhong = request.getParameter("truongPhongId");
+        if(Integer.parseInt(truongPhong)!=pb.getTruongPhongId()){
+           nhanVienService.setChucVu(pb.getTruongPhongId(),"nhan vien");
+        }
+        if (truongPhong != null && !truongPhong.isEmpty())
+            pb.setTruongPhongId(Integer.parseInt(truongPhong));
+        else
+            pb.setTruongPhongId(pb.getTruongPhongId());
+
         phongBanService.sua(pb);
 
-        response.sendRedirect("phongban");
+ taiKhoanServlet.goiDangNhapChoQuanLy(request,response,getSS(request,response));
     }
 
     // ================= XÓA =================
 
     private void xoaPhongBan(HttpServletRequest request,HttpServletResponse response)
-            throws IOException {
+            throws IOException, ServletException {
 
         int id = Integer.parseInt(request.getParameter("id"));
 
-        phongBanService.xoa(id);
+        phongBanService.setTrangThai(id,0);
 
-        response.sendRedirect("phongban");
+        taiKhoanServlet.goiDangNhapChoQuanLy(request,response,getSS(request,response));
+    }
+
+    private void kichHoatPB(HttpServletRequest request,HttpServletResponse response)
+            throws IOException, ServletException {
+
+        int id = Integer.parseInt(request.getParameter("id"));
+
+        phongBanService.setTrangThai(id,1);
+
+        taiKhoanServlet.goiDangNhapChoQuanLy(request,response,getSS(request,response));
     }
 
     // ================= XEM CHI TIẾT =================
@@ -139,7 +157,14 @@ public class PhongBanServlet extends HttpServlet {
 
     private void moFormSua(HttpServletRequest request,HttpServletResponse response)
             throws ServletException, IOException {
-
-        xemChiTiet(request,response);
+        int idPhongban=Integer.parseInt(request.getParameter("id"));
+        request.setAttribute("truongPhongHienTai",nhanVienService.layTheoId(phongBanService.layTheoId(idPhongban).getTruongPhongId()).getHoTen());
+        request.setAttribute("listNhanVien", nhanVienService.getNhanVienKhongPhaiTruongPhongTrongPB(idPhongban));
+        request.setAttribute("phongban", phongBanService.layTheoId(idPhongban));
+        request.getRequestDispatcher("WEB-INF/view/phongbanview/SuaPhongBan.jsp").forward(request,response);
+    }
+    private TaiKhoan getSS(HttpServletRequest request, HttpServletResponse response) {
+        HttpSession session = request.getSession(false);
+        return (TaiKhoan) session.getAttribute("taiKhoanDangDangNhap");
     }
 }

@@ -27,7 +27,18 @@ public class BangLuongDAO {
         } catch (SQLException e) { e.printStackTrace(); }
         return ds;
     }
-
+    public boolean daCoThang(int nhanVienId, int thang, int nam) {
+        String sql = "SELECT COUNT(*) FROM bang_luong WHERE nhan_vien_id=? AND thang=? AND nam=?";
+        try (Connection conn = DBConnection.layKetNoi();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, nhanVienId);
+            ps.setInt(2, thang);
+            ps.setInt(3, nam);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return rs.getInt(1) > 0;
+        } catch (SQLException e) { e.printStackTrace(); }
+        return false;
+    }
     public BangLuong getBangLuongMoiNhatByNhanVien(int nhanVienId) {
         BangLuong bl = null;
         String sql = "SELECT * FROM bang_luong WHERE nhan_vien_id=? ORDER BY nam DESC, thang DESC LIMIT 1";
@@ -67,7 +78,8 @@ public class BangLuongDAO {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+if(bl==null)
+    return new BangLuong();
         return bl;
     }
 

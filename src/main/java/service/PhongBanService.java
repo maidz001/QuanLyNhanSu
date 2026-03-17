@@ -15,4 +15,7 @@ public class PhongBanService {
     public boolean setSoLuong(int id,String yeuCau){
         return phongBanDAO.tangHoacGiamSL(id,yeuCau);
     }
+    public boolean setTrangThai(int phongbanId,int trangThai){
+        return phongBanDAO.setTrangThai(phongbanId,trangThai);
+    }
 }

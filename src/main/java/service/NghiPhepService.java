@@ -97,4 +97,8 @@ public class NghiPhepService {
     }
     public List<NghiPhep> layDaDuyet() { return nghiPhepDAO.layDaDuyet(); }
     public List<NghiPhep> layTuChoi()  { return nghiPhepDAO.layTuChoi(); }
+
+    public void capNhat(NghiPhep np) {
+        nghiPhepDAO.duyet(np.getNghiPhepId(),np.getNguoiDuyet(),np.getTrangThai());
+    }
 }

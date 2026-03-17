@@ -168,4 +168,91 @@ public class NhanVienDAO {
 
         return false;
     }
+
+    public List<NhanVien> getNhanVienKhongPhaiTruongPhong() {
+        List<NhanVien> list = new ArrayList<>();
+        String sql = """
+            SELECT nv.*, pb.ten_phong_ban, cv.ten_chuc_vu
+            FROM nhan_vien nv
+            LEFT JOIN phong_ban pb ON nv.phong_ban_id = pb.phong_ban_id
+            LEFT JOIN chuc_vu   cv ON nv.chuc_vu_id   = cv.chuc_vu_id
+            WHERE nv.nhan_vien_id NOT IN (
+                SELECT truong_phong_id
+                FROM phong_ban
+                WHERE truong_phong_id IS NOT NULL
+            )
+            ORDER BY nv.ho_ten
+            """;
+
+        try (Connection conn = DBConnection.layKetNoi();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) list.add(mapRow(rs));
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+    public List<NhanVien> getNhanVienKhongPhaiTruongPhongTrongPB(int phongBanId) {
+        List<NhanVien> list = new ArrayList<>();
+        String sql = """
+        SELECT nv.*, pb.ten_phong_ban, cv.ten_chuc_vu
+        FROM nhan_vien nv
+        LEFT JOIN phong_ban pb ON nv.phong_ban_id = pb.phong_ban_id
+        LEFT JOIN chuc_vu   cv ON nv.chuc_vu_id   = cv.chuc_vu_id
+        WHERE nv.phong_ban_id = ?
+        AND nv.nhan_vien_id NOT IN (
+            SELECT truong_phong_id
+            FROM phong_ban
+            WHERE truong_phong_id IS NOT NULL
+        )
+        ORDER BY nv.ho_ten
+        """;
+
+        try (Connection conn = DBConnection.layKetNoi();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, phongBanId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) list.add(mapRow(rs));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+    public boolean setChucVuTruongPhong(int nhanVienId, int chucVuTruongPhongId) {
+        String sql = "UPDATE nhan_vien SET chuc_vu_id = ? WHERE nhan_vien_id = ?";
+
+        try (Connection conn = DBConnection.layKetNoi();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, chucVuTruongPhongId);
+            ps.setInt(2, nhanVienId);
+            return ps.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    public boolean setChucVu(int nhanVienId, int chucVuId) {
+        String sql = "UPDATE nhan_vien SET chuc_vu_id = ? WHERE nhan_vien_id = ?";
+
+        try (Connection conn = DBConnection.layKetNoi();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, chucVuId);
+            ps.setInt(2, nhanVienId);
+            return ps.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

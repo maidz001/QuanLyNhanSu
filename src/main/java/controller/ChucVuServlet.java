@@ -1,16 +1,19 @@
 package controller;
 
 import model.ChucVu;
+import model.TaiKhoan;
 import service.ChucVuService;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.List;
 
 @WebServlet("/chucvu")
 public class ChucVuServlet extends HttpServlet {
+    private TaiKhoanServlet taiKhoanServlet=new TaiKhoanServlet();
 
     private ChucVuService chucVuService = new ChucVuService();
 
@@ -33,7 +36,8 @@ public class ChucVuServlet extends HttpServlet {
             case "sua":
                 moFormSua(request, response);
                 break;
-
+            case "kichhoat":kichHoatCV(request,response);
+                break;
             default:
                 danhSachChucVu(request, response);
         }
@@ -75,54 +79,54 @@ public class ChucVuServlet extends HttpServlet {
     // ================= THÊM =================
 
     private void themChucVu(HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
+            throws IOException, ServletException {
 
         ChucVu cv = new ChucVu();
 
         cv.setMaChucVu(request.getParameter("maChucVu"));
         cv.setTenChucVu(request.getParameter("tenChucVu"));
-        cv.setCapBac(Integer.parseInt(request.getParameter("capBac")));
-        cv.setluongCoBan(new java.math.BigDecimal(request.getParameter("luongCoBan")));
+
+        String capBac = request.getParameter("capBac");
+        if (capBac != null && !capBac.isEmpty())
+            cv.setCapBac(Integer.parseInt(capBac));
+
+        String luongCoBan = request.getParameter("luongCoBanMin");
+        if (luongCoBan != null && !luongCoBan.isEmpty())
+            cv.setluongCoBan(new BigDecimal(luongCoBan));
+
         cv.setMoTa(request.getParameter("moTa"));
-        cv.setTrangThai(Integer.parseInt(request.getParameter("trangThai")));
+        cv.setTrangThai(1);
 
         chucVuService.them(cv);
+        taiKhoanServlet.goiDangNhapChoQuanLy(request,response,getSS(request,response));
 
-        response.sendRedirect("chucvu");
+
     }
 
     // ================= CẬP NHẬT =================
 
-    private void capNhatChucVu(HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
 
-        ChucVu cv = new ChucVu();
-
-        cv.setChucVuId(Integer.parseInt(request.getParameter("chucVuId")));
-        cv.setMaChucVu(request.getParameter("maChucVu"));
-        cv.setTenChucVu(request.getParameter("tenChucVu"));
-        cv.setCapBac(Integer.parseInt(request.getParameter("capBac")));
-        cv.setluongCoBan(new java.math.BigDecimal(request.getParameter("luongCoBan")));
-        cv.setMoTa(request.getParameter("moTa"));
-        cv.setTrangThai(Integer.parseInt(request.getParameter("trangThai")));
-
-        chucVuService.sua(cv);
-
-        response.sendRedirect("chucvu");
-    }
 
     // ================= XÓA =================
 
     private void xoaChucVu(HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
+            throws IOException, ServletException {
 
         int id = Integer.parseInt(request.getParameter("id"));
 
         chucVuService.xoa(id);
 
-        response.sendRedirect("chucvu");
+        taiKhoanServlet.goiDangNhapChoQuanLy(request,response,getSS(request,response));
     }
+    private void kichHoatCV(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
 
+        int id = Integer.parseInt(request.getParameter("id"));
+
+        chucVuService.kichHoat(id);
+
+        taiKhoanServlet.goiDangNhapChoQuanLy(request,response,getSS(request,response));
+    }
     // ================= XEM CHI TIẾT =================
 
     private void xemChiTiet(HttpServletRequest request, HttpServletResponse response)
@@ -142,7 +146,35 @@ public class ChucVuServlet extends HttpServlet {
 
     private void moFormSua(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        int id = Integer.parseInt(request.getParameter("id"));
+        ChucVu cv = chucVuService.layTheoId(id);
+        request.setAttribute("chucvu", cv);
+        request.getRequestDispatcher("/WEB-INF/view/chucvuview/SuaChucVu.jsp").forward(request, response);
+    }
 
-        xemChiTiet(request, response);
+    private void capNhatChucVu(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        int id = Integer.parseInt(request.getParameter("id"));
+        ChucVu cv = chucVuService.layTheoId(id);
+
+        cv.setTenChucVu(request.getParameter("tenChucVu"));
+
+        String capBac = request.getParameter("capBac");
+        if (capBac != null && !capBac.isEmpty())
+            cv.setCapBac(Integer.parseInt(capBac));
+
+        String luongCoBan = request.getParameter("luongCoBan");
+        if (luongCoBan != null && !luongCoBan.isEmpty())
+            cv.setluongCoBan(new BigDecimal(luongCoBan));
+
+        cv.setMoTa(request.getParameter("moTa"));
+        cv.setTrangThai(Integer.parseInt(request.getParameter("trangThai")));
+
+        chucVuService.sua(cv);
+        taiKhoanServlet.goiDangNhapChoQuanLy(request,response,getSS(request,response));
+    }
+    private TaiKhoan getSS(HttpServletRequest request, HttpServletResponse response) {
+        HttpSession session = request.getSession(false);
+        return (TaiKhoan) session.getAttribute("taiKhoanDangDangNhap");
     }
 }

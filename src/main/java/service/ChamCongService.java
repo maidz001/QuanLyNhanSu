@@ -63,6 +63,10 @@ public class ChamCongService {
     public List<ChamCong> layChamCongNghiKhongPhep(int nhanVienId) {
         return chamCongDAO.layChamCongNghiKhongPhep(nhanVienId);
     }
+
+    public Boolean insertVangCoPhep(int nhanVienId, LocalDate ngay) {
+        return chamCongDAO.insertVangCoPhep(nhanVienId,ngay);
+    }
 }
 
 

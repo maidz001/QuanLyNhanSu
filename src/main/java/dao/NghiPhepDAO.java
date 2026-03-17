@@ -137,6 +137,25 @@ public class NghiPhepDAO {
         } catch (SQLException e) { e.printStackTrace(); }
         return ds;
     }
+    public int demNgayNghiPhepDaDuyetTheoThang(int nhanVienId, int thang, int nam) {
+        String sql = """
+            SELECT COALESCE(SUM(so_ngay), 0)
+            FROM nghi_phep
+            WHERE nhan_vien_id = ?
+              AND trang_thai = 'Da duyet'
+              AND MONTH(ngay_bat_dau) = ?
+              AND YEAR(ngay_bat_dau)  = ?
+            """;
+        try (Connection conn = DBConnection.layKetNoi();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, nhanVienId);
+            ps.setInt(2, thang);
+            ps.setInt(3, nam);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return rs.getInt(1);
+        } catch (SQLException e) { e.printStackTrace(); }
+        return 0;
+    }
     public List<NghiPhep> layTheoNhanVienDaDuyet(int nhanVienId) {
         List<NghiPhep> ds = new ArrayList<>();
 

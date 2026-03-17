@@ -28,14 +28,14 @@ public class PhongBanDAO {
     }
 
     public boolean them(PhongBan pb) {
-        String sql = "INSERT INTO phong_ban (ma_phong_ban,ten_phong_ban,so_luong,truong_phong_id,mo_ta,trang_thai) VALUES (?,?,?,?,?,?)";
+        String sql = "INSERT INTO phong_ban (ma_phong_ban, ten_phong_ban, so_luong, truong_phong_id, mo_ta, trang_thai) VALUES (?,?,?,?,?,?)";
         try (Connection conn = DBConnection.layKetNoi(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, pb.getMaPhongBan());
             ps.setString(2, pb.getTenPhongBan());
 
-            if (pb.getSoLuong() != 0) {
+            if (pb.getSoLuong() != 0)
                 ps.setInt(3, pb.getSoLuong());
-            } else
+            else
                 ps.setNull(3, Types.INTEGER);
 
             if (pb.getTruongPhongId() != null)
@@ -51,7 +51,7 @@ public class PhongBanDAO {
     }
 
     public boolean sua(PhongBan pb) {
-        String sql = "UPDATE phong_ban SET ma_phong_ban=?,ten_phong_ban=?,so_luong=?,truong_phong_id=?,mo_ta=?,trang_thai=? WHERE phong_ban_id=?";
+        String sql = "UPDATE phong_ban SET ma_phong_ban=?, ten_phong_ban=?, so_luong=?, truong_phong_id=?, mo_ta=?, trang_thai=? WHERE phong_ban_id=?";
         try (Connection conn = DBConnection.layKetNoi(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, pb.getMaPhongBan());
             ps.setString(2, pb.getTenPhongBan());
@@ -83,41 +83,18 @@ public class PhongBanDAO {
         return false;
     }
 
-    private PhongBan mapRow(ResultSet rs) throws SQLException {
-
-        PhongBan pb = new PhongBan();
-
-        pb.setPhongBanId(rs.getInt("phong_ban_id"));
-        pb.setMaPhongBan(rs.getString("ma_phong_ban"));
-        pb.setTenPhongBan(rs.getString("ten_phong_ban"));
-
-        Object soLuong = rs.getObject("so_luong");
-        if(soLuong != null){
-            pb.setSoLuong(((Number) soLuong).intValue());
-        }
-
-        Object truongPhong = rs.getObject("truong_phong_id");
-        if(truongPhong != null){
-            pb.setTruongPhongId(((Number) truongPhong).intValue());
-        }
-
-        pb.setMoTa(rs.getString("mo_ta"));
-        pb.setTrangThai(rs.getInt("trang_thai"));
-
-        return pb;
-    }
-
-    public boolean tangHoacGiamSL(int idPB,String yeuCau) {
-        String sql = "UPDATE phong_ban SET ma_phong_ban=?,ten_phong_ban=?,so_luong=?,truong_phong_id=?,mo_ta=?,trang_thai=? WHERE phong_ban_id=?";
-        PhongBan pb=layTheoId(idPB);
+    public boolean tangHoacGiamSL(int idPB, String yeuCau) {
+        String sql = "UPDATE phong_ban SET ma_phong_ban=?, ten_phong_ban=?, so_luong=?, truong_phong_id=?, mo_ta=?, trang_thai=? WHERE phong_ban_id=?";
+        PhongBan pb = layTheoId(idPB);
+        if (pb == null) return false;
         try (Connection conn = DBConnection.layKetNoi(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, pb.getMaPhongBan());
             ps.setString(2, pb.getTenPhongBan());
 
-            if (pb.getSoLuong() != 0&&yeuCau.equals("giam"))
-                ps.setInt(3, pb.getSoLuong()-1);
-            else if(pb.getSoLuong() != 0&&yeuCau.equals("tang"))
-                ps.setInt(3,pb.getSoLuong()+1);
+            if (pb.getSoLuong() != 0 && yeuCau.equals("giam"))
+                ps.setInt(3, pb.getSoLuong() - 1);
+            else if (pb.getSoLuong() != 0 && yeuCau.equals("tang"))
+                ps.setInt(3, pb.getSoLuong() + 1);
             else
                 ps.setNull(3, Types.INTEGER);
 
@@ -134,4 +111,48 @@ public class PhongBanDAO {
         return false;
     }
 
+    private PhongBan mapRow(ResultSet rs) throws SQLException {
+        PhongBan pb = new PhongBan();
+
+        pb.setPhongBanId(rs.getInt("phong_ban_id"));
+        pb.setMaPhongBan(rs.getString("ma_phong_ban"));
+        pb.setTenPhongBan(rs.getString("ten_phong_ban"));
+
+        Object soLuong = rs.getObject("so_luong");
+        if (soLuong != null)
+            pb.setSoLuong(((Number) soLuong).intValue());
+
+        Object truongPhong = rs.getObject("truong_phong_id");
+        if (truongPhong != null)
+            pb.setTruongPhongId(((Number) truongPhong).intValue());
+
+        pb.setMoTa(rs.getString("mo_ta"));
+        pb.setTrangThai(rs.getInt("trang_thai"));
+
+        // Đồng bộ thêm ngayTao và ngayCapNhat theo model
+        Timestamp ngayTao = rs.getTimestamp("ngay_tao");
+        if (ngayTao != null)
+            pb.setNgayTao(new java.util.Date(ngayTao.getTime()));
+
+        Timestamp ngayCapNhat = rs.getTimestamp("ngay_cap_nhat");
+        if (ngayCapNhat != null)
+            pb.setNgayCapNhat(new java.util.Date(ngayCapNhat.getTime()));
+
+        return pb;
+    }
+    public boolean setTrangThai(int phongBanId, int trangThai) {
+        String sql = "UPDATE phong_ban SET trang_thai = ? WHERE phong_ban_id = ?";
+
+        try (Connection conn = DBConnection.layKetNoi();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, trangThai);
+            ps.setInt(2, phongBanId);
+            return ps.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

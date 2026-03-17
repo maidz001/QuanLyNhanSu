@@ -55,7 +55,7 @@ private HopDongService hopDongService=new HopDongService();
                 xuatExcel(request,response);
                 break;
             default:
-                danhSachNhanVien(request, response);
+                taiKhoanServlet.goiDangNhapChoQuanLy(request, response,getSS(request,response));
         }
     }
 
@@ -247,7 +247,11 @@ private HopDongService hopDongService=new HopDongService();
             hd.setTrangThai("Da huy");
             hopDongService.sua(hd,getSS(request,response).getNhanVienId());
             phongBanService.setSoLuong(nhanVienService.layTheoId(id).getPhongBanId(),"giam");
-        request.setAttribute("message","Xóa thành công");}
+        request.setAttribute("message","Xóa thành công");
+        HopDong hhd= hopDongService.layHopDongHieuLuc(id);
+        hhd.setTrangThai("Da huy");
+       hopDongService.sua(hhd,getSS(request,response).getNhanVienId());
+        }
         else request.setAttribute("message","Thất bại");
         taiKhoanServlet.goiDangNhapChoQuanLy(request,response,getSS(request,response));
     }

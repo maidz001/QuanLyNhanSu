@@ -2,6 +2,7 @@ package controller;
 
 import model.NghiPhep;
 import model.TaiKhoan;
+import service.ChamCongService;
 import service.NghiPhepService;
 import service.NhanVienService;
 import service.TaiKhoanService;
@@ -12,6 +13,7 @@ import javax.servlet.http.*;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @WebServlet("/nghiphep")
@@ -19,6 +21,7 @@ public class NghiPhepServlet extends HttpServlet {
 
     private NghiPhepService nghiPhepService = new NghiPhepService();
 private TaiKhoanServlet taiKhoanServlet= new TaiKhoanServlet();
+private ChamCongService chamCongService=new ChamCongService();
 NhanVienService nhanVienService=new NhanVienService();
 TaiKhoanService taiKhoanService=new TaiKhoanService();
 
@@ -29,6 +32,12 @@ TaiKhoanService taiKhoanService=new TaiKhoanService();
         if(action==null) action="";
 
         switch(action){
+            case "duyet":
+                duyetNghiPhep(request,response);
+                break;
+            case "tuchoi":
+                tuChoiNghiPhep(request,response);
+                break;
             case "xoadondacu": xoaDonDaLau(request,response); break;
             case "xoatheoid": xoaDonTheoId(request,response); break;
             case "sua": moFormSua(request,response); break;
@@ -48,6 +57,7 @@ TaiKhoanService taiKhoanService=new TaiKhoanService();
             case "xinNghiPhep":
                 themNghiPhep(request,response);
                 break;
+
         }
     }
 
@@ -142,4 +152,64 @@ TaiKhoanService taiKhoanService=new TaiKhoanService();
         taiKhoanServlet.goiDangNhapChoNV(request,response,tk);
     }
 
+    private void duyetNghiPhep(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+
+        int id = Integer.parseInt(request.getParameter("id"));
+
+        // Lấy tài khoản đang đăng nhập
+        TaiKhoan tk = (TaiKhoan) request.getSession().getAttribute("taiKhoanDangDangNhap");
+
+        NghiPhep np = nghiPhepService.layTheoId(id);
+        if (np == null) {
+            request.getSession().setAttribute("errorMessage", "Không tìm thấy đơn nghỉ phép!");
+            response.sendRedirect("nghiphep");
+            return;
+        }
+
+        np.setTrangThai("Da duyet");
+        np.setNguoiDuyet(tk.getNhanVienId()); // set người duyệt là NV đang đăng nhập
+
+        nghiPhepService.capNhat(np);
+
+        // Tạo bản ghi chấm công vắng có phép
+        LocalDate ngayBatDau  = LocalDate.parse(np.getNgayBatDau().toString());
+        LocalDate ngayKetThuc = LocalDate.parse(np.getNgayKetThuc().toString());
+
+        LocalDate ngay = ngayBatDau;
+        while (!ngay.isAfter(ngayKetThuc)) {
+            chamCongService.insertVangCoPhep(np.getNhanVienId(), ngay);
+            ngay = ngay.plusDays(1);
+        }
+
+        request.setAttribute("message", "Đã duyệt đơn nghỉ phép thành công!");
+        taiKhoanServlet.goiDangNhapChoQuanLy(request,response,getSS(request,response));
+    }
+
+    private void tuChoiNghiPhep(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+
+        int id = Integer.parseInt(request.getParameter("id"));
+
+        TaiKhoan tk = (TaiKhoan) request.getSession().getAttribute("taiKhoanDangDangNhap");
+
+        NghiPhep np = nghiPhepService.layTheoId(id);
+        if (np == null) {
+            request.setAttribute("errorMessage", "Không tìm thấy đơn nghỉ phép!");
+            response.sendRedirect("nghiphep");
+            return;
+        }
+
+        np.setTrangThai("Tu choi");
+        np.setNguoiDuyet(tk.getNhanVienId());
+
+        nghiPhepService.capNhat(np);
+
+        request.setAttribute("message", "Đã từ chối đơn nghỉ phép!");
+        taiKhoanServlet.goiDangNhapChoQuanLy(request,response,getSS(request,response));
+    }
+    private TaiKhoan getSS(HttpServletRequest request, HttpServletResponse response) {
+        HttpSession session = request.getSession(false);
+        return (TaiKhoan) session.getAttribute("taiKhoanDangDangNhap");
+    }
 }

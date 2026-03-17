@@ -1,5 +1,7 @@
 package model;
 
+import java.util.Date;
+
 public class PhongBan {
     private int phongBanId;
     private String maPhongBan;
@@ -8,20 +10,8 @@ public class PhongBan {
     private Integer truongPhongId;
     private String moTa;
     private int trangThai;
-    private String tenTruongPhong;
-
-    public PhongBan() {}
-
-    public PhongBan(int phongBanId, String maPhongBan, String tenPhongBan, int soLuong, Integer truongPhongId, String moTa, int trangThai, String tenTruongPhong) {
-        this.phongBanId = phongBanId;
-        this.maPhongBan = maPhongBan;
-        this.tenPhongBan = tenPhongBan;
-        this.soLuong = soLuong;
-        this.truongPhongId = truongPhongId;
-        this.moTa = moTa;
-        this.trangThai = trangThai;
-        this.tenTruongPhong = tenTruongPhong;
-    }
+    private Date ngayTao;
+    private Date ngayCapNhat;
 
     public void setPhongBanId(int phongBanId) {
         this.phongBanId = phongBanId;
@@ -51,8 +41,12 @@ public class PhongBan {
         this.trangThai = trangThai;
     }
 
-    public void setTenTruongPhong(String tenTruongPhong) {
-        this.tenTruongPhong = tenTruongPhong;
+    public void setNgayTao(Date ngayTao) {
+        this.ngayTao = ngayTao;
+    }
+
+    public void setNgayCapNhat(Date ngayCapNhat) {
+        this.ngayCapNhat = ngayCapNhat;
     }
 
     public int getPhongBanId() {
@@ -83,9 +77,30 @@ public class PhongBan {
         return trangThai;
     }
 
-    public String getTenTruongPhong() {
-        return tenTruongPhong;
+    public Date getNgayTao() {
+        return ngayTao;
     }
+
+    public Date getNgayCapNhat() {
+        return ngayCapNhat;
+    }
+
+    public PhongBan(int phongBanId, String maPhongBan, String tenPhongBan, int soLuong, Integer truongPhongId, String moTa, int trangThai, Date ngayTao, Date ngayCapNhat) {
+
+        this.phongBanId = phongBanId;
+        this.maPhongBan = maPhongBan;
+        this.tenPhongBan = tenPhongBan;
+        this.soLuong = soLuong;
+        this.truongPhongId = truongPhongId;
+        this.moTa = moTa;
+        this.trangThai = trangThai;
+        this.ngayTao = ngayTao;
+        this.ngayCapNhat = ngayCapNhat;
+    }
+
+    public PhongBan() {}
+
+
 }
 
 
