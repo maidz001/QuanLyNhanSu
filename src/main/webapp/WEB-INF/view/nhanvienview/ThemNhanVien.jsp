@@ -149,6 +149,8 @@
                     <label>Ngày vào làm <span class="req">*</span></label>
                     <input type="date" name="ngayVaoLam" required value="${param.ngayVaoLam}"/>
                 </div>
+                <div><label>Số tài khoản NH</label><input type="text" name="soTaiKhoan" placeholder="VD: 1234567890"/></div>
+                <div><label>Ngân hàng</label><input type="text" name="nganHang" placeholder="VD: Vietcombank"/></div>
                 <div>
                     <label>Trạng thái</label>
                     <select name="trangThai">

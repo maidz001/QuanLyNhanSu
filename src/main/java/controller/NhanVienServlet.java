@@ -136,6 +136,78 @@ private HopDongService hopDongService=new HopDongService();
 
         taiKhoanServlet.goiDangNhapChoNV(request, response, tk);
     }
+    private void themNhanVien(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+
+        NhanVien nv = new NhanVien();
+        nv.setMaNhanVien(request.getParameter("maNhanVien"));
+        nv.setHoTen(request.getParameter("hoTen"));
+        nv.setEmail(request.getParameter("email"));
+        nv.setDienThoai(request.getParameter("dienThoai"));
+        nv.setDiaChi(request.getParameter("diaChi"));
+        nv.setGioiTinh(request.getParameter("gioiTinh"));
+        nv.setSoCmnd(request.getParameter("soCmnd"));
+        nv.setSoTaiKhoan(request.getParameter("soTaiKhoan"));
+        nv.setNganHang(request.getParameter("nganHang"));
+        nv.setPhongBanId(Integer.parseInt(request.getParameter("phongBanId")));
+        phongBanService.setSoLuong(Integer.parseInt(request.getParameter("phongBanId")), "tang");
+        nv.setChucVuId(Integer.parseInt(request.getParameter("chucVuId")));
+        nv.setTrangThai(request.getParameter("trangThai"));
+
+        String ngaySinhStr = request.getParameter("ngaySinh");
+        if (ngaySinhStr != null && !ngaySinhStr.trim().isEmpty())
+            nv.setNgaySinh(java.sql.Date.valueOf(ngaySinhStr.trim()));
+
+        String ngayVaoLamStr = request.getParameter("ngayVaoLam");
+        if (ngayVaoLamStr != null && !ngayVaoLamStr.trim().isEmpty())
+            nv.setNgayVaoLam(java.sql.Date.valueOf(ngayVaoLamStr.trim()));
+
+        nhanVienService.them(nv, getSS(request, response).getNhanVienId());
+
+        NhanVien nvMoi = nhanVienService.layTheoMa(nv.getMaNhanVien());
+        if (nvMoi != null) {
+            HopDong hd = new HopDong();
+            hd.setNhanVienId(nvMoi.getNhanVienId());
+            hd.setLoaiHopDong(request.getParameter("loaiHopDong"));
+            hd.setGhiChu(request.getParameter("ghiChuHD"));
+            hd.setTrangThai("Hieu luc");
+
+            String luongStr = request.getParameter("luongCoBan");
+            hd.setLuongCoBan(luongStr != null && !luongStr.trim().isEmpty()
+                    ? new java.math.BigDecimal(luongStr.trim())
+                    : java.math.BigDecimal.ZERO);
+
+            String ngayBDStr = request.getParameter("ngayBatDauHD");
+            java.sql.Date ngayBD = null;
+            if (ngayBDStr != null && !ngayBDStr.trim().isEmpty()) {
+                ngayBD = java.sql.Date.valueOf(ngayBDStr.trim());
+                hd.setNgayBatDau(ngayBD);
+            }
+
+            int thoiHanStr = 0;
+            if (request.getParameter("thoiHanHD") != null && !request.getParameter("thoiHanHD").isEmpty())
+                thoiHanStr = Integer.parseInt(request.getParameter("thoiHanHD"));
+
+            if (thoiHanStr > 3) hd.setPhuCap(BigDecimal.ONE);
+            else if (thoiHanStr == 0) hd.setPhuCap(BigDecimal.valueOf(500000));
+            else if (thoiHanStr == 1 || thoiHanStr == 2) hd.setPhuCap(BigDecimal.valueOf(300000));
+            else hd.setPhuCap(BigDecimal.ZERO);
+
+            if (ngayBD != null && thoiHanStr != 0) {
+                java.util.Calendar cal = java.util.Calendar.getInstance();
+                cal.setTime(ngayBD);
+                cal.add(java.util.Calendar.YEAR, thoiHanStr);
+                cal.add(java.util.Calendar.DAY_OF_MONTH, -1);
+                hd.setNgayKetThuc(new java.sql.Date(cal.getTimeInMillis()));
+            }
+
+            if (!hopDongService.them(hd, getSS(request, response).getNhanVienId()))
+                System.out.println("loi tao hop dong");
+        }
+
+        taiKhoanServlet.goiDangNhapChoQuanLy(request, response, getSS(request, response));
+    }
+
     public void suaByQuanLy(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -152,17 +224,19 @@ private HopDongService hopDongService=new HopDongService();
         String gioiTinh  = request.getParameter("gioiTinh");
         String soCmnd    = request.getParameter("soCmnd");
         String trangThai = request.getParameter("trangThai");
+        String soTaiKhoan = request.getParameter("soTaiKhoan");
+        String nganHang   = request.getParameter("nganHang");
 
-        // LỖI 1: dùng || thay vì && → phải dùng && (không null VÀ không rỗng)
-        if (hoTen     != null && !hoTen.trim().isEmpty())     cu.setHoTen(hoTen.trim());
-        if (email     != null && !email.trim().isEmpty())     cu.setEmail(email.trim());
-        if (dienThoai != null && !dienThoai.trim().isEmpty()) cu.setDienThoai(dienThoai.trim());
-        if (diaChi    != null && !diaChi.trim().isEmpty())    cu.setDiaChi(diaChi.trim());
-        if (gioiTinh  != null && !gioiTinh.trim().isEmpty())  cu.setGioiTinh(gioiTinh.trim());
-        if (soCmnd    != null && !soCmnd.trim().isEmpty())    cu.setSoCmnd(soCmnd.trim());
-        if (trangThai != null && !trangThai.trim().isEmpty()) cu.setTrangThai(trangThai.trim());
+        if (hoTen      != null && !hoTen.trim().isEmpty())      cu.setHoTen(hoTen.trim());
+        if (email      != null && !email.trim().isEmpty())      cu.setEmail(email.trim());
+        if (dienThoai  != null && !dienThoai.trim().isEmpty())  cu.setDienThoai(dienThoai.trim());
+        if (diaChi     != null && !diaChi.trim().isEmpty())     cu.setDiaChi(diaChi.trim());
+        if (gioiTinh   != null && !gioiTinh.trim().isEmpty())   cu.setGioiTinh(gioiTinh.trim());
+        if (soCmnd     != null && !soCmnd.trim().isEmpty())     cu.setSoCmnd(soCmnd.trim());
+        if (trangThai  != null && !trangThai.trim().isEmpty())  cu.setTrangThai(trangThai.trim());
+        if (soTaiKhoan != null && !soTaiKhoan.trim().isEmpty()) cu.setSoTaiKhoan(soTaiKhoan.trim());
+        if (nganHang   != null && !nganHang.trim().isEmpty())   cu.setNganHang(nganHang.trim());
 
-        // LỖI 2: Integer.parseInt không bao giờ trả về null → dùng helper
         String pbStr = request.getParameter("phongBanId");
         if (pbStr != null && !pbStr.trim().isEmpty())
             cu.setPhongBanId(Integer.parseInt(pbStr.trim()));
@@ -171,8 +245,6 @@ private HopDongService hopDongService=new HopDongService();
         if (cvStr != null && !cvStr.trim().isEmpty())
             cu.setChucVuId(Integer.parseInt(cvStr.trim()));
 
-        // LỖI 3: dùng DateParser.parseDate của POI thay vì java.sql.Date.valueOf
-        // LỖI 4: .getTime() trả về long không phải Date
         String ngaySinhStr = request.getParameter("ngaySinh");
         if (ngaySinhStr != null && !ngaySinhStr.trim().isEmpty())
             cu.setNgaySinh(java.sql.Date.valueOf(ngaySinhStr.trim()));
@@ -183,15 +255,6 @@ private HopDongService hopDongService=new HopDongService();
 
         nhanVienService.sua(cu, tk.getNhanVienId());
         taiKhoanServlet.goiDangNhapChoQuanLy(request, response, tk);
-    }
-    // ================= DANH SÁCH =================
-
-    private void danhSachNhanVien(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-        List<NhanVien> list = nhanVienService.layTatCa();
-        request.setAttribute("list", list);
-        request.getRequestDispatcher("DanhSachNhanVien.jsp").forward(request, response);
     }
 
     // ================= THÊM =================
@@ -302,96 +365,27 @@ private HopDongService hopDongService=new HopDongService();
         else {
             System.out.println("loi");
         }
+
         if(!email.isEmpty())
             nv.setEmail(email);
         if(!sdt.isEmpty())
             nv.setDienThoai(sdt);
         if(!diaChi.isEmpty())
             nv.setDiaChi(request.getParameter("diaChi"));
+        String soTaiKhoan = request.getParameter("soTaiKhoan");
+        if (soTaiKhoan != null && !soTaiKhoan.trim().isEmpty())
+            nv.setSoTaiKhoan(soTaiKhoan.trim());
+
+        String nganHang = request.getParameter("nganHang");
+        if (nganHang != null && !nganHang.trim().isEmpty())
+            nv.setNganHang(nganHang.trim());
 
         nhanVienService.sua(nv, tk.getNhanVienId());
 
         request.setAttribute("messageCapNhat", "Cập nhật thông tin thành công!");
         taiKhoanServlet.goiDangNhapChoNV(request, response, tk);
     }
-    private void themNhanVien(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
 
-        // ══ NHÂN VIÊN ══
-        NhanVien nv = new NhanVien();
-        nv.setMaNhanVien(request.getParameter("maNhanVien"));
-        nv.setHoTen(request.getParameter("hoTen"));
-        nv.setEmail(request.getParameter("email"));
-        nv.setDienThoai(request.getParameter("dienThoai"));
-        nv.setDiaChi(request.getParameter("diaChi"));
-        nv.setGioiTinh(request.getParameter("gioiTinh"));
-        nv.setSoCmnd(request.getParameter("soCmnd"));
-        nv.setPhongBanId(Integer.parseInt(request.getParameter("phongBanId")));
-        phongBanService.setSoLuong(Integer.parseInt(request.getParameter("phongBanId")),"tang");
-        nv.setChucVuId(Integer.parseInt(request.getParameter("chucVuId")));
-        nv.setTrangThai(request.getParameter("trangThai"));
-
-        String ngaySinhStr = request.getParameter("ngaySinh");
-        if (ngaySinhStr != null && !ngaySinhStr.trim().isEmpty())
-            nv.setNgaySinh(java.sql.Date.valueOf(ngaySinhStr.trim()));
-
-        String ngayVaoLamStr = request.getParameter("ngayVaoLam");
-        if (ngayVaoLamStr != null && !ngayVaoLamStr.trim().isEmpty())
-            nv.setNgayVaoLam(java.sql.Date.valueOf(ngayVaoLamStr.trim()));
-
-        nhanVienService.them(nv, getSS(request,response).getNhanVienId());
-
-        //  HỢP ĐỒNG
-        NhanVien nvMoi = nhanVienService.layTheoMa(nv.getMaNhanVien());
-        if (nvMoi != null) {
-            HopDong hd = new HopDong();
-            hd.setNhanVienId(nvMoi.getNhanVienId());
-            hd.setLoaiHopDong(request.getParameter("loaiHopDong"));
-            hd.setGhiChu(request.getParameter("ghiChuHD"));
-            hd.setTrangThai("Hieu luc");
-
-            String luongStr  = request.getParameter("luongCoBan");
-
-            hd.setLuongCoBan(luongStr != null && !luongStr.trim().isEmpty()
-                    ? new java.math.BigDecimal(luongStr.trim())
-                    : java.math.BigDecimal.ZERO);
-
-
-
-            String ngayBDStr = request.getParameter("ngayBatDauHD");
-            java.sql.Date ngayBD = null;
-            if (ngayBDStr != null && !ngayBDStr.trim().isEmpty()) {
-                ngayBD = java.sql.Date.valueOf(ngayBDStr.trim());
-                hd.setNgayBatDau(ngayBD);
-            }
-            int thoiHanStr = 0;
-if(request.getParameter("thoiHanHD")!=null&&request.getParameter("thoiHanHD")!=""){
-    thoiHanStr = Integer.parseInt(request.getParameter("thoiHanHD"));}
-
-            if(thoiHanStr>3)hd.setPhuCap(BigDecimal.ONE);
-            else if (thoiHanStr==0) {
-                hd.setPhuCap(BigDecimal.valueOf(500000));
-            } else if (thoiHanStr==1||thoiHanStr==2) {
-                hd.setPhuCap(BigDecimal.valueOf(300000));
-            } else hd.setPhuCap(BigDecimal.ZERO);
-            if (ngayBD != null && thoiHanStr != 0) {
-                int soNam = thoiHanStr;
-                if (soNam > 0) {
-                    java.util.Calendar cal = java.util.Calendar.getInstance();
-                    cal.setTime(ngayBD);
-                    cal.add(java.util.Calendar.YEAR, soNam);
-                    cal.add(java.util.Calendar.DAY_OF_MONTH, -1);
-                    hd.setNgayKetThuc(new java.sql.Date(cal.getTimeInMillis()));
-                }
-
-            }
-
-            if(!hopDongService.them(hd, getSS(request,response).getNhanVienId()))
-                System.out.println("loi");
-        }
-
-        taiKhoanServlet.goiDangNhapChoQuanLy(request,response,getSS(request,response));
-    }
     private void xuatExcel(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         xuatExcel.xuatDanhSachNhanVien(nhanVienService.layTatCa(),response);
         taiKhoanServlet.goiDangNhapChoQuanLy(request,response,getSS(request,response));

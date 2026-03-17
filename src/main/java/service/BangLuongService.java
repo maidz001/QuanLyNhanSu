@@ -196,6 +196,53 @@ public class BangLuongService {
                 .filter(l -> l != null)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
+    public boolean thanhToanTatCaTienMat(Integer nguoiThucHien) {
+        List<BangLuong> list = bangLuongDAO.layTatCa();
+        for (BangLuong bl : list) {
+            if ("Cho duyet".equals(bl.getTrangThai()) || "Da duyet".equals(bl.getTrangThai())) {
+                bangLuongDAO.capNhatTrangThai(bl.getBangLuongId(), "Da thanh toan tien mat");
+                thongBaoDAO.guiThongBaoChoNhanVien(
+                        nguoiThucHien, bl.getNhanVienId(),
+                        "Luong da thanh toan",
+                        "Luong thang " + bl.getThang() + "/" + bl.getNam()
+                                + ": " + bl.getLuongThucLanh() + " VND (Tien mat)",
+                        "bang_luong"
+                );
+            }
+        }
+        return true;
+    }
+    public boolean thanhToanTienMat(int id, Integer nguoiThucHien) {
+        BangLuong bl = bangLuongDAO.layTheoId(id);
+        if (bl == null) return false;
+        boolean kq = bangLuongDAO.capNhatTrangThai(id, "Da thanh toan tien mat");
+        if (kq) {
+            thongBaoDAO.guiThongBaoChoNhanVien(
+                    nguoiThucHien, bl.getNhanVienId(),
+                    "Luong da thanh toan",
+                    "Luong thang " + bl.getThang() + "/" + bl.getNam()
+                            + ": " + bl.getLuongThucLanh() + " VND (Tien mat)",
+                    "bang_luong"
+            );
+        }
+        return kq;
+    }
+
+    public boolean thanhToanChuyenKhoan(int id, Integer nguoiThucHien) {
+        BangLuong bl = bangLuongDAO.layTheoId(id);
+        if (bl == null) return false;
+        boolean kq = bangLuongDAO.capNhatTrangThai(id, "Da thanh toan chuyen khoan");
+        if (kq) {
+            thongBaoDAO.guiThongBaoChoNhanVien(
+                    nguoiThucHien, bl.getNhanVienId(),
+                    "Luong da thanh toan",
+                    "Luong thang " + bl.getThang() + "/" + bl.getNam()
+                            + ": " + bl.getLuongThucLanh() + " VND (Chuyen khoan)",
+                    "bang_luong"
+            );
+        }
+        return kq;
+    }
 
     // ════════════════════════════════════════════════════════
     // CRUD CƠ BẢN

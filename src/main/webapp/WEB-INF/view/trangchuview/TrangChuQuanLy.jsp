@@ -268,7 +268,11 @@
                     <span class="search-count" id="count-nv"></span>
                 </div>
                 <table class="dt">
-                    <thead><tr><th>#</th><th>Mã NV</th><th>Họ tên</th><th>Email</th><th>SĐT</th><th>Phòng ban</th><th>Chức vụ</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+                    <thead><tr><th>#</th><th>Mã NV</th><th>Họ tên</th><th>Email</th><th>SĐT</th><th>Phòng ban</th><th>Chức vụ</th><tr>
+                                                                                                                                          <th>#</th><th>Mã NV</th><th>Họ tên</th><th>Email</th><th>SĐT</th>
+                                                                                                                                          <th>Phòng ban</th><th>Chức vụ</th><th>STK</th><th>Ngân hàng</th>
+                                                                                                                                          <th>Trạng thái</th><th>Thao tác</th>
+                                                                                                                                      </tr><th>Trạng thái</th><th>Thao tác</th></tr></thead>
                     <tbody id="t-nv">
                         <c:choose>
                             <c:when test="${not empty listNhanVien}">
@@ -281,6 +285,8 @@
                                         <td>${not empty nv.dienThoai ? nv.dienThoai : '--'}</td>
                                         <td>${not empty nv.tenPhongBan ? nv.tenPhongBan : '--'}</td>
                                         <td>${not empty nv.tenChucVu ? nv.tenChucVu : '--'}</td>
+                                        <td>${not empty nv.soTaiKhoan ? nv.soTaiKhoan : '--'}</td>
+                                        <td>${not empty nv.nganHang ? nv.nganHang : '--'}</td>
                                         <td><span class="badge ${nv.trangThai == 'Dang lam viec' ? 'bg' : nv.trangThai == 'Nghi viec' ? 'br' : 'bo'}">${nv.trangThai}</span></td>
                                         <td style="white-space:nowrap">
                                             <a href="${pageContext.request.contextPath}/nhanvien?action=xemchitiet&id=${nv.nhanVienId}" class="btn bo2 bsm">Xem</a>
@@ -290,7 +296,7 @@
                                     </tr>
                                 </c:forEach>
                             </c:when>
-                            <c:otherwise><tr><td colspan="9"><div class="es">Không có dữ liệu nhân viên</div></td></tr></c:otherwise>
+<c:otherwise><tr><td colspan="11"><div class="es">Không có dữ liệu nhân viên</div></td></tr></c:otherwise>
                         </c:choose>
                     </tbody>
                 </table>
@@ -707,70 +713,118 @@
             </div>
         </div>
 
-        <!-- ═══ BẢNG LƯƠNG ═══ -->
-        <div class="panel" id="panel-bangluong">
-            <div class="box">
-                <div class="bh">
-                    <h3><svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Quản lý bảng lương</h3>
-                    <div class="ac">
-                        <a href="${pageContext.request.contextPath}/bangluong?action=tao" class="btn bs bsm">Tính lương tháng này</a>
-                        <a href="${pageContext.request.contextPath}/bangluong?action=xuatexcel" class="btn bo2 bsm">Xuất Excel</a>
-                    </div>
-                </div>
-                <!-- SEARCH BẢNG LƯƠNG -->
-                <div class="search-bar">
-                    <input type="text" id="s-bl" placeholder="🔍 Tìm tên nhân viên..." oninput="filterBL()"/>
-                    <select id="sel-tt-bl" onchange="filterBL()">
-                        <option value="">-- Trạng thái --</option>
-                        <option value="Da thanh toan">Đã thanh toán</option>
-                        <option value="Da duyet">Đã duyệt</option>
-                        <option value="Cho duyet">Chờ duyệt</option>
-                    </select>
-                    <select id="sel-thang-bl" onchange="filterBL()">
-                        <option value="">-- Tháng --</option>
-                        <c:forEach begin="1" end="12" var="m">
-                            <option value="T${m}">Tháng ${m}</option>
-                        </c:forEach>
-                    </select>
-                    <span class="search-count" id="count-bl"></span>
-                </div>
-                <table class="dt">
-                    <thead><tr><th>Nhân viên</th><th>Tháng</th><th>Năm</th><th>Ngày làm</th><th>Lương CB</th><th>Thưởng</th><th>Khấu trừ</th><th>Thực lãnh</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
-                    <tbody id="t-bl">
-                        <c:choose>
-                            <c:when test="${not empty listBangLuongAll}">
-                                <c:forEach var="b" items="${listBangLuongAll}">
-                                    <tr>
-                                        <td>
-                                            <c:set var="tenNV" value="NV#${b.nhanVienId}"/>
-                                            <c:forEach var="nv" items="${listNhanVien}">
-                                                <c:if test="${nv.nhanVienId == b.nhanVienId}">
-                                                    <c:set var="tenNV" value="${nv.hoTen}"/>
-                                                </c:if>
-                                            </c:forEach>
-                                            ${tenNV}
-                                        </td>
-                                        <td>T${b.thang}</td>
-                                        <td>${b.nam}</td>
-                                        <td>${b.soNgayThucTe}/${b.soNgayLamViec}</td>
-                                        <td><fmt:formatNumber value="${b.luongCoBan}" pattern="#,###"/></td>
-                                        <td><fmt:formatNumber value="${b.thuong}" pattern="#,###"/></td>
-                                        <td><fmt:formatNumber value="${b.tongKhauTru}" pattern="#,###"/></td>
-                                        <td><strong><fmt:formatNumber value="${b.luongThucLanh}" pattern="#,###"/></strong></td>
-                                        <td><span class="badge ${b.trangThai == 'Da thanh toan' ? 'bg' : b.trangThai == 'Da duyet' ? 'bb2' : 'bo'}">${b.trangThai}</span></td>
-                                        <td><a href="${pageContext.request.contextPath}/bangluong?action=xem&id=${b.bangLuongId}" class="btn bo2 bsm">Xem</a></td>
-                                    </tr>
-                                </c:forEach>
-                            </c:when>
-                            <c:otherwise>
-                                <tr><td colspan="10"><div class="es">Chưa có dữ liệu bảng lương</div></td></tr>
-                            </c:otherwise>
-                        </c:choose>
-                    </tbody>
-                </table>
-                <div class="no-results" id="no-bl">😔 Không tìm thấy kết quả phù hợp</div>
-            </div>
-        </div>
+       <!-- ═══ BẢNG LƯƠNG ═══ -->
+       <div class="panel" id="panel-bangluong">
+           <div class="box">
+               <div class="bh">
+                   <h3><svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Quản lý bảng lương</h3>
+                   <div class="ac">
+                       <a href="${pageContext.request.contextPath}/bangluong?action=tao" class="btn bs bsm">Tính lương tháng này</a>
+                       <a href="${pageContext.request.contextPath}/bangluong?action=xuat-excel" class="btn bo2 bsm">Xuất Excel</a>
+                       <a href="${pageContext.request.contextPath}/bangluong?action=thanh-toan-tat-ca-tien-mat"
+                          class="btn bw bsm"
+                          onclick="return confirm('Xác nhận thanh toán tiền mặt cho TẤT CẢ bảng lương đang chờ duyệt?')">
+                           💵 TT tiền mặt tất cả
+                       </a>
+                   </div>
+               </div>
+               <!-- SEARCH BẢNG LƯƠNG -->
+               <div class="search-bar">
+                   <input type="text" id="s-bl" placeholder="🔍 Tìm tên nhân viên..." oninput="filterBL()"/>
+                   <select id="sel-tt-bl" onchange="filterBL()">
+                       <option value="">-- Trạng thái --</option>
+                       <option value="Da thanh toan tien mat">Đã TT tiền mặt</option>
+                       <option value="Da thanh toan chuyen khoan">Đã TT chuyển khoản</option>
+                       <option value="Da duyet">Đã duyệt</option>
+                       <option value="Cho duyet">Chờ duyệt</option>
+                   </select>
+                   <select id="sel-thang-bl" onchange="filterBL()">
+                       <option value="">-- Tháng --</option>
+                       <c:forEach begin="1" end="12" var="m">
+                           <option value="T${m}">Tháng ${m}</option>
+                       </c:forEach>
+                   </select>
+                   <span class="search-count" id="count-bl"></span>
+               </div>
+               <table class="dt">
+                   <thead><tr><th>Nhân viên</th><th>Tháng</th><th>Năm</th><th>Ngày làm</th><th>Lương CB</th><th>Thưởng</th><th>Khấu trừ</th><th>Thực lãnh</th><th>Trạng thái</th><th>Thao tác</th><th>Thanh toán</th></tr></thead>
+                   <tbody id="t-bl">
+                       <c:choose>
+                           <c:when test="${not empty listBangLuongAll}">
+                               <c:forEach var="b" items="${listBangLuongAll}">
+                                   <tr>
+                                       <td>
+                                           <c:set var="tenNV" value="NV#${b.nhanVienId}"/>
+                                           <c:set var="soTK" value=""/>
+                                           <c:set var="nganHang" value=""/>
+                                           <c:forEach var="nv" items="${listNhanVien}">
+                                               <c:if test="${nv.nhanVienId == b.nhanVienId}">
+                                                   <c:set var="tenNV" value="${nv.hoTen}"/>
+                                                   <c:set var="soTK" value="${nv.soTaiKhoan}"/>
+                                                   <c:set var="nganHang" value="${nv.nganHang}"/>
+                                               </c:if>
+                                           </c:forEach>
+                                           ${tenNV}
+                                       </td>
+                                       <td>T${b.thang}</td>
+                                       <td>${b.nam}</td>
+                                       <td>${b.soNgayThucTe}/${b.soNgayLamViec}</td>
+                                       <td><fmt:formatNumber value="${b.luongCoBan}" pattern="#,###"/></td>
+                                       <td><fmt:formatNumber value="${b.thuong}" pattern="#,###"/></td>
+                                       <td><fmt:formatNumber value="${b.tongKhauTru}" pattern="#,###"/></td>
+                                       <td><strong><fmt:formatNumber value="${b.luongThucLanh}" pattern="#,###"/></strong></td>
+                                       <td>
+                                           <span class="badge ${b.trangThai == 'Da thanh toan tien mat' || b.trangThai == 'Da thanh toan chuyen khoan' ? 'bg' : b.trangThai == 'Da duyet' ? 'bb2' : 'bo'}">
+                                               ${b.trangThai}
+                                           </span>
+                                       </td>
+                                       <td style="white-space:nowrap">
+                                           <a href="${pageContext.request.contextPath}/bangluong?action=xem&id=${b.bangLuongId}" class="btn bo2 bsm">Xem</a>
+
+
+                                       </td>
+                                       <td style="white-space:nowrap">
+                                       <c:if test="${b.trangThai == 'Da duyet' || b.trangThai == 'Cho duyet'}">
+                                                                                      <%-- Nút tiền mặt --%>
+                                                                                      <a href="${pageContext.request.contextPath}/bangluong?action=thanh-toan-tien-mat&id=${b.bangLuongId}"
+                                                                                         class="btn bw bsm"
+                                                                                         onclick="return confirm('Xác nhận thanh toán tiền mặt cho ${tenNV}?')">
+                                                                                          💵 Tiền mặt
+                                                                                      </a>
+
+                                                                                      <%-- Nút QR chuyển khoản --%>
+                                                                                      <button class="btn bs bsm"
+                                                                                              onclick="moQR('${b.bangLuongId}','${tenNV}','${soTK}','${nganHang}','${b.luongThucLanh}')">
+                                                                                          🏦 QR
+                                                                                      </button>
+                                                                                  </c:if>                                       </td>
+
+                                   </tr>
+                               </c:forEach>
+                           </c:when>
+                           <c:otherwise>
+                               <tr><td colspan="10"><div class="es">Chưa có dữ liệu bảng lương</div></td></tr>
+                           </c:otherwise>
+                       </c:choose>
+                   </tbody>
+               </table>
+               <div class="no-results" id="no-bl">😔 Không tìm thấy kết quả phù hợp</div>
+           </div>
+       </div>
+
+       <!-- MODAL QR THANH TOÁN -->
+       <div id="modal-qr" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;align-items:center;justify-content:center;">
+           <div style="background:#fff;border-radius:14px;padding:28px;max-width:420px;width:90%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.2)">
+               <h3 style="font-size:.95rem;font-weight:700;color:#1e3a5f;margin-bottom:4px" id="qr-ten-nv"></h3>
+               <p style="font-size:.78rem;color:#7a8899;margin-bottom:16px" id="qr-info"></p>
+               <img id="qr-img" src="" alt="VietQR" style="width:220px;height:220px;border-radius:10px;border:1px solid #dce3ec;margin-bottom:16px"/>
+               <p style="font-size:.72rem;color:#7a8899;margin-bottom:18px">Quét mã QR để chuyển khoản, sau đó xác nhận bên dưới</p>
+               <div style="display:flex;gap:10px;justify-content:center">
+                   <button onclick="dongQR()" style="padding:8px 20px;border-radius:8px;border:1.5px solid #dce3ec;background:transparent;color:#7a8899;font-size:.8rem;cursor:pointer">Đóng</button>
+                   <button onclick="xacNhanQR()" style="padding:8px 20px;border-radius:8px;border:none;background:#27ae60;color:#fff;font-size:.8rem;font-weight:600;cursor:pointer">✓ Xác nhận đã thanh toán</button>
+               </div>
+           </div>
+       </div>
 
         <!-- ═══ ĐÁNH GIÁ ═══ -->
         <div class="panel" id="panel-danhgia">
@@ -994,7 +1048,7 @@
             const text   = row.textContent.toLowerCase();
             const matchKw= !kw || text.includes(kw);
             const matchPb= !pb || (row.cells[5] && row.cells[5].textContent.includes(pb));
-            const matchTt= !tt || (row.cells[7] && row.cells[7].textContent.includes(tt));
+const matchTt = !tt || (row.cells[9] && row.cells[9].textContent.includes(tt));
             const show   = matchKw && matchPb && matchTt;
             row.style.display = show ? '' : 'none';
             if (show) visible++;
@@ -1097,6 +1151,40 @@
     <c:if test="${not empty message}">
         alert("✅ ${message}");
     </c:if>
+    // ── VIETQR MODAL ──
+    let currentBangLuongId = null;
+
+    function moQR(bangLuongId, tenNV, soTK, nganHang, soTien) {
+        currentBangLuongId = bangLuongId;
+
+        document.getElementById('qr-ten-nv').textContent = tenNV;
+        document.getElementById('qr-info').textContent =
+            'STK: ' + (soTK || 'Chưa có') + ' — ' + (nganHang || 'Chưa có ngân hàng');
+
+        // Tạo VietQR URL
+        // Format: https://img.vietqr.io/image/{BANK_ID}-{ACCOUNT_NO}-{TEMPLATE}.png?amount={AMOUNT}&addInfo={INFO}&accountName={NAME}
+        const bankId   = nganHang || 'VCB'; // dùng tên ngân hàng hoặc mã BIN
+        const soTienInt = Math.round(parseFloat(soTien) || 0);
+        const qrUrl = 'https://img.vietqr.io/image/' + bankId + '-' + soTK
+                    + '-compact2.png?amount=' + soTienInt
+                    + '&addInfo=Luong%20thang'
+                    + '&accountName=' + encodeURIComponent(tenNV);
+
+        document.getElementById('qr-img').src = qrUrl;
+        document.getElementById('modal-qr').style.display = 'flex';
+    }
+
+    function dongQR() {
+        document.getElementById('modal-qr').style.display = 'none';
+        currentBangLuongId = null;
+    }
+
+    function xacNhanQR() {
+        if (!currentBangLuongId) return;
+        if (confirm('Xác nhận đã nhận được chuyển khoản?')) {
+            window.location.href = '${pageContext.request.contextPath}/bangluong?action=thanh-toan-chuyen-khoan&id=' + currentBangLuongId;
+        }
+    }
 </script>
 
 </body>

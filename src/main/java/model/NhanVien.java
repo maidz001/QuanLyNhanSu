@@ -19,6 +19,8 @@ public class NhanVien {
     private String anhDaiDien;
     private String tenPhongBan;
     private String tenChucVu;
+    private String soTaiKhoan;
+    private String nganHang;
 
     public NhanVien() {}
 
@@ -54,4 +56,8 @@ public class NhanVien {
     public void setTenPhongBan(String tenPhongBan) { this.tenPhongBan = tenPhongBan; }
     public String getTenChucVu() { return tenChucVu; }
     public void setTenChucVu(String tenChucVu) { this.tenChucVu = tenChucVu; }
+    public String getSoTaiKhoan() { return soTaiKhoan; }
+    public void setSoTaiKhoan(String soTaiKhoan) { this.soTaiKhoan = soTaiKhoan; }
+    public String getNganHang() { return nganHang; }
+    public void setNganHang(String nganHang) { this.nganHang = nganHang; }
 }

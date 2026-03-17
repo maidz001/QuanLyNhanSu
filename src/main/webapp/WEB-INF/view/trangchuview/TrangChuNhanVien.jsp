@@ -467,15 +467,19 @@
                             <div class="profile-row"><span class="lbl">Điện thoại</span><span class="val">${not empty nhanVien.dienThoai ? nhanVien.dienThoai : '--'}</span></div>
                             <div class="profile-row"><span class="lbl">Ngày sinh</span><span class="val">${not empty nhanVien.ngaySinh ? nhanVien.ngaySinh : '--'}</span></div>
                             <div class="profile-row"><span class="lbl">Địa chỉ</span><span class="val">${not empty nhanVien.diaChi ? nhanVien.diaChi : '--'}</span></div>
+                        <div class="profile-row"><span class="lbl">Giới tính</span><span class="val">${nhanVien.gioiTinh}</span></div>
+                                                    <div class="profile-row"><span class="lbl">CMND/CCCD</span><span class="val">${not empty nhanVien.soCmnd ? nhanVien.soCmnd : '--'}</span></div>
                         </div>
                         <div>
+
                             <div class="profile-row"><span class="lbl">Giới tính</span><span class="val">${nhanVien.gioiTinh}</span></div>
                             <div class="profile-row"><span class="lbl">CMND/CCCD</span><span class="val">${not empty nhanVien.soCmnd ? nhanVien.soCmnd : '--'}</span></div>
                             <div class="profile-row"><span class="lbl">Phòng ban</span><span class="val">${not empty nhanVien.tenPhongBan ? nhanVien.tenPhongBan : '--'}</span></div>
                             <div class="profile-row"><span class="lbl">Chức vụ</span><span class="val">${not empty nhanVien.tenChucVu ? nhanVien.tenChucVu : '--'}</span></div>
                             <div class="profile-row"><span class="lbl">Ngày vào làm</span><span class="val">${not empty nhanVien.ngayVaoLam ? nhanVien.ngayVaoLam : '--'}</span></div>
                             <div class="profile-row"><span class="lbl">Trạng thái</span><span class="val">${not empty nhanVien.trangThai ? nhanVien.trangThai : '--'}</span></div>
-
+<div class="profile-row"><span class="lbl">Số tài khoản NH</span><span class="val">${not empty nhanVien.soTaiKhoan ? nhanVien.soTaiKhoan : '--'}</span></div>
+<div class="profile-row"><span class="lbl">Ngân hàng</span><span class="val">${not empty nhanVien.nganHang ? nhanVien.nganHang : '--'}</span></div>
                         </div>
                     </div>
                 </div>
@@ -510,6 +514,7 @@
                                                         </div>
                             <div class="form-group">
                                 <label>Email</label>
+                                <label>Email</label>
                                 <input type="email" name="email"
                                        value="${not empty nhanVien.email ? nhanVien.email : ''}"
                                        placeholder="Nhập email..."/>
@@ -519,6 +524,19 @@
                                 <input type="text" name="diaChi"
                                        value="${not empty nhanVien.diaChi ? nhanVien.diaChi : ''}"
                                        placeholder="Nhập địa chỉ..."/>
+                            </div>
+                            <%-- Thêm vào form-grid sau ô địa chỉ --%>
+                            <div class="form-group">
+                                <label>Số tài khoản NH</label>
+                                <input type="text" name="soTaiKhoan"
+                                       value="${not empty nhanVien.soTaiKhoan ? nhanVien.soTaiKhoan : ''}"
+                                       placeholder="Nhập số tài khoản..."/>
+                            </div>
+                            <div class="form-group">
+                                <label>Ngân hàng</label>
+                                <input type="text" name="nganHang"
+                                       value="${not empty nhanVien.nganHang ? nhanVien.nganHang : ''}"
+                                       placeholder="VD: Vietcombank..."/>
                             </div>
                         </div>
                         <div class="form-actions">

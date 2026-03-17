@@ -163,6 +163,14 @@
                             <span class="info-label"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Giới tính</span>
                             <span class="info-value">${not empty nv.gioiTinh ? nv.gioiTinh : '--'}</span>
                         </li>
+                        <li class="info-item">
+                            <span class="info-label"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>Ngân hàng</span>
+                            <span class="info-value">${not empty nv.nganHang ? nv.nganHang : '--'}</span>
+                        </li>
+                        <li class="info-item">
+                            <span class="info-label"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>Số TK</span>
+                            <span class="info-value">${not empty nv.soTaiKhoan ? nv.soTaiKhoan : '--'}</span>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -196,6 +204,12 @@
                         <div class="form-group"><label>Phòng ban</label><input readonly value="${not empty nv.tenPhongBan ? nv.tenPhongBan : '--'}"/></div>
                         <div class="form-group"><label>Chức vụ</label><input readonly value="${not empty nv.tenChucVu ? nv.tenChucVu : '--'}"/></div>
                         <div class="form-group"><label>Ngày vào làm</label><input readonly value="<fmt:formatDate value='${nv.ngayVaoLam}' pattern='dd/MM/yyyy'/>"/></div>
+                    </div>
+
+                    <div class="section-title">Thông tin ngân hàng</div>
+                    <div class="form-grid">
+                        <div class="form-group"><label>Số tài khoản</label><input readonly value="${not empty nv.soTaiKhoan ? nv.soTaiKhoan : '--'}"/></div>
+                        <div class="form-group"><label>Ngân hàng</label><input readonly value="${not empty nv.nganHang ? nv.nganHang : '--'}"/></div>
                     </div>
                 </div>
 
@@ -250,6 +264,18 @@
                                 </select>
                             </div>
                             <div class="form-group"><label>Ngày vào làm</label><input type="date" name="ngayVaoLam" value="<fmt:formatDate value='${nv.ngayVaoLam}' pattern='yyyy-MM-dd'/>"/></div>
+                        </div>
+
+                        <div class="section-title">Thông tin ngân hàng</div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Số tài khoản</label>
+                                <input type="text" name="soTaiKhoan" value="${not empty nv.soTaiKhoan ? nv.soTaiKhoan : ''}"/>
+                            </div>
+                            <div class="form-group">
+                                <label>Ngân hàng</label>
+                                <input type="text" name="nganHang" value="${not empty nv.nganHang ? nv.nganHang : ''}"/>
+                            </div>
                         </div>
 
                         <div class="form-actions">
