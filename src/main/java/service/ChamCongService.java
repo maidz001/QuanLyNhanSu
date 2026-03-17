@@ -45,7 +45,7 @@ public class ChamCongService {
     }
     public boolean checkOut(int idNhanVien){
         ChamCong chamCong=chamCongDAO.layRaChamCongHomNay(idNhanVien,LocalDate.now());
-        if(!chamCong.getGioRa().toLowerCase(Locale.ROOT).equals("00:00:00")){
+        if(chamCong.getGioRa()==null||!chamCong.getGioRa().toLowerCase(Locale.ROOT).equals("00:00:00")){
             return false;
         }
         Duration duration = Duration.between(LocalTime.parse(chamCong.getGioVao()), LocalTime.now());
