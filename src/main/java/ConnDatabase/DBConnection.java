@@ -20,7 +20,10 @@ public class DBConnection {
         URL      = "jdbc:mysql://" + host + ":" + port + "/" + db + "?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true";
         USER     = user;
         PASSWORD = password;
-
+        System.out.println("HOST: " + host);
+        System.out.println("PORT: " + port);
+        System.out.println("DB: " + db);
+        System.out.println("USER: " + user);
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
