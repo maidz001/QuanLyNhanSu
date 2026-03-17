@@ -51,7 +51,9 @@ public class TaiKhoanServlet extends HttpServlet {
             case "login": moFormLogin(request,response); break;
             case "signin": moFormSignIn(request,response); break;
             case "logout": dangXuat(request,response);break;
-            default: moFormLogin(request,response);
+
+            case "trangchu":goiDangNhapChoQuanLy(request,response,getSS(request,response));break;
+            default:goiDangNhapChoQuanLy(request,response,getSS(request,response));
         }
     }
 
@@ -344,5 +346,9 @@ public class TaiKhoanServlet extends HttpServlet {
         request.setAttribute("message", "Đổi mật khẩu thành công, vui lòng đăng nhập lại!");
         request.getRequestDispatcher("/WEB-INF/view/taikhoanview/LogIn.jsp")
                 .forward(request, response);
+    }
+    private TaiKhoan getSS(HttpServletRequest request, HttpServletResponse response) {
+        HttpSession session = request.getSession(false);
+        return (TaiKhoan) session.getAttribute("taiKhoanDangDangNhap");
     }
 }
