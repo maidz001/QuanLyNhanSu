@@ -279,7 +279,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
                     <span class="search-count" id="count-nv"></span>
                 </div>
                 <table class="dt">
-                    <thead><tr><th>#</th><th>Mã NV</th><th>Họ tên</th><th>Email</th><th>SĐT</th><th>Phòng ban</th><th>Chức vụ</th><tr>
                                                                                                                                           <th>#</th><th>Mã NV</th><th>Họ tên</th><th>Email</th><th>SĐT</th>
                                                                                                                                           <th>Phòng ban</th><th>Chức vụ</th><th>STK</th><th>Ngân hàng</th>
                                                                                                                                           <th>Trạng thái</th><th>Thao tác</th>
