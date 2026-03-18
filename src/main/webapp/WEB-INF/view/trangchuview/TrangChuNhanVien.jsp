@@ -16,6 +16,32 @@
     <title>Trang Chủ Nhân Viên</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
     <style>
+
+
+
+
+    .dark { --primary: #58a6ff; --primary-light: #79c0ff; --bg: #0d1117; --white: #161b22; --border: #30363d; --text: #e6edf3; --muted: #8b949e; }
+    .dark body { background: #0d1117; color: #e6edf3; }
+    .dark .sidebar { background: #010409; }
+    .dark .topbar, .dark .box, .dark .stat-card { background: #161b22; border-color: #30363d; }
+    .dark .data-table th { background: #0d1117; }
+    .dark .data-table tr:hover td { background: #1c2128; }
+    .dark .form-group input, .dark .form-group select, .dark .form-group textarea { background: #0d1117; border-color: #30363d; color: #e6edf3; }
+    .dark .welcome-banner { background: linear-gradient(135deg, #010409 0%, #1a4a7a 100%); }
+    .dark .badge-green { background: #1a3a2a; color: #3fb950; }
+    .dark .badge-orange { background: #2d1f0a; color: #d29922; }
+    .dark .badge-red { background: #2d0f0f; color: #f85149; }
+    .dark .badge-blue { background: #0d2a4a; color: #58a6ff; }
+    .dark .cc-day { background: #1c2128; border-color: #30363d; }
+    .dark .notif-btn { background: #0d1117; border-color: #30363d; }
+    .dark .profile-row { border-bottom-color: #30363d; }
+    .dark .luong-row { border-bottom-color: #30363d; }
+    .dark .box-header { border-bottom-color: #30363d; }
+
+
+
+
+
     .chuong {
         margin: 24px 0;
         padding-bottom: 16px;
@@ -349,11 +375,7 @@
             <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>Thông báo
         </a>
     </nav>
-    <div class="sidebar-footer">
-        <a href="${pageContext.request.contextPath}/taikhoan?action=logout" class="logout-btn">
-            <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Đăng xuất
-        </a>
-    </div>
+
 </aside>
 
 <!-- MAIN -->
@@ -366,6 +388,26 @@
                 <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
                 <span class="notif-dot"></span>
             </div>
+            <button id="theme-btn" onclick="toggleTheme()" style="
+                width:34px;height:34px;border-radius:50%;
+                background:var(--bg);border:1px solid var(--border);
+                display:flex;align-items:center;justify-content:center;
+                cursor:pointer;font-size:16px;">
+                🌙
+            </button>
+             <div style="display:flex;justify-content:flex-end;margin-top:4px;">
+                                 <a href="${pageContext.request.contextPath}/taikhoan?action=logout"
+                                    style="display:flex;align-items:center;gap:6px;padding:5px 13px;border-radius:7px;background:#fdedec;border:1px solid #f5b7b1;color:#e74c3c;font-size:0.74rem;font-weight:500;text-decoration:none;transition:all 0.2s;margin-left:auto;"
+                                    onmouseover="this.style.background='#e74c3c';this.style.color='#fff'"
+                                    onmouseout="this.style.background='#fdedec';this.style.color='#e74c3c'">
+                                     <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.8;">
+                                         <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                                         <polyline points="16 17 21 12 16 7"/>
+                                         <line x1="21" y1="12" x2="9" y2="12"/>
+                                     </svg>
+                                     Đăng xuất
+                                 </a>
+                             </div>
         </div>
     </div>
 
@@ -379,19 +421,7 @@
                     <p>Chào mừng bạn quay trở lại hệ thống quản lý nhân sự.</p>
                 </div>
 
-                <div style="display:flex;justify-content:flex-end;margin-top:4px;">
-                    <a href="${pageContext.request.contextPath}/taikhoan?action=logout"
-                       style="display:flex;align-items:center;gap:6px;padding:5px 13px;border-radius:7px;background:#fdedec;border:1px solid #f5b7b1;color:#e74c3c;font-size:0.74rem;font-weight:500;text-decoration:none;transition:all 0.2s;margin-left:auto;"
-                       onmouseover="this.style.background='#e74c3c';this.style.color='#fff'"
-                       onmouseout="this.style.background='#fdedec';this.style.color='#e74c3c'">
-                        <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.8;">
-                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                            <polyline points="16 17 21 12 16 7"/>
-                            <line x1="21" y1="12" x2="9" y2="12"/>
-                        </svg>
-                        Đăng xuất
-                    </a>
-                </div>
+
             </div>
 
             <div class="stats-grid">
@@ -1737,6 +1767,19 @@ function poll() {
 }
 
 poll();
+</script>
+<script>
+function toggleTheme() {
+    const isDark = document.body.classList.toggle('dark');
+    document.getElementById('theme-btn').textContent = isDark ? '☀️' : '🌙';
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+}
+
+// Nhớ trạng thái khi reload
+if (localStorage.getItem('theme') === 'dark') {
+    document.body.classList.add('dark');
+    document.getElementById('theme-btn').textContent = '☀️';
+}
 </script>
 </body>
 </html>

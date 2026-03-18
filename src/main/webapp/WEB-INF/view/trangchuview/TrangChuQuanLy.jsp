@@ -16,6 +16,103 @@
     <title>Trang Chủ Quản Lý</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
     <style>
+
+:root {
+    --primary:#1e3a5f;--pl:#2d6a9f;--bg:#f0f2f5;--white:#fff;
+    --border:#dce3ec;--text:#1a1a2e;--muted:#7a8899;
+    --success:#27ae60;--warning:#f39c12;--danger:#e74c3c;--sw:260px
+}
+
+.dark{--primary:#58a6ff;--pl:#79c0ff;--bg:#0d1117;--white:#161b22;--border:#30363d;--text:#e6edf3;--muted:#8b949e;--success:#3fb950;--warning:#d29922;--danger:#f85149}
+.dark body{background:#0d1117;color:#e6edf3}
+.dark .sidebar{background:#010409}
+
+.dark .tb{
+    background:#161b22;
+    border-bottom:1px solid #30363d;
+}
+
+.dark .box,
+.dark .sc{
+    background:#161b22;
+    border-color:#30363d;
+}.dark .dt th{background:#0d1117;color:#8b949e}
+.dark .dt td{color:#e6edf3;border-bottom-color:#30363d}
+.dark .dt tr:hover td{background:#1c2128}
+.dark .fm input,.dark .fm select,.dark .fm textarea{background:#0d1117;border-color:#30363d;color:#e6edf3}
+.dark .search-bar{background:#161b22;border-color:#30363d}
+.dark .search-bar input,.dark .search-bar select{background:#0d1117;border-color:#30363d;color:#e6edf3}
+.dark .bh{border-bottom-color:#30363d}
+.dark .wb{background:linear-gradient(135deg,#010409 0%,#1a4a7a 100%)}
+.dark .bg{background:#1a3a2a;color:#3fb950}
+.dark .bo{background:#2d1f0a;color:#d29922}
+.dark .br{background:#2d0f0f;color:#f85149}
+.dark .bb2,.dark .bp{background:#0d2a4a;color:#58a6ff}
+.dark .tbt{color:#8b949e}
+.dark .tbt.active{color:#58a6ff;border-bottom-color:#58a6ff}
+.dark .tabb{border-bottom-color:#30363d}
+.dark .di2{border-bottom-color:#30363d}
+.dark .fa{border-top-color:#30363d}
+.dark .bo2{border-color:#30363d;color:#8b949e}
+
+
+
+
+    /* Welcome banner icon */
+    .bi { color: var(--text); }
+
+    /* Search bar */
+    .search-bar { background: var(--white); }
+    .search-bar input, .search-bar select { background: var(--white); color: var(--text); border-color: var(--border); }
+
+    /* Stat card icon */
+    .si { background: rgba(30,58,95,.08); }
+    .dark .si { background: rgba(88,166,255,.1); }
+    .dark .si svg { stroke: var(--primary); }
+
+    /* Table no results */
+    .no-results { color: var(--muted); }
+
+    /* Nav badge count */
+    .search-count { background: rgba(30,58,95,.08); color: var(--muted); }
+    .dark .search-count { background: rgba(88,166,255,.1); }
+
+    /* Topbar */
+
+    .dark .nb { background: var(--bg); border-color: var(--border); }
+    .dark .nb svg { stroke: var(--muted); }
+    .dark .nd { background: var(--danger); }
+    .dark .pt { color: var(--primary); }
+    .dark .di { color: var(--muted); }
+
+    /* Sidebar */
+    .dark .sh { border-bottom-color: rgba(255,255,255,.1); }
+    .dark .su { border-bottom-color: rgba(255,255,255,.1); }
+    .dark .sf { border-top-color: rgba(255,255,255,.1); }
+
+    /* Buttons */
+    .dark .bp2 { background: var(--primary); }
+    .dark .bs { background: var(--success); }
+    .dark .bd { background: var(--danger); }
+    .dark .bw { background: var(--warning); }
+
+    /* Tab */
+    .dark .tc { color: var(--text); }
+
+    /* Empty state */
+    .dark .es { color: var(--muted); }
+    .dark .es svg { stroke: var(--border); }
+
+    /* Dept item */
+    .dark .di2 .dn { color: var(--text); }
+
+    /* Modal QR */
+    .dark #modal-qr > div { background: var(--white); border-color: var(--border); }
+
+
+
+
+
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--primary:#1e3a5f;--pl:#2d6a9f;--bg:#f0f2f5;--white:#fff;--border:#dce3ec;--text:#1a1a2e;--muted:#7a8899;--success:#27ae60;--warning:#f39c12;--danger:#e74c3c;--sw:260px}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex}
@@ -190,6 +287,15 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
                 <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
                 <span class="nd"></span>
             </div>
+            <span class="di" id="currentDate"></span>
+                <button id="theme-btn" onclick="toggleTheme()" style="
+                    width:32px;height:32px;border-radius:50%;
+                    background:var(--bg);border:1px solid var(--border);
+                    display:flex;align-items:center;justify-content:center;
+                    cursor:pointer;font-size:15px;line-height:1;">
+                    🌙
+                </button>
+                <div class="nb">...</div>
         </div>
     </div>
 
@@ -877,18 +983,18 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
        </div>
 
        <!-- MODAL QR THANH TOÁN -->
-       <div id="modal-qr" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;align-items:center;justify-content:center;">
-           <div style="background:#fff;border-radius:14px;padding:28px;max-width:420px;width:90%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.2)">
-               <h3 style="font-size:.95rem;font-weight:700;color:#1e3a5f;margin-bottom:4px" id="qr-ten-nv"></h3>
-               <p style="font-size:.78rem;color:#7a8899;margin-bottom:16px" id="qr-info"></p>
-               <img id="qr-img" src="" alt="VietQR" style="width:220px;height:220px;border-radius:10px;border:1px solid #dce3ec;margin-bottom:16px"/>
-               <p style="font-size:.72rem;color:#7a8899;margin-bottom:18px">Quét mã QR để chuyển khoản, sau đó xác nhận bên dưới</p>
-               <div style="display:flex;gap:10px;justify-content:center">
-                   <button onclick="dongQR()" style="padding:8px 20px;border-radius:8px;border:1.5px solid #dce3ec;background:transparent;color:#7a8899;font-size:.8rem;cursor:pointer">Đóng</button>
-                   <button onclick="xacNhanQR()" style="padding:8px 20px;border-radius:8px;border:none;background:#27ae60;color:#fff;font-size:.8rem;font-weight:600;cursor:pointer">✓ Xác nhận đã thanh toán</button>
-               </div>
-           </div>
-       </div>
+      <div id="modal-qr" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;align-items:center;justify-content:center;">
+          <div style="background:var(--white);border-radius:14px;padding:28px;max-width:420px;width:90%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.2);border:1px solid var(--border)">
+              <h3 style="font-size:.95rem;font-weight:700;color:var(--primary);margin-bottom:4px" id="qr-ten-nv"></h3>
+              <p style="font-size:.78rem;color:var(--muted);margin-bottom:16px" id="qr-info"></p>
+              <img id="qr-img" src="" alt="VietQR" style="width:220px;height:220px;border-radius:10px;border:1px solid var(--border);margin-bottom:16px"/>
+              <p style="font-size:.72rem;color:var(--muted);margin-bottom:18px">Quét mã QR để chuyển khoản, sau đó xác nhận bên dưới</p>
+              <div style="display:flex;gap:10px;justify-content:center">
+                  <button onclick="dongQR()" style="padding:8px 20px;border-radius:8px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-size:.8rem;cursor:pointer">Đóng</button>
+                  <button onclick="xacNhanQR()" style="padding:8px 20px;border-radius:8px;border:none;background:var(--success);color:#fff;font-size:.8rem;font-weight:600;cursor:pointer">✓ Xác nhận đã thanh toán</button>
+              </div>
+          </div>
+      </div>
 
         <!-- ═══ ĐÁNH GIÁ ═══ -->
         <div class="panel" id="panel-danhgia">
@@ -1272,172 +1378,125 @@ const matchTt = !tt || (row.cells[9] && row.cells[9].textContent.includes(tt));
 </script>
 <script src="https://unpkg.com/chart.js@4.4.0/dist/chart.umd.js"></script>
 <script>
-// ══════════════════════════════════════════════════════════
-// BIỂU ĐỒ GIỚI TÍNH (Doughnut Chart)
-// ══════════════════════════════════════════════════════════
-const canvasGioiTinh = document.getElementById('chartGioiTinh');
-if (canvasGioiTinh && canvasGioiTinh.getContext) {
-    const ctxGT = canvasGioiTinh.getContext('2d');
-
-    new Chart(ctxGT, {
-        type: 'doughnut',
-        data: {
-            labels: ['Nam', 'Nữ', 'Khác'],
-            datasets: [{
-                data: [
-                    ${not empty thongKeGioiTinh.nam ? thongKeGioiTinh.nam : 0},
-                    ${not empty thongKeGioiTinh.nu ? thongKeGioiTinh.nu : 0},
-                    ${not empty thongKeGioiTinh.khac ? thongKeGioiTinh.khac : 0}
-                ],
-                backgroundColor: [
-                    '#3498db',  // Xanh dương - Nam
-                    '#e74c3c',  // Đỏ - Nữ
-                    '#95a5a6'   // Xám - Khác
-                ],
-                borderWidth: 3,
-                borderColor: '#fff',
-                hoverBorderColor: '#fff',
-                hoverBorderWidth: 5,
-                hoverOffset: 8
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: {
-                        padding: 20,
-                        font: {
-                            size: 13,
-                            family: 'Inter',
-                            weight: '500'
-                        },
-                        color: '#1a1a2e',
-                        usePointStyle: true,
-                        pointStyle: 'circle'
-                    }
-                },
-                tooltip: {
-                    backgroundColor: 'rgba(30, 58, 95, 0.95)',
-                    padding: 14,
-                    titleFont: { size: 14, weight: '600' },
-                    bodyFont: { size: 13 },
-                    borderColor: '#dce3ec',
-                    borderWidth: 1,
-                    displayColors: true,
-                    callbacks: {
-                        label: function(context) {
-                            const label = context.label || '';
-                            const value = context.parsed || 0;
-                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                            const percent = total > 0 ? ((value * 100) / total).toFixed(1) : 0;
-                            return ' ' + label + ': ' + value + ' nhân viên (' + percent + '%)';
-                        }
-                    }
-                }
-            }
-        }
-    });
+// Restore theme NGAY LẬP TỨC trước khi render
+if (localStorage.getItem('theme') === 'dark') {
+    document.documentElement.classList.add('dark');
 }
 
+function toggleTheme() {
+    const isDark = document.documentElement.classList.toggle('dark');
+    document.getElementById('theme-btn').textContent = isDark ? '☀️' : '🌙';
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    buildCharts();
+}
 
-// ══════════════════════════════════════════════════════════
-// BIỂU ĐỒ ĐỘ TUỔI (Bar Chart)
-// ══════════════════════════════════════════════════════════
-const canvasDoTuoi = document.getElementById('chartDoTuoi');
-if (canvasDoTuoi && canvasDoTuoi.getContext) {
-    const ctxDT = canvasDoTuoi.getContext('2d');
+function getChartColors() {
+    const dark = document.documentElement.classList.contains('dark');
+    return {
+        text:    dark ? '#e6edf3' : '#1a1a2e',
+        muted:   dark ? '#8b949e' : '#7a8899',
+        grid:    dark ? '#30363d' : '#f0f2f5',
+        bar:     dark ? '#58a6ff' : '#1e3a5f',
+        tooltip: dark ? 'rgba(22,27,34,0.95)' : 'rgba(30,58,95,0.95)'
+    };
+}
 
-    new Chart(ctxDT, {
-        type: 'bar',
-        data: {
-            labels: ['18-25 tuổi', '26-35 tuổi', '36-45 tuổi', '46-55 tuổi', '56+ tuổi'],
-            datasets: [{
-                label: 'Số nhân viên',
-                data: [
-                    ${not empty thongKeDoTuoi['18-25'] ? thongKeDoTuoi['18-25'] : 0},
-                    ${not empty thongKeDoTuoi['26-35'] ? thongKeDoTuoi['26-35'] : 0},
-                    ${not empty thongKeDoTuoi['36-45'] ? thongKeDoTuoi['36-45'] : 0},
-                    ${not empty thongKeDoTuoi['46-55'] ? thongKeDoTuoi['46-55'] : 0},
-                    ${not empty thongKeDoTuoi['56+'] ? thongKeDoTuoi['56+'] : 0}
-                ],
-                backgroundColor: '#1e3a5f',
-                borderRadius: 8,
-                borderSkipped: false,
-                barThickness: 55
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        stepSize: 1,
-                        font: {
-                            size: 12,
-                            family: 'Inter'
-                        },
-                        color: '#7a8899',
-                        callback: function(value) {
-                            return Number.isInteger(value) ? value : '';
-                        }
-                    },
-                    grid: {
-                        color: '#f0f2f5',
-                        drawBorder: false
-                    },
-                    border: {
-                        display: false
-                    }
-                },
-                x: {
-                    ticks: {
-                        font: {
-                            size: 12,
-                            family: 'Inter',
-                            weight: '500'
-                        },
-                        color: '#1a1a2e'
-                    },
-                    grid: {
-                        display: false
-                    },
-                    border: {
-                        display: false
-                    }
-                }
+let chartGT = null, chartDT = null;
+
+function buildCharts() {
+    const c = getChartColors();
+    if (chartGT) chartGT.destroy();
+    if (chartDT) chartDT.destroy();
+
+    const canvasGT = document.getElementById('chartGioiTinh');
+    if (canvasGT) {
+        chartGT = new Chart(canvasGT.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Nam','Nữ','Khác'],
+                datasets: [{
+                    data: [
+                        ${not empty thongKeGioiTinh.nam  ? thongKeGioiTinh.nam  : 0},
+                        ${not empty thongKeGioiTinh.nu   ? thongKeGioiTinh.nu   : 0},
+                        ${not empty thongKeGioiTinh.khac ? thongKeGioiTinh.khac : 0}
+                    ],
+                    backgroundColor: ['#3498db','#e74c3c','#95a5a6'],
+                    borderWidth: 3,
+                    borderColor: document.documentElement.classList.contains('dark') ? '#161b22' : '#fff',
+                    hoverOffset: 8
+                }]
             },
-            plugins: {
-                legend: {
-                    display: false
-                },
-                tooltip: {
-                    backgroundColor: 'rgba(30, 58, 95, 0.95)',
-                    padding: 14,
-                    titleFont: { size: 14, weight: '600' },
-                    bodyFont: { size: 13 },
-                    borderColor: '#dce3ec',
-                    borderWidth: 1,
-                    displayColors: false,
-                    callbacks: {
-                        title: function(context) {
-                            return context[0].label;
-                        },
-                        label: function(context) {
-                            return ' Số lượng: ' + context.parsed.y + ' người';
+            options: {
+                responsive: true, maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { padding:20, color:c.text, font:{size:13,family:'Inter',weight:'500'}, usePointStyle:true, pointStyle:'circle' }
+                    },
+                    tooltip: {
+                        backgroundColor: c.tooltip, padding:14,
+                        titleFont:{size:14,weight:'600'}, bodyFont:{size:13},
+                        callbacks: {
+                            label: function(ctx) {
+                                const total = ctx.dataset.data.reduce((a,b)=>a+b,0);
+                                const pct = total>0 ? ((ctx.parsed*100)/total).toFixed(1) : 0;
+                                return ' '+ctx.label+': '+ctx.parsed+' NV ('+pct+'%)';
+                            }
                         }
                     }
                 }
             }
-        }
-    });
+        });
+    }
+
+    const canvasDT = document.getElementById('chartDoTuoi');
+    if (canvasDT) {
+        chartDT = new Chart(canvasDT.getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: ['18-25','26-35','36-45','46-55','56+'],
+                datasets: [{
+                    label: 'Số nhân viên',
+                    data: [
+                        ${not empty thongKeDoTuoi['18-25'] ? thongKeDoTuoi['18-25'] : 0},
+                        ${not empty thongKeDoTuoi['26-35'] ? thongKeDoTuoi['26-35'] : 0},
+                        ${not empty thongKeDoTuoi['36-45'] ? thongKeDoTuoi['36-45'] : 0},
+                        ${not empty thongKeDoTuoi['46-55'] ? thongKeDoTuoi['46-55'] : 0},
+                        ${not empty thongKeDoTuoi['56+']   ? thongKeDoTuoi['56+']   : 0}
+                    ],
+                    backgroundColor: c.bar, borderRadius:8, borderSkipped:false, barThickness:55
+                }]
+            },
+            options: {
+                responsive:true, maintainAspectRatio:false,
+                scales: {
+                    y: {
+                        beginAtZero:true,
+                        ticks:{ stepSize:1, color:c.muted, font:{size:12,family:'Inter'}, callback:v=>Number.isInteger(v)?v:'' },
+                        grid:{ color:c.grid, drawBorder:false }, border:{display:false}
+                    },
+                    x: {
+                        ticks:{ color:c.text, font:{size:12,family:'Inter',weight:'500'} },
+                        grid:{display:false}, border:{display:false}
+                    }
+                },
+                plugins: {
+                    legend:{display:false},
+                    tooltip:{
+                        backgroundColor:c.tooltip, padding:14, displayColors:false,
+                        callbacks:{ label:ctx=>' Số lượng: '+ctx.parsed.y+' người' }
+                    }
+                }
+            }
+        });
+    }
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('theme-btn');
+    if (btn && localStorage.getItem('theme') === 'dark') btn.textContent = '☀️';
+    buildCharts();
+});
 </script>
-
-
 </body>
 </html>
