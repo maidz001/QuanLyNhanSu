@@ -7,12 +7,15 @@ import javax.servlet.http.*;
 import model.BangLuong;
 import model.NhanVien;
 import model.TaiKhoan;
+import model.ThongBao;
 import service.BangLuongService;
 import service.NhanVienService;
+import service.ThongBaoService;
 import until.XuatExcel;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +24,7 @@ import java.util.List;
 public class BangLuongServlet extends HttpServlet {
 
     private XuatExcel xuatExcel = new XuatExcel();
+    private ThongBaoService thongBaoService=new ThongBaoService();
     private NhanVienService nhanVienService = new NhanVienService();
     private BangLuongService bangLuongService = new BangLuongService();
     private TaiKhoanServlet taiKhoanServlet = new TaiKhoanServlet();
@@ -166,7 +170,10 @@ public class BangLuongServlet extends HttpServlet {
         int thang = LocalDate.now().getMonthValue();
         int nam   = LocalDate.now().getYear();
         bangLuongService.tinhLuongToanBoThang(thang, nam, getSS(request, response).getNhanVienId());
-        request.getSession().setAttribute("message", "Đã tính lương tháng " + thang + "/" + nam);
+        request.setAttribute("message", "Đã tính lương tháng " + thang + "/" + nam);
+        LocalDate now=LocalDate.now();
+        thongBaoService.thongBaoTinhLuongChoNhanVien(getSS(request,response).getNhanVienId());
+
         taiKhoanServlet.goiDangNhapChoQuanLy(request, response, getSS(request, response));
     }
 
@@ -175,7 +182,10 @@ public class BangLuongServlet extends HttpServlet {
 
         int id = Integer.parseInt(request.getParameter("id"));
         boolean kq = bangLuongService.duyetBangLuong(id, getSS(request, response).getNhanVienId());
-        request.getSession().setAttribute("message",
+        if(kq)
+            thongBaoService.them(new ThongBao(0,getSS(request,response).getNhanVienId(),getSS(request,response).getNhanVienId(),"Sửa thông tin","Đổi thông tin cá nhân thành công","sửa thông tin",0, Date.valueOf("00:00:00")));
+
+        request.setAttribute("message",
                 kq ? "Đã duyệt bảng lương thành công!" : "Duyệt thất bại!");
         taiKhoanServlet.goiDangNhapChoQuanLy(request,response,getSS(request,response));
     }
@@ -185,9 +195,12 @@ public class BangLuongServlet extends HttpServlet {
 
         int id = Integer.parseInt(request.getParameter("id"));
         boolean kq = bangLuongService.thanhToanTienMat(id, getSS(request, response).getNhanVienId());
-        request.getSession().setAttribute("message",
+        request.setAttribute("message",
                 kq ? "Đã thanh toán tiền mặt thành công!" : "Thanh toán thất bại!");
+        LocalDate now=LocalDate.now();
+        thongBaoService.them(new ThongBao(0,getSS(request,response).getNhanVienId(),bangLuongService.layTheoId(id).getNhanVienId(),"Thanh toán lương","Đã thanh toán bảng lương tháng "+bangLuongService.layTheoId(id).getThang()+" cho bạn bằng phương thức thanh toán tiền mặt, cảm ơn sự đóng góp của bạn cho công ty trong tháng vừa qua.","Thanh toán lương",0, Date.valueOf(now)));
         taiKhoanServlet.goiDangNhapChoQuanLy(request,response,getSS(request,response));
+
     }
 
     private void thanhToanChuyenKhoan(HttpServletRequest request, HttpServletResponse response)
@@ -195,8 +208,10 @@ public class BangLuongServlet extends HttpServlet {
 
         int id = Integer.parseInt(request.getParameter("id"));
         boolean kq = bangLuongService.thanhToanChuyenKhoan(id, getSS(request, response).getNhanVienId());
-        request.getSession().setAttribute("message",
+        request.setAttribute("message",
                 kq ? "Đã xác nhận thanh toán chuyển khoản!" : "Xác nhận thất bại!");
+        LocalDate now=LocalDate.now();
+        thongBaoService.them(new ThongBao(0,getSS(request,response).getNhanVienId(),bangLuongService.layTheoId(id).getNhanVienId(),"Thanh toán lương","Đã thanh toán bảng lương tháng "+bangLuongService.layTheoId(id).getThang()+" cho bạn bằng phương thức thanh toán chuyển khoản online, cảm ơn sự đóng góp của bạn cho công ty trong tháng vừa qua.","Thanh toán lương",0, Date.valueOf(now)));
         taiKhoanServlet.goiDangNhapChoQuanLy(request,response,getSS(request,response));
     }
 
@@ -204,7 +219,7 @@ public class BangLuongServlet extends HttpServlet {
             throws IOException, ServletException {
 
         bangLuongService.thanhToanTatCaTienMat(getSS(request, response).getNhanVienId());
-        request.getSession().setAttribute("message",
+        request.setAttribute("message",
                 "Đã thanh toán tiền mặt tất cả bảng lương chờ duyệt!");
         taiKhoanServlet.goiDangNhapChoQuanLy(request,response,getSS(request,response));
     }

@@ -163,7 +163,6 @@ public class ThongBaoDAO {
         tb.setLoai(rs.getString("loai"));
         tb.setDaDoc(rs.getInt("da_doc"));
         tb.setNgayTao(rs.getTimestamp("ngay_tao"));
-        try { tb.setTenNguoiGui(rs.getString("ten_nguoi_gui")); } catch (SQLException ignored) {}
         return tb;
     }
 }

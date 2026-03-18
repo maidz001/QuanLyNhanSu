@@ -2,10 +2,8 @@ package controller;
 
 import model.NghiPhep;
 import model.TaiKhoan;
-import service.ChamCongService;
-import service.NghiPhepService;
-import service.NhanVienService;
-import service.TaiKhoanService;
+import model.ThongBao;
+import service.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -20,6 +18,7 @@ import java.util.List;
 public class NghiPhepServlet extends HttpServlet {
 
     private NghiPhepService nghiPhepService = new NghiPhepService();
+    private ThongBaoService thongBaoService=new ThongBaoService();
 private TaiKhoanServlet taiKhoanServlet= new TaiKhoanServlet();
 private ChamCongService chamCongService=new ChamCongService();
 NhanVienService nhanVienService=new NhanVienService();
@@ -94,6 +93,8 @@ TaiKhoanService taiKhoanService=new TaiKhoanService();
         }
         else{
             request.setAttribute("message","Nộp đơn thành công");
+            LocalDate now=LocalDate.now();
+            thongBaoService.them(new ThongBao(0,getSS(request,response).getNhanVienId(),np.getNhanVienId(),"Nộp đơn xin nghỉ","Nộp đơn xin nghỉ phép thành công, theo dõi trang thái trong mục đơn nghỉ phép nhé.","Xin nghỉ phép",0, Date.valueOf(now)));
             taiKhoanServlet.goiDangNhapChoNV(request,response,tk);
         }
 
@@ -162,17 +163,17 @@ TaiKhoanService taiKhoanService=new TaiKhoanService();
 
         NghiPhep np = nghiPhepService.layTheoId(id);
         if (np == null) {
-            request.getSession().setAttribute("errorMessage", "Không tìm thấy đơn nghỉ phép!");
-            response.sendRedirect("nghiphep");
+            request.setAttribute("errorMessage", "Không tìm thấy đơn nghỉ phép!");
+            taiKhoanServlet.goiDangNhapChoQuanLy(request,response,getSS(request,response));
             return;
         }
 
         np.setTrangThai("Da duyet");
-        np.setNguoiDuyet(tk.getNhanVienId()); // set người duyệt là NV đang đăng nhập
+        np.setNguoiDuyet(tk.getNhanVienId());
 
         nghiPhepService.capNhat(np);
 
-        // Tạo bản ghi chấm công vắng có phép
+
         LocalDate ngayBatDau  = LocalDate.parse(np.getNgayBatDau().toString());
         LocalDate ngayKetThuc = LocalDate.parse(np.getNgayKetThuc().toString());
 
@@ -183,6 +184,9 @@ TaiKhoanService taiKhoanService=new TaiKhoanService();
         }
 
         request.setAttribute("message", "Đã duyệt đơn nghỉ phép thành công!");
+        LocalDate now=LocalDate.now();
+        thongBaoService.them(new ThongBao(0,getSS(request,response).getNhanVienId(),np.getNhanVienId(),"Duyệt đơn nghỉ phép","Đơnnghir phép của bạn đã được duyệt, chúc bạn có 1 kì nghỉ vui vẻ.","Duyệt nghỉ phép",0, Date.valueOf(now)));
+
         taiKhoanServlet.goiDangNhapChoQuanLy(request,response,getSS(request,response));
     }
 
@@ -206,6 +210,9 @@ TaiKhoanService taiKhoanService=new TaiKhoanService();
         nghiPhepService.capNhat(np);
 
         request.setAttribute("message", "Đã từ chối đơn nghỉ phép!");
+        LocalDate now=LocalDate.now();
+        thongBaoService.them(new ThongBao(0,getSS(request,response).getNhanVienId(),np.getNhanVienId(),"Từ chối đơn xin nghỉ phép","Đơn xin nghỉ phép của bạn bị từ chối, liên hệ phòng quản lý để biết thêm chi tiết","Từ chối nghỉ phép",0, Date.valueOf(now)));
+
         taiKhoanServlet.goiDangNhapChoQuanLy(request,response,getSS(request,response));
     }
     private TaiKhoan getSS(HttpServletRequest request, HttpServletResponse response) {

@@ -8,12 +8,15 @@ import javax.servlet.http.*;
 import model.HopDong;
 import model.NhanVien;
 import model.TaiKhoan;
+import model.ThongBao;
 import service.*;
 import until.XuatExcel;
 
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.apache.poi.ss.util.DateParser.parseDate;
@@ -26,6 +29,7 @@ import static org.apache.poi.ss.util.DateParser.parseDate;
 )
 public class NhanVienServlet extends HttpServlet {
 private XuatExcel xuatExcel=new XuatExcel();
+private ThongBaoService thongBaoService=new ThongBaoService();
     private NhanVienService nhanVienService = new NhanVienService();
     private TaiKhoanServlet taiKhoanServlet = new TaiKhoanServlet();
 private HopDongService hopDongService=new HopDongService();
@@ -161,9 +165,10 @@ private HopDongService hopDongService=new HopDongService();
         String ngayVaoLamStr = request.getParameter("ngayVaoLam");
         if (ngayVaoLamStr != null && !ngayVaoLamStr.trim().isEmpty())
             nv.setNgayVaoLam(java.sql.Date.valueOf(ngayVaoLamStr.trim()));
+        LocalDate now=LocalDate.now();
 
-        nhanVienService.them(nv, getSS(request, response).getNhanVienId());
-
+        if(nhanVienService.them(nv, getSS(request, response).getNhanVienId()))
+        thongBaoService.them(new ThongBao(0,getSS(request,response).getNhanVienId(),getSS(request,response).getNhanVienId(),"Thêm nhân viên","Thêm thành công nhân viên"+nv.getHoTen()+" vào công ty","Thêm nhân viên",0, Date.valueOf(now)));
         NhanVien nvMoi = nhanVienService.layTheoMa(nv.getMaNhanVien());
         if (nvMoi != null) {
             HopDong hd = new HopDong();
@@ -252,8 +257,11 @@ private HopDongService hopDongService=new HopDongService();
         String ngayVaoLamStr = request.getParameter("ngayVaoLam");
         if (ngayVaoLamStr != null && !ngayVaoLamStr.trim().isEmpty())
             cu.setNgayVaoLam(java.sql.Date.valueOf(ngayVaoLamStr.trim()));
+        LocalDate now=LocalDate.now();
 
         nhanVienService.sua(cu, tk.getNhanVienId());
+        thongBaoService.them(new ThongBao(0,getSS(request,response).getNhanVienId(),nvId,"Sửa thông tin cá nhân","Thông tin cá nhân của bạn đã được quản lý cập nhật","Sửa thông tin",0, Date.valueOf(now)));
+
         taiKhoanServlet.goiDangNhapChoQuanLy(request, response, tk);
     }
 
@@ -381,8 +389,10 @@ private HopDongService hopDongService=new HopDongService();
             nv.setNganHang(nganHang.trim());
 
         nhanVienService.sua(nv, tk.getNhanVienId());
-
+        LocalDate now=LocalDate.now();
         request.setAttribute("messageCapNhat", "Cập nhật thông tin thành công!");
+        thongBaoService.them(new ThongBao(0,getSS(request,response).getNhanVienId(),getSS(request,response).getNhanVienId(),"Sửa thông tin","Đổi thông tin cá nhân thành công","sửa thông tin",0, Date.valueOf(now)));
+
         taiKhoanServlet.goiDangNhapChoNV(request, response, tk);
     }
 

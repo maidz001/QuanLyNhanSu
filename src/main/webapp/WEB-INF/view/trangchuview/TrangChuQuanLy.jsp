@@ -1101,22 +1101,88 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
                     <span class="search-count" id="count-tb"></span>
                 </div>
                 <table class="dt">
-                    <thead><tr><th>Tiêu đề</th><th>Nội dung</th><th>Người nhận</th><th>Loại</th><th>Ngày</th><th>Trạng thái</th></tr></thead>
+                    <thead>
+                        <tr>
+                            <th>Tiêu đề</th>
+                            <th>Nội dung</th>
+                            <th>Người nhận</th>
+                            <th>Người gửi</th>
+                            <th>Loại</th>
+                            <th>Ngày</th>
+                            <th>Trạng thái</th>
+                        </tr>
+                    </thead>
                     <tbody id="t-tb">
                         <c:choose>
                             <c:when test="${not empty listThongBaoAll}">
                                 <c:forEach var="tb" items="${listThongBaoAll}">
                                     <tr>
+                                        <!-- Tiêu đề -->
                                         <td><strong>${tb.tieuDe}</strong></td>
-                                        <td>${tb.noiDung}</td>
-                                        <td>${not empty tb.tenNguoiNhan ? tb.tenNguoiNhan : '--'}</td>
-                                        <td><span class="badge bb2">${not empty tb.loai ? tb.loai : '--'}</span></td>
-                                        <td><c:choose><c:when test="${not empty tb.ngayTao}"><fmt:formatDate value="${tb.ngayTao}" pattern="dd/MM/yyyy"/></c:when><c:otherwise>--</c:otherwise></c:choose></td>
-                                        <td><span class="badge ${tb.daDoc == 1 ? 'bg' : 'bo'}">${tb.daDoc == 1 ? 'Đã đọc' : 'Chưa đọc'}</span></td>
+
+                                        <!-- Nội dung -->
+                                        <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                                            ${tb.noiDung}
+                                        </td>
+
+                                        <!-- Người nhận - TÌM TRONG listNhanVien -->
+                                        <td>
+                                            <c:set var="tenNguoiNhan" value="--"/>
+                                            <c:forEach var="nv" items="${listNhanVien}">
+                                                <c:if test="${tb.nguoiNhan == nv.nhanVienId}">
+                                                    <c:set var="tenNguoiNhan" value="${nv.hoTen}"/>
+                                                </c:if>
+                                            </c:forEach>
+                                            ${tenNguoiNhan}
+                                        </td>
+
+                                        <!-- Người gửi - TÌM TRONG listNhanVien -->
+                                        <td>
+                                            <c:set var="tenNguoiGui" value="Hệ thống"/>
+                                            <c:forEach var="nv" items="${listNhanVien}">
+                                                <c:if test="${tb.nguoiGui!= nv.nhanVienId}">
+                                                    <c:set var="tenNguoiGui" value="${nv.hoTen}"/>
+                                                </c:if>
+
+                                            </c:forEach>
+                                            <span style="font-size:.75rem;color:var(--muted);">
+                                                ${tenNguoiGui}
+                                            </span>
+                                        </td>
+
+                                        <!-- Loại -->
+                                        <td>
+                                            <span class="badge bb2">
+                                                ${not empty tb.loai ? tb.loai : 'Hệ thống'}
+                                            </span>
+                                        </td>
+
+                                        <!-- Ngày -->
+                                        <td>
+                                            <c:choose>
+                                                <c:when test="${not empty tb.ngayTao}">
+                                                    <fmt:formatDate value="${tb.ngayTao}" pattern="dd/MM/yyyy HH:mm"/>
+                                                </c:when>
+                                                <c:otherwise>--</c:otherwise>
+                                            </c:choose>
+                                        </td>
+
+                                        <!-- Trạng thái -->
+                                        <td>
+                                            <span class="badge ${tb.daDoc == 1 ? 'bg' : 'bo'}">
+                                                ${tb.daDoc == 1 ? 'Đã đọc' : 'Chưa đọc'}
+                                            </span>
+                                        </td>
                                     </tr>
                                 </c:forEach>
                             </c:when>
-                            <c:otherwise><tr><td colspan="6"><div class="es">Chưa có thông báo</div></td></tr></c:otherwise>
+                            <c:otherwise>
+                                <tr>
+                                    <td colspan="7">
+                                        <div class="es">Chưa có thông báo</div>
+                                    </td>
+                                </tr>
+                            </c:otherwise>
                         </c:choose>
                     </tbody>
                 </table>

@@ -2,13 +2,18 @@ package controller;
 
 import model.PhongBan;
 import model.TaiKhoan;
+import model.ThongBao;
+import org.apache.poi.ss.formula.functions.T;
 import service.NhanVienService;
 import service.PhongBanService;
+import service.ThongBaoService;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @WebServlet("/phongban")
@@ -16,6 +21,7 @@ public class PhongBanServlet extends HttpServlet {
 
     private PhongBanService phongBanService = new PhongBanService();
     private TaiKhoanServlet taiKhoanServlet=new TaiKhoanServlet();
+    private ThongBaoService thongBaoService=new ThongBaoService();
     NhanVienService nhanVienService=new NhanVienService();
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -86,6 +92,9 @@ public class PhongBanServlet extends HttpServlet {
         pb.setTrangThai(Integer.parseInt(request.getParameter("trangThai")));
 
         phongBanService.them(pb);
+        LocalDate now=LocalDate.now();
+        thongBaoService.them(new ThongBao(0,getSS(request,response).getNhanVienId(),getSS(request,response).getNhanVienId(),"Thêm phòng ban","Bạn vừa thêm phòng ban mới có tên: "+pb.getTenPhongBan(),"Thêm phòng ban",0, Date.valueOf(now)));
+
         taiKhoanServlet.goiDangNhapChoQuanLy(request,response,getSS(request,response));
     }
 
@@ -112,8 +121,10 @@ public class PhongBanServlet extends HttpServlet {
             pb.setTruongPhongId(pb.getTruongPhongId());
 
         phongBanService.sua(pb);
+        LocalDate now=LocalDate.now();
+        thongBaoService.them(new ThongBao(0,getSS(request,response).getNhanVienId(),getSS(request,response).getNhanVienId(),"Sửa phòng ban","Sửa phòng ban: "+pb.getTenPhongBan()+" thành công","Sửa phòng ban",0, Date.valueOf(now)));
 
- taiKhoanServlet.goiDangNhapChoQuanLy(request,response,getSS(request,response));
+        taiKhoanServlet.goiDangNhapChoQuanLy(request,response,getSS(request,response));
     }
 
     // ================= XÓA =================

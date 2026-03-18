@@ -11,10 +11,19 @@ public class ThongBao {
     private String loai;
     private int daDoc;
     private Date ngayTao;
-    private String tenNguoiGui;
-    private String tenNguoiNhan;
 
     public ThongBao() {}
+
+    public ThongBao(int thongBaoId, Integer nguoiGui, Integer nguoiNhan, String tieuDe, String noiDung, String loai, int daDoc, Date ngayTao) {
+        this.thongBaoId = thongBaoId;
+        this.nguoiGui = nguoiGui;
+        this.nguoiNhan = nguoiNhan;
+        this.tieuDe = tieuDe;
+        this.noiDung = noiDung;
+        this.loai = loai;
+        this.daDoc = daDoc;
+        this.ngayTao = ngayTao;
+    }
 
     public int getThongBaoId() { return thongBaoId; }
     public void setThongBaoId(int thongBaoId) { this.thongBaoId = thongBaoId; }
@@ -32,8 +41,4 @@ public class ThongBao {
     public void setDaDoc(int daDoc) { this.daDoc = daDoc; }
     public Date getNgayTao() { return ngayTao; }
     public void setNgayTao(Date ngayTao) { this.ngayTao = ngayTao; }
-    public String getTenNguoiGui() { return tenNguoiGui; }
-    public void setTenNguoiGui(String tenNguoiGui) { this.tenNguoiGui = tenNguoiGui; }
-    public String getTenNguoiNhan() { return tenNguoiNhan; }
-    public void setTenNguoiNhan(String tenNguoiNhan) { this.tenNguoiNhan = tenNguoiNhan; }
 }

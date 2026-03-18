@@ -203,10 +203,10 @@ public class BangLuongService {
                 bangLuongDAO.capNhatTrangThai(bl.getBangLuongId(), "Da thanh toan tien mat");
                 thongBaoDAO.guiThongBaoChoNhanVien(
                         nguoiThucHien, bl.getNhanVienId(),
-                        "Luong da thanh toan",
+                        "Thanh toán lương",
                         "Luong thang " + bl.getThang() + "/" + bl.getNam()
-                                + ": " + bl.getLuongThucLanh() + " VND (Tien mat)",
-                        "bang_luong"
+                                + ": " + bl.getLuongThucLanh() + " VND (Tien mat) , cảm ơn sự đóng góp của bạn trong tháng vừa qua.",
+                        "Thanh toán lương"
                 );
             }
         }

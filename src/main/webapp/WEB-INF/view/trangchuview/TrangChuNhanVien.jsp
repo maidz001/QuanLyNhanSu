@@ -21,7 +21,7 @@
 
 
     .dark { --primary: #58a6ff; --primary-light: #79c0ff; --bg: #0d1117; --white: #161b22; --border: #30363d; --text: #e6edf3; --muted: #8b949e; }
-    .dark body { background: #0d1117; color: #e6edf3; }
+    .dark body,.qd { background: #0d1117; color: #e6edf3; }
     .dark .sidebar { background: #010409; }
     .dark .topbar, .dark .box, .dark .stat-card { background: #161b22; border-color: #30363d; }
     .dark .data-table th { background: #0d1117; }
@@ -513,7 +513,7 @@
         </div>
 
         <!-- Mục lục -->
-        <div style="background:#f8fafc;padding:14px;margin:16px 0;border-left:4px solid var(--primary);border-radius:6px;">
+        <div class="qd" style="background:#f8fafc;padding:14px;margin:16px 0;border-left:4px solid var(--primary);border-radius:6px;">
             <div style="font-size:.76rem;font-weight:600;color:var(--primary);margin-bottom:8px;">
                 📑 MỤC LỤC
             </div>

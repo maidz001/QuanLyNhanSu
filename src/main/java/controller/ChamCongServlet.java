@@ -2,20 +2,25 @@ package controller;
 
 import model.ChamCong;
 import model.TaiKhoan;
+import model.ThongBao;
 import service.ChamCongService;
 import service.NhanVienService;
 import service.TaiKhoanService;
+import service.ThongBaoService;
 import until.XuatExcel;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @WebServlet("/chamcong")
 public class ChamCongServlet extends HttpServlet {
     private XuatExcel xuatExcel=new XuatExcel();
+    private ThongBaoService thongBaoService=new ThongBaoService();
     NhanVienService nhanVienService=new NhanVienService();
     private TaiKhoanService taiKhoanService=new TaiKhoanService();
 private  ChamCongService chamCongService=new ChamCongService();
@@ -104,8 +109,11 @@ private  ChamCongService chamCongService=new ChamCongService();
         if(!chamCongService.checkIn(id)){
             request.setAttribute("message","Hôm nay đã CheckIn, vui lòng không spam");
         }
-        else
-            request.setAttribute("message","CheckIn Thành Công");
+        else {
+            request.setAttribute("message", "CheckIn Thành Công");
+            LocalDate now=LocalDate.now();
+            thongBaoService.them(new ThongBao(0,getSS(request,response).getNhanVienId(),id,"CheckIn","Buổi sáng vui vẻ nhé bạn yêu dấu","Check In thành công",0, Date.valueOf(now)));
+        }
         taiKhoanServlet.goiDangNhapChoNV(request,response,taiKhoanService.layTheoId(id));
     }
     private void checkOut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -113,8 +121,11 @@ private  ChamCongService chamCongService=new ChamCongService();
         if(!chamCongService.checkOut(id)){
             request.setAttribute("message","Hôm nay đã CheckOut, vui lòng không spam");
         }
-        else
-            request.setAttribute("message","CheckOut Thành Công");
+        else {
+            request.setAttribute("message", "CheckOut Thành Công");
+            LocalDate now=LocalDate.now();
+            thongBaoService.them(new ThongBao(0,getSS(request,response).getNhanVienId(),id,"Check Out","Cảm ơn vì 1 ngày đóng góp cho công ty hết mình nhé bạn yêu.","Check Out thành công",0, Date.valueOf(now)));
+        }
         taiKhoanServlet.goiDangNhapChoNV(request,response,taiKhoanService.layTheoId(id));
     }
     private TaiKhoan getSS(HttpServletRequest request, HttpServletResponse response) {

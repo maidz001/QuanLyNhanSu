@@ -3,14 +3,17 @@ package controller;
 import model.HopDong;
 import model.NhanVien;
 import model.TaiKhoan;
+import model.ThongBao;
 import service.HopDongService;
 import service.NhanVienService;
+import service.ThongBaoService;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -18,6 +21,7 @@ import java.util.List;
 public class HopDongServlet extends HttpServlet {
 
     private HopDongService hopDongService = new HopDongService();
+    private ThongBaoService thongBaoService=new ThongBaoService();
     private TaiKhoanServlet taiKhoanServlet=new TaiKhoanServlet();
     private NhanVienService nhanVienService=new NhanVienService();
 
@@ -186,6 +190,8 @@ public class HopDongServlet extends HttpServlet {
         hopDongService.sua(hd,getSS(request,response).getNhanVienId());
 
         request.getSession().setAttribute("message", "Cập nhật hợp đồng thành công!");
+        LocalDate now=LocalDate.now();
+        thongBaoService.them(new ThongBao(0,getSS(request,response).getNhanVienId(),hd.getNhanVienId(),"Hợp đồng","Hợp đồng của bạn đã được cập nhật.","Cập nhật hợp đồng",0, Date.valueOf(now)));
 taiKhoanServlet.goiDangNhapChoQuanLy(request,response,getSS(request,response));
     }
 
