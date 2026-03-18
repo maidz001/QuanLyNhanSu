@@ -20,8 +20,36 @@
 
 
 
-    .dark { --primary: #58a6ff; --primary-light: #79c0ff; --bg: #0d1117; --white: #161b22; --border: #30363d; --text: #e6edf3; --muted: #8b949e; }
-    .dark body,.qd { background: #0d1117; color: #e6edf3; }
+.dark {
+    --primary: #58a6ff;
+    --primary-light: #79c0ff;
+    --pl: #79c0ff;
+    --bg: #0d1117;
+    --bg-light: #1c2128;  /* ← THÊM MỚI */
+    --white: #161b22;
+    --border: #30363d;
+    --text: #e6edf3;
+    --muted: #8b949e;
+}
+.dark body { background: #0d1117; color: #e6edf3; }
+.dark .sidebar { background: #010409; }
+.dark .topbar, .dark .box, .dark .stat-card { background: #161b22; border-color: #30363d; }
+.dark .data-table th { background: #0d1117; }
+.dark .data-table tr:hover td { background: #1c2128; }
+.dark .form-group input, .dark .form-group select, .dark .form-group textarea { background: #0d1117; border-color: #30363d; color: #e6edf3; }
+.dark .welcome-banner { background: linear-gradient(135deg, #010409 0%, #1a4a7a 100%); }
+.dark .badge-green { background: #1a3a2a; color: #3fb950; }
+.dark .badge-orange { background: #2d1f0a; color: #d29922; }
+.dark .badge-red { background: #2d0f0f; color: #f85149; }
+.dark .badge-blue { background: #0d2a4a; color: #58a6ff; }
+.dark .cc-day { background: #1c2128; border-color: #30363d; }
+.dark .notif-btn { background: #0d1117; border-color: #30363d; }
+.dark .profile-row { border-bottom-color: #30363d; }
+.dark .luong-row { border-bottom-color: #30363d; }
+.dark .box-header { border-bottom-color: #30363d; }
+.dark .highlight-box { background: #1c2128 !important; }  /* ← THÊM MỚI */
+.dark .highlight-box-green { background: #1a3a2a !important; }  /* ← THÊM MỚI */
+.dark .highlight-box-red { background: #2d0f0f !important; border-left-color: #f85149; }  /* ← THÊM MỚI */
     .dark .sidebar { background: #010409; }
     .dark .topbar, .dark .box, .dark .stat-card { background: #161b22; border-color: #30363d; }
     .dark .data-table th { background: #0d1117; }
@@ -94,14 +122,22 @@
         font-weight: 500;
     }
 
-    /* Highlight box */
-    .highlight-box {
-        background: #f8fafc;
-        padding: 12px;
-        border-left: 4px solid var(--primary);
-        border-radius: 6px;
-        margin: 8px 0;
-    }
+.highlight-box {
+    background: var(--bg-light);
+    padding: 12px;
+    border-left: 4px solid var(--primary);
+    border-radius: 6px;
+    margin: 8px 0;
+}
+
+.highlight-box-green {
+    background: #eafaf1;
+}
+
+.highlight-box-red {
+    background: #fdedec;
+    border-left-color: var(--danger);
+}
 
     /* Scroll smooth */
     html {
@@ -126,7 +162,9 @@
         :root {
             --primary: #1e3a5f;
             --primary-light: #2d6a9f;
+            --pl: #2d6a9f;
             --bg: #f0f2f5;
+            --bg-light: #f8fafc;  /* ← THÊM MỚI */
             --white: #ffffff;
             --border: #dce3ec;
             --text: #1a1a2e;
@@ -513,8 +551,7 @@
         </div>
 
         <!-- Mục lục -->
-        <div class="qd" style="background:#f8fafc;padding:14px;margin:16px 0;border-left:4px solid var(--primary);border-radius:6px;">
-            <div style="font-size:.76rem;font-weight:600;color:var(--primary);margin-bottom:8px;">
+<div style="background:var(--bg-light);padding:14px;margin:16px 0;border-left:4px solid var(--primary);border-radius:6px;">            <div style="font-size:.76rem;font-weight:600;color:var(--primary);margin-bottom:8px;">
                 📑 MỤC LỤC
             </div>
             <div style="font-size:.72rem;line-height:1.8;color:var(--text);">
@@ -582,7 +619,7 @@
                 <div class="dieu">
                     <div class="tieu-de-dieu">Điều 4: Nghỉ phép năm</div>
                     <div class="noi-dung">
-                        <div class="highlight-box" style="background:#eafaf1;">
+<div class="highlight-box" style="background:#eafaf1;">
                             <p><strong>1.</strong> Nhân viên có thâm niên dưới 5 năm: <span class="badge bg">12 ngày/năm</span></p>
                             <p><strong>2.</strong> Nhân viên có thâm niên từ 5 năm trở lên: <span class="badge bg">14 ngày/năm</span></p>
                             <p><strong>3.</strong> Phải đăng ký trước ít nhất <strong>3 ngày làm việc</strong></p>
@@ -715,7 +752,7 @@
                 <div class="dieu">
                     <div class="tieu-de-dieu">Điều 11: Các hành vi bị nghiêm cấm</div>
                     <div class="noi-dung">
-                        <div class="highlight-box" style="background:#fdedec;border-left-color:var(--danger);">
+<div class="highlight-box highlight-box-red">
                             <p><strong>1.</strong> Đi làm muộn, về sớm không lý do chính đáng</p>
                             <p><strong>2.</strong> Sử dụng tài sản, thiết bị của Công ty cho mục đích cá nhân</p>
                             <p><strong>3.</strong> Tiết lộ thông tin mật, bí mật kinh doanh của Công ty</p>
