@@ -5,7 +5,9 @@ import model.NhanVien;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class NhanVienDAO {
 
@@ -202,6 +204,66 @@ public class NhanVienDAO {
         } catch (SQLException e) { e.printStackTrace(); }
         return false;
     }
+
+    public Map<String, Integer> getThongKeGioiTinh() {
+        Map<String, Integer> result = new HashMap<>();
+        result.put("nam", 0);
+        result.put("nu", 0);
+        result.put("khac", 0);
+
+        String sql = "SELECT gioi_tinh, COUNT(*) as so_luong " +
+                "FROM nhan_vien " +
+                "WHERE trang_thai = 'Dang lam viec' " +
+                "GROUP BY gioi_tinh";
+
+        try (Connection conn=DBConnection.layKetNoi();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                String gioiTinh = rs.getString("gioi_tinh");
+                int soLuong = rs.getInt("so_luong");
+
+                if (gioiTinh != null) {
+                    String gt = gioiTinh.toLowerCase().trim();
+                    if (gt.equals("nam")) {
+                        result.put("nam", soLuong);
+                    } else if (gt.equals("nữ") || gt.equals("nu")) {
+                        result.put("nu", soLuong);
+                    } else {
+                        result.put("khac", result.get("khac") + soLuong);
+                    }
+                } else {
+                    result.put("khac", result.get("khac") + soLuong);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+
+    public List<Integer> getAllNamSinh() {
+        List<Integer> list = new ArrayList<>();
+        String sql = "SELECT YEAR(ngay_sinh) as ngay_sinh " +
+                "FROM nhan_vien " +
+                "WHERE ngay_sinh IS NOT NULL AND trang_thai = 'Dang lam viec'";
+
+        try (Connection conn=DBConnection.layKetNoi();PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                list.add(rs.getInt("ngay_sinh"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
 
     private NhanVien mapRow(ResultSet rs) throws SQLException {
         NhanVien nv = new NhanVien();

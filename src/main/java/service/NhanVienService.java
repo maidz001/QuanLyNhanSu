@@ -5,7 +5,8 @@ import dao.NhanVienDAO;
 import dao.ThongBaoDAO;
 import model.ChucVu;
 import model.NhanVien;
-import java.util.List;
+
+import java.util.*;
 
 public class NhanVienService {
     private NhanVienDAO nhanVienDAO = new NhanVienDAO();
@@ -77,6 +78,87 @@ public class NhanVienService {
         }
         return nhanVienDAO.setChucVu(idNhanVien,idChucVu);
     }
+
+
+
+        public Map<String, Object> tinhThongKeGioiTinh() {
+            Map<String, Object> result = new HashMap<>();
+
+            // Lấy số liệu từ DAO
+            Map<String, Integer> data = nhanVienDAO.getThongKeGioiTinh();
+
+            int nam = data.get("nam");
+            int nu = data.get("nu");
+            int khac = data.get("khac");
+            int total = nam + nu + khac;
+
+            // Đưa vào result
+            result.put("nam", nam);
+            result.put("nu", nu);
+            result.put("khac", khac);
+            result.put("tongSo", total);
+
+            // Tính phần trăm
+            if (total > 0) {
+                result.put("phanTramNam", Math.round((nam * 100.0 / total) * 10) / 10.0);
+                result.put("phanTramNu", Math.round((nu * 100.0 / total) * 10) / 10.0);
+                result.put("phanTramKhac", Math.round((khac * 100.0 / total) * 10) / 10.0);
+            } else {
+                result.put("phanTramNam", 0.0);
+                result.put("phanTramNu", 0.0);
+                result.put("phanTramKhac", 0.0);
+            }
+
+            return result;
+        }
+
+
+        // ════════════════════════════════════════════════════════════
+        // Tính thống kê độ tuổi theo khoảng
+        // ════════════════════════════════════════════════════════════
+        public Map<String, Integer> tinhThongKeDoTuoi() {
+            // Khởi tạo kết quả với LinkedHashMap để giữ thứ tự
+            Map<String, Integer> result = new LinkedHashMap<>();
+            result.put("18-25", 0);
+            result.put("26-35", 0);
+            result.put("36-45", 0);
+            result.put("46-55", 0);
+            result.put("56+", 0);
+            List<Integer> danhSachNamSinh = nhanVienDAO.getAllNamSinh();
+
+            // Năm hiện tại
+            int namHienTai = Calendar.getInstance().get(Calendar.YEAR);
+
+            // Tính tuổi và phân loại
+            for (Integer namSinh : danhSachNamSinh) {
+                if (namSinh != null && namSinh > 0) {
+                    int tuoi = namHienTai - namSinh;
+
+                    if (tuoi >= 18 && tuoi <= 25) {
+                        result.put("18-25", result.get("18-25") + 1);
+                    } else if (tuoi >= 26 && tuoi <= 35) {
+                        result.put("26-35", result.get("26-35") + 1);
+                    } else if (tuoi >= 36 && tuoi <= 45) {
+                        result.put("36-45", result.get("36-45") + 1);
+                    } else if (tuoi >= 46 && tuoi <= 55) {
+                        result.put("46-55", result.get("46-55") + 1);
+                    } else if (tuoi >= 56) {
+                        result.put("56+", result.get("56+") + 1);
+                    }
+                }
+            }
+
+            return result;
+        }
+
+
+
+        public Map<String, Object> layTatCaThongKe() {
+            Map<String, Object> result = new HashMap<>();
+            result.put("gioiTinh", tinhThongKeGioiTinh());
+            result.put("doTuoi", tinhThongKeDoTuoi());
+            return result;
+        }
 }
 
 

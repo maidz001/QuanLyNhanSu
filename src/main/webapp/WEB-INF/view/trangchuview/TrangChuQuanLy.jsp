@@ -196,61 +196,103 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
     <div class="cnt">
 
         <!-- ═══ DASHBOARD ═══ -->
-        <div class="panel active" id="panel-dashboard">
-            <div class="wb">
-                <div>
-                    <h2>Xin chào, ${tk.tenDangNhap}! 👋</h2>
-                    <p>Bảng điều khiển quản lý nhân sự — Tổng quan toàn công ty.</p>
-                </div>
-                <div class="bi"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-            </div>
-            <div class="sg">
-                <div class="sc"><div class="sct"><div class="si blue"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div></div><div class="val">${not empty tongNhanVien ? tongNhanVien : '--'}</div><div class="lbl">Tổng nhân viên</div></div>
-                <div class="sc"><div class="sct"><div class="si green"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div></div><div class="val">${not empty nvDangLam ? nvDangLam : '--'}</div><div class="lbl">Đang làm việc</div></div>
-                <div class="sc"><div class="sct"><div class="si orange"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg></div></div><div class="val">${not empty donChoDuyet ? donChoDuyet : '--'}</div><div class="lbl">Đơn nghỉ phép chờ</div></div>
-                <div class="sc"><div class="sct"><div class="si purple"><svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div></div><div class="val">${not empty tongQuyLuong ? tongQuyLuong : '--'}</div><div class="lbl">Tổng quỹ lương</div></div>
-                <div class="sc"><div class="sct"><div class="si red"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></div></div><div class="val">${not empty tongPhongBan ? tongPhongBan : '--'}</div><div class="lbl">Phòng ban</div></div>
-            </div>
-            <div class="g2">
-                <div class="box">
-                    <div class="bh"><h3><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Nhân viên theo phòng ban</h3><a class="va" onclick="showPanel('phongban',null)">Chi tiết</a></div>
-                    <div class="bb">
-                        <c:choose>
-                            <c:when test="${not empty listPhongBan}">
-                                <c:forEach var="pb" items="${listPhongBan}">
-                                    <div class="di2"><span class="dn">${pb.tenPhongBan}</span><span class="badge bb2">${pb.soLuong} NV</span></div>
-                                </c:forEach>
-                            </c:when>
-                            <c:otherwise><div class="es"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7"/></svg><p>Chưa có dữ liệu</p></div></c:otherwise>
-                        </c:choose>
+                <div class="panel active" id="panel-dashboard">
+                    <div class="wb">
+                        <div>
+                            <h2>Xin chào, ${tk.tenDangNhap}! 👋</h2>
+                            <p>Bảng điều khiển quản lý nhân sự — Tổng quan toàn công ty.</p>
+                        </div>
+                        <div class="bi">...</div>
                     </div>
+
+                    <!-- 5 ô thống kê -->
+                    <div class="sg">
+                        ...
+                    </div><!-- Kết thúc .sg -->
+
+                    <!-- ═══════════════════════════════════════════════════════ -->
+                    <!-- BIỂU ĐỒ THỐNG KÊ GIỚI TÍNH & ĐỘ TUỔI -->
+                    <!-- ═══════════════════════════════════════════════════════ -->
+                    <div class="g2" style="margin-top: 18px;">
+
+                        <!-- Biểu đồ Giới tính -->
+                        <div class="box">
+                            <div class="bh">
+                                <h3>
+                                    <svg viewBox="0 0 24 24">
+                                        <circle cx="12" cy="12" r="10"/>
+                                        <path d="M12 6v6l4 2"/>
+                                    </svg>
+                                    Phân bố giới tính
+                                </h3>
+                            </div>
+                            <div class="bb" style="min-height: 320px; display: flex; align-items: center; justify-content: center; padding: 24px;">
+                                <canvas id="chartGioiTinh" style="max-height: 280px; max-width: 100%;"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Biểu đồ Độ tuổi -->
+                        <div class="box">
+                            <div class="bh">
+                                <h3>
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M3 3v18h18"/>
+                                        <path d="M18 17V9"/>
+                                        <path d="M13 17V5"/>
+                                        <path d="M8 17v-3"/>
+                                    </svg>
+                                    Cơ cấu độ tuổi
+                                </h3>
+                            </div>
+                            <div class="bb" style="min-height: 320px; padding: 24px;">
+                                <canvas id="chartDoTuoi"></canvas>
+                            </div>
+                        </div>
+
+                    </div><!-- Kết thúc .g2 biểu đồ -->
+
+                    <!-- Box Nhân viên theo phòng ban & Đơn nghỉ phép -->
+                    <div class="g2">
+                        <div class="box">
+                            <div class="bh"><h3><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Nhân viên theo phòng ban</h3><a class="va" onclick="showPanel('phongban',null)">Chi tiết</a></div>
+                            <div class="bb">
+                                <c:choose>
+                                    <c:when test="${not empty listPhongBan}">
+                                        <c:forEach var="pb" items="${listPhongBan}">
+                                            <div class="di2"><span class="dn">${pb.tenPhongBan}</span><span class="badge bb2">${pb.soLuong} NV</span></div>
+                                        </c:forEach>
+                                    </c:when>
+                                    <c:otherwise><div class="es"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7"/></svg><p>Chưa có dữ liệu</p></div></c:otherwise>
+                                </c:choose>
+                            </div>
+                        </div>
+                        <div class="box">
+                            <div class="bh"><h3><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Đơn nghỉ phép chờ duyệt</h3><a class="va" onclick="showPanel('nghiphep',null)">Xem tất cả</a></div>
+                            <table class="dt">
+                                <thead><tr><th>Nhân viên</th><th>Loại</th><th>Số ngày</th><th>Thao tác</th></tr></thead>
+                                <tbody>
+                                    <c:choose>
+                                        <c:when test="${not empty listNghiPhepChoDuyet}">
+                                            <c:forEach var="np" items="${listNghiPhepChoDuyet}" end="4">
+                                                <tr>
+                                                    <td>${not empty np.hoTen ? np.hoTen : 'NV#'.concat(np.nhanVienId)}</td>
+                                                    <td>${np.loaiPhep}</td>
+                                                    <td>${np.soNgay}</td>
+                                                    <td>
+                                                        <a href="${pageContext.request.contextPath}/nghiphep?action=duyet&id=${np.nghiPhepId}" class="btn bs bsm">Duyệt</a>
+                                                        <a href="${pageContext.request.contextPath}/nghiphep?action=tu-choi&id=${np.nghiPhepId}" class="btn bd bsm">Từ chối</a>
+                                                    </td>
+                                                </tr>
+                                            </c:forEach>
+                                        </c:when>
+                                        <c:otherwise><tr><td colspan="4"><div class="es">Không có đơn chờ duyệt</div></td></tr></c:otherwise>
+                                    </c:choose>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div><!-- Kết thúc .g2 box phòng ban -->
+
                 </div>
-                <div class="box">
-                    <div class="bh"><h3><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Đơn nghỉ phép chờ duyệt</h3><a class="va" onclick="showPanel('nghiphep',null)">Xem tất cả</a></div>
-                    <table class="dt">
-                        <thead><tr><th>Nhân viên</th><th>Loại</th><th>Số ngày</th><th>Thao tác</th></tr></thead>
-                        <tbody>
-                            <c:choose>
-                                <c:when test="${not empty listNghiPhepChoDuyet}">
-                                    <c:forEach var="np" items="${listNghiPhepChoDuyet}" end="4">
-                                        <tr>
-                                            <td>${not empty np.hoTen ? np.hoTen : 'NV#'.concat(np.nhanVienId)}</td>
-                                            <td>${np.loaiPhep}</td>
-                                            <td>${np.soNgay}</td>
-                                            <td>
-                                                <a href="${pageContext.request.contextPath}/nghiphep?action=duyet&id=${np.nghiPhepId}" class="btn bs bsm">Duyệt</a>
-                                                <a href="${pageContext.request.contextPath}/nghiphep?action=tu-choi&id=${np.nghiPhepId}" class="btn bd bsm">Từ chối</a>
-                                            </td>
-                                        </tr>
-                                    </c:forEach>
-                                </c:when>
-                                <c:otherwise><tr><td colspan="4"><div class="es">Không có đơn chờ duyệt</div></td></tr></c:otherwise>
-                            </c:choose>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
 
         <!-- ═══ NHÂN VIÊN ═══ -->
         <div class="panel" id="panel-nhanvien">
@@ -279,10 +321,22 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
                     <span class="search-count" id="count-nv"></span>
                 </div>
                 <table class="dt">
-                                                                                                                                          <th>#</th><th>Mã NV</th><th>Họ tên</th><th>Email</th><th>SĐT</th>
-                                                                                                                                          <th>Phòng ban</th><th>Chức vụ</th><th>STK</th><th>Ngân hàng</th>
-                                                                                                                                          <th>Trạng thái</th><th>Thao tác</th>
-                                                                                                                                      </tr><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+
+                     <thead>
+                         <tr>
+                             <th>#</th>
+                             <th>Mã NV</th>
+                             <th>Họ tên</th>
+                             <th>Email</th>
+                             <th>SĐT</th>
+                             <th>Phòng ban</th>
+                             <th>Chức vụ</th>
+                             <th>STK</th>
+                             <th>Ngân hàng</th>
+                             <th>Trạng thái</th>
+                             <th>Thao tác</th>
+                         </tr>
+                     </thead>
                     <tbody id="t-nv">
                         <c:choose>
                             <c:when test="${not empty listNhanVien}">
@@ -1195,7 +1249,195 @@ const matchTt = !tt || (row.cells[9] && row.cells[9].textContent.includes(tt));
             window.location.href = '${pageContext.request.contextPath}/bangluong?action=thanh-toan-chuyen-khoan&id=' + currentBangLuongId;
         }
     }
+    // Thêm vào cuối file, sau các function hiện tại
+
+    // Kiểm tra URL parameter khi trang load
+    window.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const panel = urlParams.get('panel');
+
+        if (panel) {
+            showPanel(panel, null);
+            // Tìm menu item tương ứng và active nó
+            document.querySelectorAll('.ni').forEach(item => {
+                if (item.getAttribute('onclick')?.includes(panel)) {
+                    item.classList.add('active');
+                }
+            });
+        }
+    });
+
+
+
 </script>
+<script src="https://unpkg.com/chart.js@4.4.0/dist/chart.umd.js"></script>
+<script>
+// ══════════════════════════════════════════════════════════
+// BIỂU ĐỒ GIỚI TÍNH (Doughnut Chart)
+// ══════════════════════════════════════════════════════════
+const canvasGioiTinh = document.getElementById('chartGioiTinh');
+if (canvasGioiTinh && canvasGioiTinh.getContext) {
+    const ctxGT = canvasGioiTinh.getContext('2d');
+
+    new Chart(ctxGT, {
+        type: 'doughnut',
+        data: {
+            labels: ['Nam', 'Nữ', 'Khác'],
+            datasets: [{
+                data: [
+                    ${not empty thongKeGioiTinh.nam ? thongKeGioiTinh.nam : 0},
+                    ${not empty thongKeGioiTinh.nu ? thongKeGioiTinh.nu : 0},
+                    ${not empty thongKeGioiTinh.khac ? thongKeGioiTinh.khac : 0}
+                ],
+                backgroundColor: [
+                    '#3498db',  // Xanh dương - Nam
+                    '#e74c3c',  // Đỏ - Nữ
+                    '#95a5a6'   // Xám - Khác
+                ],
+                borderWidth: 3,
+                borderColor: '#fff',
+                hoverBorderColor: '#fff',
+                hoverBorderWidth: 5,
+                hoverOffset: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 20,
+                        font: {
+                            size: 13,
+                            family: 'Inter',
+                            weight: '500'
+                        },
+                        color: '#1a1a2e',
+                        usePointStyle: true,
+                        pointStyle: 'circle'
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(30, 58, 95, 0.95)',
+                    padding: 14,
+                    titleFont: { size: 14, weight: '600' },
+                    bodyFont: { size: 13 },
+                    borderColor: '#dce3ec',
+                    borderWidth: 1,
+                    displayColors: true,
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.parsed || 0;
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percent = total > 0 ? ((value * 100) / total).toFixed(1) : 0;
+                            return ' ' + label + ': ' + value + ' nhân viên (' + percent + '%)';
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+
+// ══════════════════════════════════════════════════════════
+// BIỂU ĐỒ ĐỘ TUỔI (Bar Chart)
+// ══════════════════════════════════════════════════════════
+const canvasDoTuoi = document.getElementById('chartDoTuoi');
+if (canvasDoTuoi && canvasDoTuoi.getContext) {
+    const ctxDT = canvasDoTuoi.getContext('2d');
+
+    new Chart(ctxDT, {
+        type: 'bar',
+        data: {
+            labels: ['18-25 tuổi', '26-35 tuổi', '36-45 tuổi', '46-55 tuổi', '56+ tuổi'],
+            datasets: [{
+                label: 'Số nhân viên',
+                data: [
+                    ${not empty thongKeDoTuoi['18-25'] ? thongKeDoTuoi['18-25'] : 0},
+                    ${not empty thongKeDoTuoi['26-35'] ? thongKeDoTuoi['26-35'] : 0},
+                    ${not empty thongKeDoTuoi['36-45'] ? thongKeDoTuoi['36-45'] : 0},
+                    ${not empty thongKeDoTuoi['46-55'] ? thongKeDoTuoi['46-55'] : 0},
+                    ${not empty thongKeDoTuoi['56+'] ? thongKeDoTuoi['56+'] : 0}
+                ],
+                backgroundColor: '#1e3a5f',
+                borderRadius: 8,
+                borderSkipped: false,
+                barThickness: 55
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1,
+                        font: {
+                            size: 12,
+                            family: 'Inter'
+                        },
+                        color: '#7a8899',
+                        callback: function(value) {
+                            return Number.isInteger(value) ? value : '';
+                        }
+                    },
+                    grid: {
+                        color: '#f0f2f5',
+                        drawBorder: false
+                    },
+                    border: {
+                        display: false
+                    }
+                },
+                x: {
+                    ticks: {
+                        font: {
+                            size: 12,
+                            family: 'Inter',
+                            weight: '500'
+                        },
+                        color: '#1a1a2e'
+                    },
+                    grid: {
+                        display: false
+                    },
+                    border: {
+                        display: false
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(30, 58, 95, 0.95)',
+                    padding: 14,
+                    titleFont: { size: 14, weight: '600' },
+                    bodyFont: { size: 13 },
+                    borderColor: '#dce3ec',
+                    borderWidth: 1,
+                    displayColors: false,
+                    callbacks: {
+                        title: function(context) {
+                            return context[0].label;
+                        },
+                        label: function(context) {
+                            return ' Số lượng: ' + context.parsed.y + ' người';
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+</script>
+
 
 </body>
 </html>
