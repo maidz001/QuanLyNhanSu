@@ -197,9 +197,7 @@ public class BangLuongServlet extends HttpServlet {
         boolean kq = bangLuongService.thanhToanTienMat(id, getSS(request, response).getNhanVienId());
         request.setAttribute("message",
                 kq ? "Đã thanh toán tiền mặt thành công!" : "Thanh toán thất bại!");
-        LocalDate now=LocalDate.now();
-        thongBaoService.them(new ThongBao(0,getSS(request,response).getNhanVienId(),bangLuongService.layTheoId(id).getNhanVienId(),"Thanh toán lương","Đã thanh toán bảng lương tháng "+bangLuongService.layTheoId(id).getThang()+" cho bạn bằng phương thức thanh toán tiền mặt, cảm ơn sự đóng góp của bạn cho công ty trong tháng vừa qua.","Thanh toán lương",0, Date.valueOf(now)));
-        taiKhoanServlet.goiDangNhapChoQuanLy(request,response,getSS(request,response));
+              taiKhoanServlet.goiDangNhapChoQuanLy(request,response,getSS(request,response));
 
     }
 
@@ -210,8 +208,6 @@ public class BangLuongServlet extends HttpServlet {
         boolean kq = bangLuongService.thanhToanChuyenKhoan(id, getSS(request, response).getNhanVienId());
         request.setAttribute("message",
                 kq ? "Đã xác nhận thanh toán chuyển khoản!" : "Xác nhận thất bại!");
-        LocalDate now=LocalDate.now();
-        thongBaoService.them(new ThongBao(0,getSS(request,response).getNhanVienId(),bangLuongService.layTheoId(id).getNhanVienId(),"Thanh toán lương","Đã thanh toán bảng lương tháng "+bangLuongService.layTheoId(id).getThang()+" cho bạn bằng phương thức thanh toán chuyển khoản online, cảm ơn sự đóng góp của bạn cho công ty trong tháng vừa qua.","Thanh toán lương",0, Date.valueOf(now)));
         taiKhoanServlet.goiDangNhapChoQuanLy(request,response,getSS(request,response));
     }
 

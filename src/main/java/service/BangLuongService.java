@@ -219,10 +219,10 @@ public class BangLuongService {
         if (kq) {
             thongBaoDAO.guiThongBaoChoNhanVien(
                     nguoiThucHien, bl.getNhanVienId(),
-                    "Luong da thanh toan",
-                    "Luong thang " + bl.getThang() + "/" + bl.getNam()
-                            + ": " + bl.getLuongThucLanh() + " VND (Tien mat)",
-                    "bang_luong"
+                    "Thanh toán lương",
+                    "Lương tháng " + bl.getThang() + "/" + bl.getNam()
+                            + ": " + bl.getLuongThucLanh() + " VND (Tien mat) đã được thanh toán, cảm ơn sự đóng góp của bạn trong tháng qua nhé.",
+                    "Thanh toán lương"
             );
         }
         return kq;
@@ -235,10 +235,10 @@ public class BangLuongService {
         if (kq) {
             thongBaoDAO.guiThongBaoChoNhanVien(
                     nguoiThucHien, bl.getNhanVienId(),
-                    "Luong da thanh toan",
-                    "Luong thang " + bl.getThang() + "/" + bl.getNam()
-                            + ": " + bl.getLuongThucLanh() + " VND (Chuyen khoan)",
-                    "bang_luong"
+                    "Thanh toán lương",
+                    "Lương tháng " + bl.getThang() + "/" + bl.getNam()
+                            + ": " + bl.getLuongThucLanh() + " VND (Chuyen khoan) đã được thanh toán, cảm ơn sự đóng góp của bạn trong tháng qua nhé.",
+                    "thanh toán lương"
             );
         }
         return kq;

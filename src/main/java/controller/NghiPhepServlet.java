@@ -185,7 +185,7 @@ TaiKhoanService taiKhoanService=new TaiKhoanService();
 
         request.setAttribute("message", "Đã duyệt đơn nghỉ phép thành công!");
         LocalDate now=LocalDate.now();
-        thongBaoService.them(new ThongBao(0,getSS(request,response).getNhanVienId(),np.getNhanVienId(),"Duyệt đơn nghỉ phép","Đơnnghir phép của bạn đã được duyệt, chúc bạn có 1 kì nghỉ vui vẻ.","Duyệt nghỉ phép",0, Date.valueOf(now)));
+        thongBaoService.them(new ThongBao(0,getSS(request,response).getNhanVienId(),np.getNhanVienId(),"Duyệt đơn nghỉ phép","Đơn nghỉ phép của bạn đã được duyệt, chúc bạn có 1 kì nghỉ vui vẻ.","Duyệt nghỉ phép",0, Date.valueOf(now)));
 
         taiKhoanServlet.goiDangNhapChoQuanLy(request,response,getSS(request,response));
     }
