@@ -16,6 +16,86 @@
     <title>Trang Chủ Nhân Viên</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
     <style>
+    .chuong {
+        margin: 24px 0;
+        padding-bottom: 16px;
+        border-bottom: 1px solid var(--border);
+    }
+    .chuong:last-child {
+        border-bottom: none;
+    }
+
+    /* Tiêu đề chương */
+    .tieu-de-chuong {
+        font-size: .88rem;
+        font-weight: 700;
+        color: var(--primary);
+        text-transform: uppercase;
+        margin: 0 0 16px 0;
+        padding-bottom: 8px;
+        border-bottom: 2px solid var(--primary);
+        letter-spacing: .02em;
+    }
+
+    /* Điều */
+    .dieu {
+        margin: 16px 0;
+    }
+
+    /* Tiêu đề điều */
+    .tieu-de-dieu {
+        font-size: .82rem;
+        font-weight: 600;
+        color: var(--pl);
+        margin-bottom: 8px;
+        padding-left: 8px;
+        border-left: 3px solid var(--pl);
+    }
+
+    /* Nội dung */
+    .noi-dung p {
+        margin: 6px 0;
+        text-align: justify;
+    }
+
+    .noi-dung strong {
+        color: var(--primary);
+    }
+
+    .noi-dung u {
+        text-decoration: none;
+        color: var(--pl);
+        font-weight: 500;
+    }
+
+    /* Highlight box */
+    .highlight-box {
+        background: #f8fafc;
+        padding: 12px;
+        border-left: 4px solid var(--primary);
+        border-radius: 6px;
+        margin: 8px 0;
+    }
+
+    /* Scroll smooth */
+    html {
+        scroll-behavior: smooth;
+    }
+
+    /* Link mục lục */
+    #chuong1:target,
+    #chuong2:target,
+    #chuong3:target,
+    #chuong4:target,
+    #chuong5:target,
+    #chuong6:target {
+        animation: highlight 1.5s ease;
+    }
+
+    @keyframes highlight {
+        0% { background: rgba(45, 106, 159, 0.15); }
+        100% { background: transparent; }
+    }
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         :root {
             --primary: #1e3a5f;
@@ -383,7 +463,388 @@
                     </div>
                 </div>
             </div>
+<!-- QUY ĐỊNH CÔNG TY - ĐẦY ĐỦ TRONG 1 BOX -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="box" style="margin-top: 18px;">
 
+    <div class="bb" style="max-height:600px;overflow-y:auto;">
+
+        <!-- Header văn bản -->
+        <div style="text-align:center;padding:16px 0;border-bottom:2px solid var(--primary);">
+            <div style="font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">
+                CÔNG TY TNHH QUẢN LÝ NHÂN SỰ
+            </div>
+            <h3 style="font-size:1rem;font-weight:700;color:var(--primary);margin:6px 0;">
+                QUY CHẾ LÀM VIỆC NỘI BỘ
+            </h3>
+            <div style="font-size:.68rem;color:var(--muted);font-style:italic;">
+                (Ban hành kèm theo Quyết định số 01/QĐ-CT ngày 01/01/2025)
+            </div>
+        </div>
+
+        <!-- Mục lục -->
+        <div style="background:#f8fafc;padding:14px;margin:16px 0;border-left:4px solid var(--primary);border-radius:6px;">
+            <div style="font-size:.76rem;font-weight:600;color:var(--primary);margin-bottom:8px;">
+                📑 MỤC LỤC
+            </div>
+            <div style="font-size:.72rem;line-height:1.8;color:var(--text);">
+                <a href="#chuong1" style="color:var(--text);text-decoration:none;display:block;">
+                    <strong>Chương I:</strong> Quy định chung
+                </a>
+                <a href="#chuong2" style="color:var(--text);text-decoration:none;display:block;">
+                    <strong>Chương II:</strong> Chế độ nghỉ phép
+                </a>
+                <a href="#chuong3" style="color:var(--text);text-decoration:none;display:block;">
+                    <strong>Chương III:</strong> Chế độ lương thưởng
+                </a>
+                <a href="#chuong4" style="color:var(--text);text-decoration:none;display:block;">
+                    <strong>Chương IV:</strong> Kỷ luật lao động
+                </a>
+                <a href="#chuong5" style="color:var(--text);text-decoration:none;display:block;">
+                    <strong>Chương V:</strong> Đánh giá nhân viên
+                </a>
+                <a href="#chuong6" style="color:var(--text);text-decoration:none;display:block;">
+                    <strong>Chương VI:</strong> Điều khoản thi hành
+                </a>
+            </div>
+        </div>
+
+        <!-- Nội dung chính -->
+        <div style="font-size:.79rem;line-height:1.8;color:var(--text);">
+
+            <!-- CHƯƠNG I -->
+            <div id="chuong1" class="chuong">
+                <h4 class="tieu-de-chuong">CHƯƠNG I: QUY ĐỊNH CHUNG</h4>
+
+                <div class="dieu">
+                    <div class="tieu-de-dieu">Điều 1: Phạm vi và đối tượng áp dụng</div>
+                    <div class="noi-dung">
+                        <p><strong>1.</strong> Quy chế này quy định về chế độ làm việc, kỷ luật lao động và các quy định nội bộ tại Công ty.</p>
+                        <p><strong>2.</strong> Áp dụng đối với toàn thể cán bộ, nhân viên đang làm việc tại Công ty.</p>
+                    </div>
+                </div>
+
+                <div class="dieu">
+                    <div class="tieu-de-dieu">Điều 2: Giờ làm việc</div>
+                    <div class="noi-dung">
+                        <div class="highlight-box">
+                            <p><strong>1.</strong> Giờ làm việc hành chính: <span class="badge bg">8:00 - 17:00</span> (nghỉ trưa 12:00 - 13:00)</p>
+                            <p><strong>2.</strong> Làm việc 5 ngày/tuần (Thứ 2 - Thứ 6), nghỉ Thứ 7, Chủ nhật và các ngày lễ theo quy định của Nhà nước</p>
+                            <p><strong>3.</strong> Tổng số giờ làm việc: <strong>40 giờ/tuần</strong></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dieu">
+                    <div class="tieu-de-dieu">Điều 3: Chấm công</div>
+                    <div class="noi-dung">
+                        <p><strong>1.</strong> Nhân viên phải chấm công đúng giờ khi đến và khi về.</p>
+                        <p><strong>2.</strong> Chấm công muộn trên <span class="badge bo">15 phút</span> được coi là đi muộn.</p>
+                        <p><strong>3.</strong> Đi muộn quá <span class="badge br">3 lần/tháng</span> sẽ bị xử lý kỷ luật.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHƯƠNG II -->
+            <div id="chuong2" class="chuong">
+                <h4 class="tieu-de-chuong">CHƯƠNG II: CHẾ ĐỘ NGHỈ PHÉP</h4>
+
+                <div class="dieu">
+                    <div class="tieu-de-dieu">Điều 4: Nghỉ phép năm</div>
+                    <div class="noi-dung">
+                        <div class="highlight-box" style="background:#eafaf1;">
+                            <p><strong>1.</strong> Nhân viên có thâm niên dưới 5 năm: <span class="badge bg">12 ngày/năm</span></p>
+                            <p><strong>2.</strong> Nhân viên có thâm niên từ 5 năm trở lên: <span class="badge bg">14 ngày/năm</span></p>
+                            <p><strong>3.</strong> Phải đăng ký trước ít nhất <strong>3 ngày làm việc</strong></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dieu">
+                    <div class="tieu-de-dieu">Điều 5: Nghỉ ốm, nghỉ việc riêng</div>
+                    <div class="noi-dung">
+                        <p><strong>1.</strong> <u>Nghỉ ốm:</u> Phải có giấy xác nhận của cơ sở y tế. Được hưởng 100% lương nếu có giấy bác sĩ.</p>
+                        <p><strong>2.</strong> <u>Nghỉ việc riêng:</u> Tối đa 3 ngày/năm (không hưởng lương). Phải được quản lý trực tiếp phê duyệt.</p>
+                        <p><strong>3.</strong> Thông báo cho quản lý trực tiếp trước khi nghỉ.</p>
+                    </div>
+                </div>
+
+                <div class="dieu">
+                    <div class="tieu-de-dieu">Điều 6: Nghỉ lễ, Tết</div>
+                    <div class="noi-dung">
+                        <p><strong>1.</strong> Được nghỉ đầy đủ theo quy định của Bộ luật Lao động.</p>
+                        <p><strong>2.</strong> Làm việc ngày lễ được trả lương <span class="badge bo">gấp 200%</span> + 1 ngày nghỉ bù.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHƯƠNG III -->
+            <div id="chuong3" class="chuong">
+                <h4 class="tieu-de-chuong">CHƯƠNG III: CHẾ ĐỘ LƯƠNG THƯỞNG</h4>
+
+                <div class="dieu">
+                    <div class="tieu-de-dieu">Điều 7: Lương cơ bản</div>
+                    <div class="noi-dung">
+                        <div class="highlight-box">
+                            <p><strong>1.</strong> Lương được trả vào <span class="badge bg">ngày 10 hàng tháng</span></p>
+                            <p><strong>2.</strong> Lương tháng 13 được tính theo số tháng làm việc thực tế trong năm</p>
+                            <p><strong>3.</strong> Tăng lương: Xét duyệt hàng năm dựa trên kết quả đánh giá hiệu suất</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dieu">
+                    <div class="tieu-de-dieu">Điều 8: Phụ cấp</div>
+                    <div class="noi-dung">
+                        <table class="dt" style="margin:8px 0;">
+                            <thead>
+                                <tr>
+                                    <th>Loại phụ cấp</th>
+                                    <th>Mức</th>
+                                    <th>Điều kiện</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Ăn trưa</strong></td>
+                                    <td><span class="badge bg">30.000đ/ngày</span></td>
+                                    <td>Tính theo ngày làm việc thực tế</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Xăng xe</strong></td>
+                                    <td>Theo chức vụ</td>
+                                    <td>Từ Phó phòng trở lên</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Điện thoại</strong></td>
+                                    <td>Theo vị trí</td>
+                                    <td>Vị trí yêu cầu liên lạc thường xuyên</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Làm đêm</strong></td>
+                                    <td><span class="badge bo">+30% lương giờ</span></td>
+                                    <td>22:00 - 6:00 sáng hôm sau</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="dieu">
+                    <div class="tieu-de-dieu">Điều 9: Thưởng</div>
+                    <div class="noi-dung">
+                        <p><strong>1.</strong> <u>Thưởng theo hiệu quả công việc:</u> Đánh giá hàng quý, mức thưởng từ 500.000đ - 5.000.000đ</p>
+                        <p><strong>2.</strong> <u>Thưởng các ngày lễ:</u> Tết Nguyên Đán, 30/4, 2/9 (tối thiểu 500.000đ/dịp)</p>
+                        <p><strong>3.</strong> <u>Thưởng đột xuất:</u> Theo thành tích xuất sắc, sáng kiến cải tiến</p>
+                        <p><strong>4.</strong> <u>Thưởng thâm niên:</u> 5 năm, 10 năm, 15 năm làm việc tại Công ty</p>
+                    </div>
+                </div>
+
+                <div class="dieu">
+                    <div class="tieu-de-dieu">Điều 10: Các khoản khấu trừ</div>
+                    <div class="noi-dung">
+                        <table class="dt" style="margin:8px 0;">
+                            <thead>
+                                <tr>
+                                    <th>Khoản khấu trừ</th>
+                                    <th>Tỷ lệ</th>
+                                    <th>Ghi chú</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Bảo hiểm xã hội</td>
+                                    <td><span class="badge bb2">8%</span></td>
+                                    <td>Theo lương đóng BHXH</td>
+                                </tr>
+                                <tr>
+                                    <td>Bảo hiểm y tế</td>
+                                    <td><span class="badge bb2">1.5%</span></td>
+                                    <td>Theo lương đóng BHXH</td>
+                                </tr>
+                                <tr>
+                                    <td>Bảo hiểm thất nghiệp</td>
+                                    <td><span class="badge bb2">1%</span></td>
+                                    <td>Theo lương đóng BHXH</td>
+                                </tr>
+                                <tr>
+                                    <td>Thuế TNCN</td>
+                                    <td>Theo bậc lũy tiến</td>
+                                    <td>Từ 5% - 35%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHƯƠNG IV -->
+            <div id="chuong4" class="chuong">
+                <h4 class="tieu-de-chuong">CHƯƠNG IV: KỶ LUẬT LAO ĐỘNG</h4>
+
+                <div class="dieu">
+                    <div class="tieu-de-dieu">Điều 11: Các hành vi bị nghiêm cấm</div>
+                    <div class="noi-dung">
+                        <div class="highlight-box" style="background:#fdedec;border-left-color:var(--danger);">
+                            <p><strong>1.</strong> Đi làm muộn, về sớm không lý do chính đáng</p>
+                            <p><strong>2.</strong> Sử dụng tài sản, thiết bị của Công ty cho mục đích cá nhân</p>
+                            <p><strong>3.</strong> Tiết lộ thông tin mật, bí mật kinh doanh của Công ty</p>
+                            <p><strong>4.</strong> Gây mất đoàn kết nội bộ, xúc phạm đồng nghiệp</p>
+                            <p><strong>5.</strong> Làm việc riêng trong giờ làm việc</p>
+                            <p><strong>6.</strong> Làm giả hồ sơ, tài liệu, chứng từ</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dieu">
+                    <div class="tieu-de-dieu">Điều 12: Hình thức kỷ luật</div>
+                    <div class="noi-dung">
+                        <table class="dt" style="margin:8px 0;">
+                            <thead>
+                                <tr>
+                                    <th>Hình thức</th>
+                                    <th>Mức xử phạt</th>
+                                    <th>Áp dụng</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Khiển trách</strong></td>
+                                    <td>Nhắc nhở bằng văn bản</td>
+                                    <td>Vi phạm nhẹ lần đầu</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Cảnh cáo</strong></td>
+                                    <td><span class="badge bo">Trừ 20% lương tháng</span></td>
+                                    <td>Vi phạm lặp lại hoặc vi phạm nghiêm trọng</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Tạm đình công</strong></td>
+                                    <td>Ngưng việc không quá 3 tháng</td>
+                                    <td>Vi phạm rất nghiêm trọng</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Sa thải</strong></td>
+                                    <td><span class="badge br">Chấm dứt hợp đồng</span></td>
+                                    <td>Vi phạm đặc biệt nghiêm trọng</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHƯƠNG V -->
+            <div id="chuong5" class="chuong">
+                <h4 class="tieu-de-chuong">CHƯƠNG V: ĐÁNH GIÁ NHÂN VIÊN</h4>
+
+                <div class="dieu">
+                    <div class="tieu-de-dieu">Điều 13: Tiêu chí đánh giá</div>
+                    <div class="noi-dung">
+                        <div class="highlight-box">
+                            <p><strong>1.</strong> Kết quả công việc: <span class="badge bg">40%</span> (KPI đạt được, chất lượng sản phẩm/dịch vụ)</p>
+                            <p><strong>2.</strong> Thái độ làm việc: <span class="badge bg">30%</span> (Tinh thần trách nhiệm, sáng tạo, chủ động)</p>
+                            <p><strong>3.</strong> Kỷ luật lao động: <span class="badge bg">20%</span> (Chấm công, tuân thủ nội quy)</p>
+                            <p><strong>4.</strong> Tinh thần đồng đội: <span class="badge bg">10%</span> (Hỗ trợ đồng nghiệp, hợp tác)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dieu">
+                    <div class="tieu-de-dieu">Điều 14: Chu kỳ đánh giá</div>
+                    <div class="noi-dung">
+                        <p><strong>1.</strong> <u>Đánh giá hiệu suất:</u> Hàng tháng (đánh giá KPI, năng suất làm việc)</p>
+                        <p><strong>2.</strong> <u>Đánh giá năng lực:</u> Hàng quý (đánh giá kỹ năng, năng lực chuyên môn)</p>
+                        <p><strong>3.</strong> <u>Đánh giá tổng thể:</u> Cuối năm (xét tăng lương, thăng chức)</p>
+                    </div>
+                </div>
+
+                <div class="dieu">
+                    <div class="tieu-de-dieu">Điều 15: Xếp loại đánh giá</div>
+                    <div class="noi-dung">
+                        <table class="dt" style="margin:8px 0;">
+                            <thead>
+                                <tr>
+                                    <th>Xếp loại</th>
+                                    <th>Điểm</th>
+                                    <th>Mô tả</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="badge bg">Xuất sắc</span></td>
+                                    <td>90 - 100</td>
+                                    <td>Hoàn thành vượt mức, có sáng kiến xuất sắc</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge bb2">Giỏi</span></td>
+                                    <td>80 - 89</td>
+                                    <td>Hoàn thành tốt nhiệm vụ, vượt chỉ tiêu</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge bo">Khá</span></td>
+                                    <td>70 - 79</td>
+                                    <td>Hoàn thành nhiệm vụ đúng yêu cầu</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge bgr">Trung bình</span></td>
+                                    <td>50 - 69</td>
+                                    <td>Hoàn thành một phần nhiệm vụ</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge br">Yếu</span></td>
+                                    <td>< 50</td>
+                                    <td>Không hoàn thành nhiệm vụ</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHƯƠNG VI -->
+            <div id="chuong6" class="chuong">
+                <h4 class="tieu-de-chuong">CHƯƠNG VI: ĐIỀU KHOẢN THI HÀNH</h4>
+
+                <div class="dieu">
+                    <div class="tieu-de-dieu">Điều 16: Hiệu lực</div>
+                    <div class="noi-dung">
+                        <p><strong>1.</strong> Quy chế này có hiệu lực từ ngày ký và thay thế các quy định trước đây trái với quy chế này.</p>
+                        <p><strong>2.</strong> Trong quá trình thực hiện, nếu có vướng mắc, các đơn vị, cá nhân báo cáo Ban Giám đốc để xem xét, giải quyết.</p>
+                    </div>
+                </div>
+
+                <div class="dieu">
+                    <div class="tieu-de-dieu">Điều 17: Trách nhiệm thi hành</div>
+                    <div class="noi-dung">
+                        <p><strong>1.</strong> Trưởng các phòng ban có trách nhiệm phổ biến, hướng dẫn và kiểm tra việc thực hiện quy chế này.</p>
+                        <p><strong>2.</strong> Toàn thể cán bộ, nhân viên có trách nhiệm nghiêm túc thực hiện quy chế này.</p>
+                        <p><strong>3.</strong> Mọi sửa đổi, bổ sung quy chế phải được Ban Giám đốc phê duyệt bằng văn bản.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Chữ ký -->
+        <div style="margin-top:32px;padding-top:20px;border-top:3px double var(--primary);text-align:right;">
+            <div style="font-size:.72rem;color:var(--muted);margin-bottom:6px;">
+                Ngày 01 tháng 01 năm 2025
+            </div>
+            <div style="font-size:.82rem;font-weight:700;color:var(--primary);text-transform:uppercase;">
+                GIÁM ĐỐC CÔNG TY
+            </div>
+            <div style="font-size:.68rem;color:var(--muted);font-style:italic;margin-top:4px;">
+                (Ký, ghi rõ họ tên, đóng dấu)
+            </div>
+            <div style="height:60px;"></div>
+            <div style="font-size:.78rem;font-weight:600;color:var(--text);">
+                [Nguyễn Hồng Mai]
+            </div>
+        </div>
+
+    </div>
+</div>
         </div>
 
         <!-- ═══ THÔNG TIN CÁ NHÂN ═══ -->
