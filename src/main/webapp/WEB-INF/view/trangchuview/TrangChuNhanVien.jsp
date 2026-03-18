@@ -1541,7 +1541,7 @@
                             <c:choose>
                                 <c:when test="${not empty listThongBao}">
                                     <c:forEach var="tb" items="${listThongBao}">
-                                    <tr>
+                                    <tr data-tbid="${tb.thongBaoId}">
                                         <td><strong>${tb.tieuDe}</strong></td>
                                         <td>${tb.noiDung}</td>
                                         <td><span class="badge badge-blue">${not empty tb.loai ? tb.loai : '--'}</span></td>
@@ -1574,7 +1574,18 @@
 
     </div><!-- /content -->
 </div><!-- /main -->
-
+<!-- Toast thông báo -->
+<div id="tb-toast" style="
+    position:fixed; top:20px; left:50%; transform:translateX(-50%) scale(0.8);
+    background:#1e3a5f; color:#fff;
+    padding:12px 24px; border-radius:12px;
+    box-shadow:0 8px 32px rgba(0,0,0,0.25);
+    font-family:'Inter',sans-serif;
+    opacity:0; pointer-events:none;
+    transition:opacity 0.3s ease, transform 0.3s ease;
+    z-index:9999; white-space:nowrap;">
+    <span id="tb-toast-text"></span>
+</div>
 <script>
     // ── Clock ──
     function updateClock() {
@@ -1650,6 +1661,82 @@
             grid.appendChild(cell);
         }
     })();
+
+</script>
+<script>
+function getLastId() {
+    let max = 0;
+    document.querySelectorAll('tr[data-tbid]')
+            .forEach(tr => { if (parseInt(tr.dataset.tbid) > max) max = parseInt(tr.dataset.tbid); });
+    return max;
+}
+
+function showToast(noiDung) {
+    const toast = document.getElementById('tb-toast');
+    document.getElementById('tb-toast-text').textContent = '🔔 ' + noiDung;
+
+    // Hiện ra
+    toast.style.opacity   = '1';
+    toast.style.transform = 'translateX(-50%) scale(1)';
+
+    // Ẩn sau 3s
+    setTimeout(() => {
+        toast.style.opacity   = '0';
+        toast.style.transform = 'translateX(-50%) scale(0.8)';
+    }, 5000);
+}
+
+function poll() {
+    fetch('${pageContext.request.contextPath}/thongbao?action=thongbaomoi&userId=${tk.nhanVienId}&lastId=' + getLastId())
+        .then(r => r.text())
+        .then(html => {
+            if (html.trim()) {
+                const tbody = document.querySelector('#panel-thongbao .data-table tbody');
+                const empty = tbody.querySelector('td[colspan]');
+                if (empty) empty.closest('tr').remove();
+                tbody.insertAdjacentHTML('afterbegin', html);
+
+                const newTr  = tbody.querySelector('tr[data-tbid]');
+                const tieuDe = newTr.cells[0].querySelector('strong')?.textContent.trim() || '';
+                const noiDung= newTr.cells[1].textContent.trim();
+                const ngay   = newTr.cells[3].textContent.trim();
+
+                showToast(noiDung);
+
+                // Dashboard
+                const dashBox = document.querySelector('#panel-dashboard .grid-2 .box:nth-child(2) .box-body');
+                if (dashBox) {
+                    const emptyDash = dashBox.querySelector('.empty-state');
+                    if (emptyDash) emptyDash.remove();
+
+                    const newId = newTr.dataset.tbid;
+                    if (!dashBox.querySelector('[data-tbid="' + newId + '"]')) {
+                        const div = document.createElement('div');
+                        div.className   = 'tb-item unread';
+                        div.dataset.tbid = newId;
+                        div.innerHTML =
+                            '<div class="tb-icon">' +
+                                '<svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>' +
+                            '</div>' +
+                            '<div class="tb-content">' +
+                                '<div class="tb-title">' + tieuDe + '</div>' +
+                                '<div class="tb-sub">' + ngay + ' \u2022 Ch\u01b0a \u0111\u1ecdc</div>' +
+                            '</div>';
+                        dashBox.insertBefore(div, dashBox.firstChild);
+
+                        const items = dashBox.querySelectorAll('.tb-item');
+                        if (items.length > 4) items[items.length - 1].remove();
+                    }
+                }
+
+                document.querySelector('.notif-dot').style.display = 'block';
+            }
+            poll();
+        })
+        .catch(() => setTimeout(poll, 5000));
+}
+
+poll();
 </script>
 </body>
 </html>

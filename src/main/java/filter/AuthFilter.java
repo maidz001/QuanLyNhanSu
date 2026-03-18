@@ -7,7 +7,7 @@ import model.TaiKhoan;
 import java.io.IOException;
 import java.util.Locale;
 
-@WebFilter("/*")
+@WebFilter(urlPatterns = "/*", asyncSupported = true)
 public class AuthFilter implements Filter {
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)

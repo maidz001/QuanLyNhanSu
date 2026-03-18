@@ -1,17 +1,24 @@
 package controller;
 
+import ConnDatabase.DBConnection;
 import model.TaiKhoan;
 import model.ThongBao;
 import service.TaiKhoanService;
 import service.ThongBaoService;
 
+import javax.servlet.AsyncContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
-@WebServlet("/thongbao")
+@WebServlet(urlPatterns = "/thongbao",asyncSupported = true)
 public class ThongBaoServlet extends HttpServlet {
     private TaiKhoanServlet taiKhoanServlet=new TaiKhoanServlet();
 
@@ -35,7 +42,8 @@ public class ThongBaoServlet extends HttpServlet {
             case "xoatatcathongbaodadoc":
                 xoaTatCaThongBaoDaDoc(request, response);
                 break;
-
+            case "thongbaomoi":layThongBaoMoiHonId(request,response);
+                break;
 
             default:
                 danhSachThongBao(request, response);
@@ -112,5 +120,46 @@ public class ThongBaoServlet extends HttpServlet {
         thongBaoService.xoaTatCaThongBaoDaDocChoNhanVien(id);
         request.setAttribute("message","Xóa thành công");
         taiKhoanServlet.goiDangNhapChoNV(request,response,tk);
+    }
+    private void layThongBaoMoiHonId(HttpServletRequest req, HttpServletResponse resp)
+            throws IOException, ServletException {
+
+        int userId = Integer.parseInt(req.getParameter("userId"));
+        int lastId = Integer.parseInt(req.getParameter("lastId"));
+
+        resp.setContentType("text/html;charset=UTF-8");
+
+        AsyncContext async = req.startAsync();
+        async.setTimeout(0);
+
+        Thread.ofVirtual().start(() -> {
+            try {
+                while (true) {
+                    List<ThongBao> ds = thongBaoService.layThongBaoMoiHonId(userId, lastId);
+
+                    if (!ds.isEmpty()) {
+                        PrintWriter out = async.getResponse().getWriter();
+                        for (ThongBao tb : ds) {
+                            out.print("<tr data-tbid=\"" + tb.getThongBaoId() + "\">");
+                            out.print("<td><strong>" + tb.getTieuDe() + "</strong></td>");
+                            out.print("<td>" + tb.getNoiDung() + "</td>");
+                            out.print("<td><span class='badge badge-blue'>" + (tb.getLoai() != null ? tb.getLoai() : "--") + "</span></td>");
+                            out.print("<td>" + tb.getNgayTao() + "</td>");
+                            out.print("<td><span class='badge badge-orange'>Chưa đọc</span></td>");
+                            out.print("<td><a href='/quanlynhansu/thongbao?action=danhdaudadoc&id=" + tb.getThongBaoId() + "' style='font-size:0.72rem;color:var(--primary-light)'>Đánh dấu đọc</a></td>");
+                            out.print("</tr>");
+                        }
+                        out.flush();
+                        break;
+                    }
+
+                    Thread.sleep(2000);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                async.complete();
+            }
+        });
     }
 }

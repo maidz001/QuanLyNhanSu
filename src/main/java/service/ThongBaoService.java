@@ -20,4 +20,8 @@ public class ThongBaoService {
     public boolean xoaTatCaThongBaoDaDocChoNhanVien(int id) {
         return thongBaoDAO.xoaTatCaThongBaoDaDocChoNhanVien(id);
     }
+
+    public List<ThongBao> layThongBaoMoiHonId(int userId, int lastId) {
+        return thongBaoDAO.layThongBaoMoiHonId(userId, lastId);
+    }
 }

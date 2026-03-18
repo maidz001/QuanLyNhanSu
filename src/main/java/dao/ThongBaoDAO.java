@@ -132,6 +132,27 @@ public class ThongBaoDAO {
         them(tb);
     }
 
+
+    public List<ThongBao> layThongBaoMoiHonId(int nguoiNhan, int lastId) {
+        List<ThongBao> ds = new ArrayList<>();
+        String sql = """
+        SELECT tb.*, nv.ho_ten AS ten_nguoi_gui
+        FROM thong_bao tb
+        LEFT JOIN nhan_vien nv ON tb.nguoi_gui = nv.nhan_vien_id
+        WHERE tb.nguoi_nhan = ?
+          AND tb.thong_bao_id > ?
+        ORDER BY tb.thong_bao_id ASC
+    """;
+        try (Connection conn = DBConnection.layKetNoi();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, nguoiNhan);
+            ps.setInt(2, lastId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) ds.add(mapRow(rs));
+        } catch (SQLException e) { e.printStackTrace(); }
+        return ds;
+    }
+
     private ThongBao mapRow(ResultSet rs) throws SQLException {
         ThongBao tb = new ThongBao();
         tb.setThongBaoId(rs.getInt("thong_bao_id"));
