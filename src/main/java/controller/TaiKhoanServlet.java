@@ -355,6 +355,9 @@ public class TaiKhoanServlet extends HttpServlet {
     }
     private TaiKhoan getSS(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession(false);
+        if(session==null)
+            return new TaiKhoan();
+
         return (TaiKhoan) session.getAttribute("taiKhoanDangDangNhap");
     }
 }

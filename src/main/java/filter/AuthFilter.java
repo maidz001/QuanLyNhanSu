@@ -47,7 +47,7 @@ public class AuthFilter implements Filter {
         }
 
         if (!daDangNhap) {
-            res.sendRedirect(req.getContextPath() + "/taikhoan/login");
+            res.sendRedirect(req.getContextPath() + "/taikhoan?action=login");
             return;
         }
 
