@@ -251,6 +251,12 @@ public class TaiKhoanServlet extends HttpServlet {
             throws ServletException, IOException{
         HttpSession session = request.getSession(false);
         if (session != null) session.invalidate();
+        try{
+            getSS(request,response);
+            System.out.println("chua dang xuat");
+        } catch (Exception e) {
+            System.out.println("da dang xuat");
+        }
         response.sendRedirect(request.getContextPath() + "/taikhoan?action=login");
     }
 

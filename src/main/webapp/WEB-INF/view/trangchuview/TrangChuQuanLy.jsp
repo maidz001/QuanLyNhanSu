@@ -105,6 +105,8 @@
 
     /* Dept item */
     .dark .di2 .dn { color: var(--text); }
+    .dark .di2 { border-bottom-color: var(--border); }
+    .dark .di2 .dn { color: var(--text) !important; }
 
     /* Modal QR */
     .dark #modal-qr > div { background: var(--white); border-color: var(--border); }
