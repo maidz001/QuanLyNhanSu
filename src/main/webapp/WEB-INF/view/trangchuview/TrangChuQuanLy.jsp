@@ -47,7 +47,7 @@
 .dark .bg{background:#1a3a2a;color:#3fb950}
 .dark .bo{background:#2d1f0a;color:#d29922}
 .dark .br{background:#2d0f0f;color:#f85149}
-.dark .bb2,.dark .bp{background:#0d2a4a;color:#58a6ff}
+.dark .bb2,.dark .bp{background:#0d2a4a !important;color:#58a6ff !important;}
 .dark .tbt{color:#8b949e}
 .dark .tbt.active{color:#58a6ff;border-bottom-color:#58a6ff}
 .dark .tabb{border-bottom-color:#30363d}
