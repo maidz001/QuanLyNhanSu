@@ -149,8 +149,7 @@ public class DanhGiaDAO {
                 dg.setNhanXet(rs.getString("nhan_xet"));
                 dg.setNguoiDanhGia(rs.getInt("nguoi_danh_gia"));
                 dg.setNgayDanhGia(rs.getDate("ngay_danh_gia"));
-                dg.setHoTen(rs.getString("ho_ten"));
-                dg.setTenNguoiDanhGia(rs.getString("ten_nguoi_danh_gia"));
+
 
                 list.add(dg);
             }
@@ -173,8 +172,6 @@ public class DanhGiaDAO {
         dg.setNhanXet(rs.getString("nhan_xet"));
         dg.setNguoiDanhGia(rs.getInt("nguoi_danh_gia"));
         dg.setNgayDanhGia(rs.getTimestamp("ngay_danh_gia"));
-        try { dg.setHoTen(rs.getString("ho_ten")); } catch (SQLException ignored) {}
-        try { dg.setTenNguoiDanhGia(rs.getString("ten_nguoi_danh_gia")); } catch (SQLException ignored) {}
         return dg;
     }
 }

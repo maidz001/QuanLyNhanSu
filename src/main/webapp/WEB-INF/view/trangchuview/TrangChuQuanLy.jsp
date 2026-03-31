@@ -969,7 +969,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
         <!-- ═══ ĐÁNH GIÁ ═══ -->
         <div class="panel" id="panel-danhgia">
             <div class="box">
-                <div class="bh"><h3><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Quản lý đánh giá nhân viên</h3><a href="${pageContext.request.contextPath}/danhgia?action=them" class="btn bp2 bsm">+ Thêm đánh giá</a></div>
+                <div class="bh"><h3><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Quản lý đánh giá nhân viên</h3><a href="${pageContext.request.contextPath}/danhgia?action=moformthem" class="btn bp2 bsm">+ Thêm đánh giá</a></div>
                 <!-- SEARCH ĐÁNH GIÁ -->
                 <div class="search-bar">
                     <input type="text" placeholder="🔍 Tìm tên nhân viên..." oninput="filterTable('t-dg',this.value,[0],'count-dg','no-dg')"/>
@@ -988,13 +988,25 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
                             <c:when test="${not empty listDanhGiaAll}">
                                 <c:forEach var="dg" items="${listDanhGiaAll}">
                                     <tr>
-                                        <td>${not empty dg.hoTen ? dg.hoTen : 'NV#'.concat(dg.nhanVienId)}</td>
+                                        <td>
+                                            <c:forEach var="nv" items="${listNhanVien}">
+                                                <c:choose>
+                                                    <c:when test="${nv.nhanVienId == dg.nhanVienId}">${nv.hoTen}</c:when>
+                                                </c:choose>
+                                            </c:forEach>
+                                        </td>
                                         <td>T${dg.thang}</td>
                                         <td>${dg.nam}</td>
                                         <td><strong>${dg.tongDiem}</strong></td>
                                         <td><span class="badge ${dg.xepLoai == 'Xuat sac' ? 'bg' : dg.xepLoai == 'Gioi' ? 'bb2' : dg.xepLoai == 'Kha' ? 'bo' : 'br'}">${not empty dg.xepLoai ? dg.xepLoai : '--'}</span></td>
                                         <td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${not empty dg.nhanXet ? dg.nhanXet : '--'}</td>
-                                        <td>${not empty dg.tenNguoiDanhGia ? dg.tenNguoiDanhGia : '--'}</td>
+                                        <td>
+                                            <c:forEach var="nv" items="${listNhanVien}">
+                                                <c:choose>
+                                                    <c:when test="${nv.nhanVienId == dg.nguoiDanhGia}">${nv.hoTen}</c:when>
+                                                </c:choose>
+                                            </c:forEach>
+                                        </td>
                                         <td><c:choose><c:when test="${not empty dg.ngayDanhGia}"><fmt:formatDate value="${dg.ngayDanhGia}" pattern="dd/MM/yyyy"/></c:when><c:otherwise>--</c:otherwise></c:choose></td>
                                         <td><a href="${pageContext.request.contextPath}/danhgia?action=sua&id=${dg.danhGiaId}" class="btn bp2 bsm">Sửa</a></td>
                                     </tr>
@@ -1041,9 +1053,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
                                         <td><span class="badge ${t.trangThai == 1 ? 'bg' : 'br'}">${t.trangThai == 1 ? 'Hoạt động' : 'Khóa'}</span></td>
                                         <td><c:choose><c:when test="${not empty t.ngayTao}"><fmt:formatDate value="${t.ngayTao}" pattern="dd/MM/yyyy"/></c:when><c:otherwise>--</c:otherwise></c:choose></td>
                                         <td>
-                                            <a href="${pageContext.request.contextPath}/taikhoan?action=sua&id=${t.taiKhoanId}" class="btn bp2 bsm">Sửa</a>
-                                            <a href="${pageContext.request.contextPath}/taikhoan?action=khoa&id=${t.taiKhoanId}" class="btn bw bsm">Khóa</a>
-                                            <a href="${pageContext.request.contextPath}/taikhoan?action=xoa&id=${t.taiKhoanId}" class="btn bd bsm" onclick="return confirm('Xóa tài khoản?')">Xóa</a>
+                                            <a href="${pageContext.request.contextPath}/taikhoan?action=khoa&taikhoanid=${t.taiKhoanId}" class="btn bw bsm">Khóa</a>
+                                            <a href="${pageContext.request.contextPath}/taikhoan?action=xoa&taikhoanid=${t.taiKhoanId}" class="btn bd bsm" onclick="return confirm('Xóa tài khoản?')">Xóa</a>
                                         </td>
                                     </tr>
                                 </c:forEach>

@@ -13,8 +13,6 @@ public class DanhGia {
     private String nhanXet;
     private int nguoiDanhGia;
     private Date ngayDanhGia;
-    private String hoTen;
-    private String tenNguoiDanhGia;
 
     public DanhGia() {}
 
@@ -36,8 +34,4 @@ public class DanhGia {
     public void setNguoiDanhGia(int nguoiDanhGia) { this.nguoiDanhGia = nguoiDanhGia; }
     public Date getNgayDanhGia() { return ngayDanhGia; }
     public void setNgayDanhGia(Date ngayDanhGia) { this.ngayDanhGia = ngayDanhGia; }
-    public String getHoTen() { return hoTen; }
-    public void setHoTen(String hoTen) { this.hoTen = hoTen; }
-    public String getTenNguoiDanhGia() { return tenNguoiDanhGia; }
-    public void setTenNguoiDanhGia(String tenNguoiDanhGia) { this.tenNguoiDanhGia = tenNguoiDanhGia; }
 }

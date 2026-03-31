@@ -47,6 +47,7 @@ public class TaiKhoanServlet extends HttpServlet {
             case "xacnhantaikhoan":guiOTP(request,response);
 
             case "xoa": xoaTaiKhoan(request,response); break;
+            case "khoa": khoaTaiKhoan(request,response); break;
             case "xem": xemChiTiet(request,response); break;
             case "login": moFormLogin(request,response); break;
             case "signin": moFormSignIn(request,response); break;
@@ -56,6 +57,8 @@ public class TaiKhoanServlet extends HttpServlet {
             default:goiDangNhapChoQuanLy(request,response,getSS(request,response));
         }
     }
+
+
 
     protected void doPost(HttpServletRequest request,HttpServletResponse response)
             throws ServletException, IOException {
@@ -179,13 +182,13 @@ public class TaiKhoanServlet extends HttpServlet {
     // ================= XÓA =================
 
     private void xoaTaiKhoan(HttpServletRequest request,HttpServletResponse response)
-            throws IOException {
+            throws IOException, ServletException {
 
-        int id=Integer.parseInt(request.getParameter("id"));
+        int id=Integer.parseInt(request.getParameter("taikhoanid"));
 
         taiKhoanService.xoa(id);
 
-        response.sendRedirect("taikhoan");
+       goiDangNhapChoQuanLy(request,response,getSS(request,response));
     }
 
     // ================= XEM CHI TIẾT =================
@@ -359,5 +362,12 @@ public class TaiKhoanServlet extends HttpServlet {
             return new TaiKhoan();
 
         return (TaiKhoan) session.getAttribute("taiKhoanDangDangNhap");
+    }
+    private void khoaTaiKhoan(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        int taikhoanid= Integer.parseInt(request.getParameter("taikhoanid"));
+        TaiKhoan tk=taiKhoanService.layTheoId(taikhoanid);
+        tk.setTrangThai(0);
+        taiKhoanService.sua(tk);
+        goiDangNhapChoQuanLy(request,response,getSS(request,response));
     }
 }

@@ -1,6 +1,7 @@
 package controller;
 
 import model.DanhGia;
+import model.TaiKhoan;
 import service.DanhGiaService;
 import service.NhanVienService;
 
@@ -9,13 +10,16 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 @WebServlet("/danhgia")
 public class DanhGiaServlet extends HttpServlet {
 
     private DanhGiaService danhGiaService = new DanhGiaService();
-    private NhanVienService nhanVienService=new NhanVienService();
+    private NhanVienService nhanVienService = new NhanVienService();
+    private TaiKhoanServlet taiKhoanServlet=new TaiKhoanServlet();
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -27,7 +31,7 @@ public class DanhGiaServlet extends HttpServlet {
 
         switch (action) {
 
-            case "them":
+            case "moformthem":
                 showFormThem(request, response);
                 break;
 
@@ -96,10 +100,10 @@ public class DanhGiaServlet extends HttpServlet {
 
     private void showFormThem(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        request.setAttribute("nguoiThucHien",nhanVienService.layTheoId(getSS(request,response).getNhanVienId()));
+        request.setAttribute("listNhanVien", nhanVienService.layTatCa());
 
-        request.setAttribute("danhSachNhanVien", nhanVienService.layTatCa());
-
-        request.getRequestDispatcher("ThemDanhGia.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/view/danhgiaview/ThemDanhGia.jsp").forward(request, response);
     }
 
     // ================= THÊM =================
@@ -107,19 +111,30 @@ public class DanhGiaServlet extends HttpServlet {
     private void themDanhGia(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
 
-        DanhGia dg = new DanhGia();
+        try {
+            DanhGia dg = new DanhGia();
 
-        dg.setNhanVienId(Integer.parseInt(request.getParameter("nhanVienId")));
-        dg.setThang(Integer.parseInt(request.getParameter("thang")));
-        dg.setNam(Integer.parseInt(request.getParameter("nam")));
-        dg.setTongDiem(new BigDecimal(request.getParameter("tongDiem")));
-        dg.setXepLoai(request.getParameter("xepLoai"));
-        dg.setNhanXet(request.getParameter("nhanXet"));
-        dg.setNguoiDanhGia(Integer.parseInt(request.getParameter("nguoiDanhGia")));
+            dg.setNhanVienId(Integer.parseInt(request.getParameter("nhanVienId")));
+            dg.setThang(Integer.parseInt(request.getParameter("thang")));
+            dg.setNam(Integer.parseInt(request.getParameter("nam")));
 
-        danhGiaService.them(dg);
+            // Xử lý tongDiem có thể là số thập phân
+            String tongDiemStr = request.getParameter("tongDiem");
+            dg.setTongDiem(new BigDecimal(tongDiemStr != null ? tongDiemStr : "0"));
 
-        response.sendRedirect("danhgia");
+            dg.setXepLoai(request.getParameter("xepLoai"));
+            dg.setNhanXet(request.getParameter("nhanXet"));
+            dg.setNguoiDanhGia(Integer.parseInt(request.getParameter("nguoiDanhGia")));
+
+            boolean result = danhGiaService.them(dg);
+            if(result)
+                request.getRequestDispatcher("/WEB-INF/view/danhgiaview/ThemDanhGia.jsp").forward(request,response);
+            else
+                taiKhoanServlet.goiDangNhapChoQuanLy(request,response,getSS(request,response));
+
+        } catch (NumberFormatException | ServletException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     // ================= FORM SỬA =================
@@ -130,28 +145,40 @@ public class DanhGiaServlet extends HttpServlet {
         int id = Integer.parseInt(request.getParameter("id"));
 
         DanhGia dg = danhGiaService.layTheoId(id);
+     request.setAttribute("nhanVien",nhanVienService.layTheoId(dg.getNhanVienId()));
+        request.setAttribute("danhGia", dg);
+        request.setAttribute("nguoiThucHien", nhanVienService.layTheoId(getSS(request,response).getNhanVienId()));
 
-        request.setAttribute("dg", dg);
-        request.setAttribute("danhSachNhanVien", nhanVienService.layTatCa());
-
-        request.getRequestDispatcher("SuaDanhGia.jsp").forward(request, response);
+        request.getRequestDispatcher("WEB-INF/view/danhgiaview/SuaDanhGia.jsp").forward(request, response);
     }
 
-    // ================= CẬP NHẬT =================
+
 
     private void capNhatDanhGia(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
 
-        DanhGia dg = new DanhGia();
+        try {
+            DanhGia dg = new DanhGia();
 
-        dg.setDanhGiaId(Integer.parseInt(request.getParameter("danhGiaId")));
-        dg.setTongDiem(new BigDecimal(request.getParameter("tongDiem")));
-        dg.setXepLoai(request.getParameter("xepLoai"));
-        dg.setNhanXet(request.getParameter("nhanXet"));
+            dg.setDanhGiaId(Integer.parseInt(request.getParameter("danhGiaId")));
 
-        danhGiaService.sua(dg);
+            String tongDiemStr = request.getParameter("tongDiem");
+            dg.setTongDiem(new BigDecimal(tongDiemStr != null ? tongDiemStr : "0"));
 
-        response.sendRedirect("danhgia");
+            dg.setXepLoai(request.getParameter("xepLoai"));
+            dg.setNhanXet(request.getParameter("nhanXet"));
+            Date now=new Date();
+            dg.setNgayDanhGia(now);
+
+            danhGiaService.sua(dg);
+
+            taiKhoanServlet.goiDangNhapChoQuanLy(request,response,getSS(request,response));
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            response.sendRedirect(request.getContextPath() + "/danhgia?error=du_lieu_khong_hop_le");
+        } catch (ServletException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     // ================= XÓA =================
@@ -163,7 +190,7 @@ public class DanhGiaServlet extends HttpServlet {
 
         danhGiaService.xoa(id);
 
-        response.sendRedirect("danhgia");
+        response.sendRedirect(request.getContextPath() + "/danhgia");
     }
 
     // ================= XEM CHI TIẾT =================
@@ -178,5 +205,9 @@ public class DanhGiaServlet extends HttpServlet {
         request.setAttribute("dg", dg);
 
         request.getRequestDispatcher("ChiTietDanhGia.jsp").forward(request, response);
+    }
+    private TaiKhoan getSS(HttpServletRequest request, HttpServletResponse response) {
+        HttpSession session = request.getSession(false);
+        return (TaiKhoan) session.getAttribute("taiKhoanDangDangNhap");
     }
 }
