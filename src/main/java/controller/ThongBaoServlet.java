@@ -50,7 +50,6 @@ public class ThongBaoServlet extends HttpServlet {
         }
     }
 
-    // ================= DANH SÁCH =================
 
     private void danhSachThongBao(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -68,40 +67,13 @@ public class ThongBaoServlet extends HttpServlet {
                 .forward(request, response);
     }
 
-    // ================= CHI TIẾT =================
-
-    private void xemChiTiet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-        int id = Integer.parseInt(request.getParameter("id"));
-
-        ThongBao tb = thongBaoService.layTheoId(id);
-
-        thongBaoService.danhDauDaDoc(id);
-
-        request.setAttribute("tb", tb);
-
-        request.getRequestDispatcher("ChiTietThongBao.jsp")
-                .forward(request, response);
-    }
-
-    // ================= ĐỌC TẤT CẢ =================
-
-    private void docTatCa(HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
-
-        int nguoiNhanId = (int) request.getSession(false).getAttribute("nhanVienId");
-
-        thongBaoService.docTatCa(nguoiNhanId);
-
-        response.sendRedirect("thongbao");
-    }
     private void danhDauDaDocById(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         TaiKhoan tk = (TaiKhoan) request.getSession(false).getAttribute("taiKhoanDangDangNhap");
         int thongBaoId = Integer.parseInt(request.getParameter("id"));
 
         thongBaoService.danhDauDaDoc(thongBaoId);
+
         taiKhoanServlet.goiDangNhapChoNV(request,response,tk);
     }
     private void danhDauTatCaLaDaDoc(HttpServletRequest request, HttpServletResponse response)
@@ -110,6 +82,7 @@ public class ThongBaoServlet extends HttpServlet {
         int thongBaoId = Integer.parseInt(request.getParameter("nhanVienId"));
 
         thongBaoService.docTatCa(thongBaoId);
+        request.setAttribute("message","Đã dánh dấu tất cả thành đã đọc thành công");
         taiKhoanServlet.goiDangNhapChoNV(request,response,tk);
     }
     private void xoaTatCaThongBaoDaDoc(HttpServletRequest request, HttpServletResponse response)

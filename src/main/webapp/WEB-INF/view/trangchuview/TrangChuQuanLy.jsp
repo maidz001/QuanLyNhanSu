@@ -1053,7 +1053,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
                                         <td><span class="badge ${t.trangThai == 1 ? 'bg' : 'br'}">${t.trangThai == 1 ? 'Hoạt động' : 'Khóa'}</span></td>
                                         <td><c:choose><c:when test="${not empty t.ngayTao}"><fmt:formatDate value="${t.ngayTao}" pattern="dd/MM/yyyy"/></c:when><c:otherwise>--</c:otherwise></c:choose></td>
                                         <td>
-                                            <a href="${pageContext.request.contextPath}/taikhoan?action=khoa&taikhoanid=${t.taiKhoanId}" class="btn bw bsm">Khóa</a>
+                                        <c:if test="${t.trangThai==1}"><a href="${pageContext.request.contextPath}/taikhoan?action=khoa&taikhoanid=${t.taiKhoanId}" class="btn bw bsm">Khóa</a></c:if>
+                                                                                  <c:if test="${t.trangThai==0}"><a href="${pageContext.request.contextPath}/taikhoan?action=kichhoat&taikhoanid=${t.taiKhoanId}" class="btn bw bsm">kích hoạt</a></c:if>
+
                                             <a href="${pageContext.request.contextPath}/taikhoan?action=xoa&taikhoanid=${t.taiKhoanId}" class="btn bd bsm" onclick="return confirm('Xóa tài khoản?')">Xóa</a>
                                         </td>
                                     </tr>
@@ -1365,9 +1367,11 @@ const matchTt = !tt || (row.cells[9] && row.cells[9].textContent.includes(tt));
 </script>
 
 <script>
-    <c:if test="${not empty message}">
-        alert("✅ ${message}");
-    </c:if>
+
+        window.addEventListener('DOMContentLoaded', function() {
+            var msg = "${not empty message ? message : ''}";
+            if (msg) alert("✅ " + msg);
+        });
     // ── VIETQR MODAL ──
     let currentBangLuongId = null;
 

@@ -23,18 +23,18 @@ import static org.apache.poi.ss.util.DateParser.parseDate;
 
 @WebServlet("/nhanvien")
 @MultipartConfig(
-        fileSizeThreshold = 1024 * 1024,      // 1MB
-        maxFileSize       = 1024 * 1024 * 5,  // 5MB
-        maxRequestSize    = 1024 * 1024 * 10  // 10MB
+        fileSizeThreshold = 1024 * 1024,
+        maxFileSize       = 1024 * 1024 * 5,
+        maxRequestSize    = 1024 * 1024 * 10
 )
 public class NhanVienServlet extends HttpServlet {
-private XuatExcel xuatExcel=new XuatExcel();
-private ThongBaoService thongBaoService=new ThongBaoService();
+    private XuatExcel xuatExcel = new XuatExcel();
+    private ThongBaoService thongBaoService = new ThongBaoService();
     private NhanVienService nhanVienService = new NhanVienService();
     private TaiKhoanServlet taiKhoanServlet = new TaiKhoanServlet();
-private HopDongService hopDongService=new HopDongService();
-    private PhongBanService phongBanService=new PhongBanService();
-    private ChucVuService chucVuService=new ChucVuService();
+    private HopDongService hopDongService = new HopDongService();
+    private PhongBanService phongBanService = new PhongBanService();
+    private ChucVuService chucVuService = new ChucVuService();
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -43,28 +43,14 @@ private HopDongService hopDongService=new HopDongService();
         if (action == null) action = "";
 
         switch (action) {
-            case "them":
-                moFormThem(request,response);
-                break;
-            case "sua":
-                suaForm(request, response);
-                break;
-            case "xoa":
-                xoaNhanVien(request, response);
-                break;
-            case "xemchitiet":
-                xemChiTiet(request, response);
-                break;
-            case "xuatexcel":
-                xuatExcel(request,response);
-                break;
-            default:
-                taiKhoanServlet.goiDangNhapChoQuanLy(request, response,getSS(request,response));
+            case "them":       moFormThem(request, response);  break;
+            case "sua":        suaForm(request, response);     break;
+            case "xoa":        xoaNhanVien(request, response); break;
+            case "xemchitiet": xemChiTiet(request, response);  break;
+            case "xuatexcel":  xuatExcel(request, response);   break;
+            default: taiKhoanServlet.goiDangNhapChoQuanLy(request, response, getSS(request, response));
         }
     }
-
-
-
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -75,38 +61,41 @@ private HopDongService hopDongService=new HopDongService();
         if (action == null) return;
 
         switch (action) {
-            case "capnhatthongtincanhan": capNhatCaNhan(request, response); break;
-            case "them":       themNhanVien(request, response);    break;
-            case "suabyquanly":
-
-                    suaByQuanLy(request,response);
-
-                break;
-            case "capnhatanh": capNhatAnh(request, response);      break;
+            case "capnhatthongtincanhan": capNhatCaNhan(request, response);  break;
+            case "them":                  themNhanVien(request, response);   break;
+            case "suabyquanly":           suaByQuanLy(request, response);    break;
+            case "capnhatanh":            capNhatAnh(request, response);     break;
         }
     }
 
-    // ================= CẬP NHẬT ẢNH ĐẠI DIỆN =================
-    private void moFormThem(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setAttribute("listChucVu",chucVuService.layTatCa());
-        request.setAttribute("listPhongBan",phongBanService.layTatCa());
-        if(nhanVienService.layTatCa().size()<10)
-        request.setAttribute("soNhanVien","NV0"+(nhanVienService.layTatCa().size()+1));
-        else         request.setAttribute("soNhanVien","NV"+(nhanVienService.layTatCa().size()+1));
+    private void moFormThem(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        request.setAttribute("listChucVu", chucVuService.layTatCa());
+        request.setAttribute("listPhongBan", phongBanService.layTatCa());
+
+        int soNV = nhanVienService.layTatCa().size();
+        request.setAttribute("soNhanVien", soNV < 9 ? "NV0" + (soNV + 1) : "NV" + (soNV + 1));
 
         request.getRequestDispatcher("WEB-INF/view/nhanvienview/ThemNhanVien.jsp").forward(request, response);
-
     }
+
     private void capNhatAnh(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         HttpSession session = request.getSession(false);
         TaiKhoan tk = (TaiKhoan) session.getAttribute("taiKhoanDangDangNhap");
-        int nvId = Integer.parseInt(request.getParameter("nhanVienId"));
 
+        String nvIdStr = request.getParameter("nhanVienId");
+        if (nvIdStr == null || nvIdStr.trim().isEmpty()) {
+            request.setAttribute("message", "Không tìm thấy nhân viên!");
+            taiKhoanServlet.goiDangNhapChoNV(request, response, tk);
+            return;
+        }
+
+        int nvId = Integer.parseInt(nvIdStr);
         Part filePart = request.getPart("anhDaiDien");
         String fileName = filePart.getSubmittedFileName();
-
 
         if (fileName == null || fileName.trim().isEmpty()) {
             taiKhoanServlet.goiDangNhapChoNV(request, response, tk);
@@ -114,48 +103,71 @@ private HopDongService hopDongService=new HopDongService();
         }
 
         String ext = fileName.substring(fileName.lastIndexOf(".")).toLowerCase();
-        if (!ext.equals(".jpg") && !ext.equals(".jpeg")
-                && !ext.equals(".png") && !ext.equals(".gif")) {
+        if (!ext.equals(".jpg") && !ext.equals(".jpeg") && !ext.equals(".png") && !ext.equals(".gif")) {
             request.setAttribute("message", "Chỉ chấp nhận file JPG, PNG, GIF!");
             taiKhoanServlet.goiDangNhapChoNV(request, response, tk);
             return;
         }
 
-        // Tên file theo nhanVienId
         String newFileName = "avatar_" + nvId + ext;
-
-        // Lưu vào WebContent/uploads/avatars/
-        String uploadPath = getServletContext().getRealPath("")
-                + File.separator + "uploads"
-                + File.separator + "avatars";
+        String uploadPath = getServletContext().getRealPath("") + File.separator + "uploads" + File.separator + "avatars";
         File uploadDir = new File(uploadPath);
         if (!uploadDir.exists()) uploadDir.mkdirs();
 
         filePart.write(uploadPath + File.separator + newFileName);
 
-        // Lưu đường dẫn tương đối vào DB
         NhanVien nv = nhanVienService.layTheoId(nvId);
+        if (nv == null) {
+            request.setAttribute("message", "Nhân viên không tồn tại!");
+            taiKhoanServlet.goiDangNhapChoNV(request, response, tk);
+            return;
+        }
+
         nv.setAnhDaiDien("uploads/avatars/" + newFileName);
         nhanVienService.sua(nv, null);
-
+        request.setAttribute("message", "Cập nhật avatar thành công");
         taiKhoanServlet.goiDangNhapChoNV(request, response, tk);
     }
+
     private void themNhanVien(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
 
+        String hoTen = request.getParameter("hoTen");
+        if (hoTen == null || hoTen.trim().isEmpty()) {
+            request.setAttribute("message", "Họ tên nhân viên không được để trống!");
+            taiKhoanServlet.goiDangNhapChoQuanLy(request, response, getSS(request, response));
+            return;
+        }
+
+        String email = request.getParameter("email");
+        if (email == null || email.trim().isEmpty()) {
+            request.setAttribute("message", "Email không được để trống!");
+            taiKhoanServlet.goiDangNhapChoQuanLy(request, response, getSS(request, response));
+            return;
+        }
+
+        String phongBanIdStr = request.getParameter("phongBanId");
+        String chucVuIdStr   = request.getParameter("chucVuId");
+        if (phongBanIdStr == null || phongBanIdStr.trim().isEmpty()
+                || chucVuIdStr == null || chucVuIdStr.trim().isEmpty()) {
+            request.setAttribute("message", "Vui lòng chọn phòng ban và chức vụ!");
+            taiKhoanServlet.goiDangNhapChoQuanLy(request, response, getSS(request, response));
+            return;
+        }
+
         NhanVien nv = new NhanVien();
         nv.setMaNhanVien(request.getParameter("maNhanVien"));
-        nv.setHoTen(request.getParameter("hoTen"));
-        nv.setEmail(request.getParameter("email"));
+        nv.setHoTen(hoTen.trim());
+        nv.setEmail(email.trim());
         nv.setDienThoai(request.getParameter("dienThoai"));
         nv.setDiaChi(request.getParameter("diaChi"));
         nv.setGioiTinh(request.getParameter("gioiTinh"));
         nv.setSoCmnd(request.getParameter("soCmnd"));
         nv.setSoTaiKhoan(request.getParameter("soTaiKhoan"));
         nv.setNganHang(request.getParameter("nganHang"));
-        nv.setPhongBanId(Integer.parseInt(request.getParameter("phongBanId")));
-        phongBanService.setSoLuong(Integer.parseInt(request.getParameter("phongBanId")), "tang");
-        nv.setChucVuId(Integer.parseInt(request.getParameter("chucVuId")));
+        nv.setPhongBanId(Integer.parseInt(phongBanIdStr));
+        phongBanService.setSoLuong(Integer.parseInt(phongBanIdStr), "tang");
+        nv.setChucVuId(Integer.parseInt(chucVuIdStr));
         nv.setTrangThai(request.getParameter("trangThai"));
 
         String ngaySinhStr = request.getParameter("ngaySinh");
@@ -165,10 +177,12 @@ private HopDongService hopDongService=new HopDongService();
         String ngayVaoLamStr = request.getParameter("ngayVaoLam");
         if (ngayVaoLamStr != null && !ngayVaoLamStr.trim().isEmpty())
             nv.setNgayVaoLam(java.sql.Date.valueOf(ngayVaoLamStr.trim()));
-        LocalDate now=LocalDate.now();
 
-        if(nhanVienService.them(nv, getSS(request, response).getNhanVienId()))
-        thongBaoService.them(new ThongBao(0,getSS(request,response).getNhanVienId(),getSS(request,response).getNhanVienId(),"Thêm nhân viên","Thêm thành công nhân viên"+nv.getHoTen()+" vào công ty","Thêm nhân viên",0, Date.valueOf(now)));
+        LocalDate now = LocalDate.now();
+
+        if (nhanVienService.them(nv, getSS(request, response).getNhanVienId()))
+            thongBaoService.them(new ThongBao(0, getSS(request, response).getNhanVienId(), getSS(request, response).getNhanVienId(), "Thêm nhân viên", "Thêm thành công nhân viên " + nv.getHoTen() + " vào công ty", "Thêm nhân viên", 0, Date.valueOf(now)));
+
         NhanVien nvMoi = nhanVienService.layTheoMa(nv.getMaNhanVien());
         if (nvMoi != null) {
             HopDong hd = new HopDong();
@@ -193,10 +207,10 @@ private HopDongService hopDongService=new HopDongService();
             if (request.getParameter("thoiHanHD") != null && !request.getParameter("thoiHanHD").isEmpty())
                 thoiHanStr = Integer.parseInt(request.getParameter("thoiHanHD"));
 
-            if (thoiHanStr > 3) hd.setPhuCap(BigDecimal.ONE);
-            else if (thoiHanStr == 0) hd.setPhuCap(BigDecimal.valueOf(500000));
+            if      (thoiHanStr > 3)                    hd.setPhuCap(BigDecimal.ONE);
+            else if (thoiHanStr == 0)                   hd.setPhuCap(BigDecimal.valueOf(500000));
             else if (thoiHanStr == 1 || thoiHanStr == 2) hd.setPhuCap(BigDecimal.valueOf(300000));
-            else hd.setPhuCap(BigDecimal.ZERO);
+            else                                         hd.setPhuCap(BigDecimal.ZERO);
 
             if (ngayBD != null && thoiHanStr != 0) {
                 java.util.Calendar cal = java.util.Calendar.getInstance();
@@ -210,6 +224,7 @@ private HopDongService hopDongService=new HopDongService();
                 System.out.println("loi tao hop dong");
         }
 
+        request.setAttribute("message", "Thêm nhân viên thành công");
         taiKhoanServlet.goiDangNhapChoQuanLy(request, response, getSS(request, response));
     }
 
@@ -218,9 +233,21 @@ private HopDongService hopDongService=new HopDongService();
 
         HttpSession session = request.getSession(false);
         TaiKhoan tk = (TaiKhoan) session.getAttribute("taiKhoanDangDangNhap");
+        String nvIdStr = request.getParameter("nhanVienId");
+        if (nvIdStr == null || nvIdStr.trim().isEmpty()) {
+            request.setAttribute("message", "Không tìm thấy nhân viên cần sửa!");
+            taiKhoanServlet.goiDangNhapChoQuanLy(request, response, tk);
+            return;
+        }
 
-        int nvId = Integer.parseInt(request.getParameter("nhanVienId"));
+        int nvId = Integer.parseInt(nvIdStr);
         NhanVien cu = nhanVienService.layTheoId(nvId);
+
+        if (cu == null) {
+            request.setAttribute("message", "Nhân viên không tồn tại!");
+            taiKhoanServlet.goiDangNhapChoQuanLy(request, response, tk);
+            return;
+        }
 
         String hoTen     = request.getParameter("hoTen");
         String email     = request.getParameter("email");
@@ -257,103 +284,110 @@ private HopDongService hopDongService=new HopDongService();
         String ngayVaoLamStr = request.getParameter("ngayVaoLam");
         if (ngayVaoLamStr != null && !ngayVaoLamStr.trim().isEmpty())
             cu.setNgayVaoLam(java.sql.Date.valueOf(ngayVaoLamStr.trim()));
-        LocalDate now=LocalDate.now();
 
+        LocalDate now = LocalDate.now();
         nhanVienService.sua(cu, tk.getNhanVienId());
-        thongBaoService.them(new ThongBao(0,getSS(request,response).getNhanVienId(),nvId,"Sửa thông tin cá nhân","Thông tin cá nhân của bạn đã được quản lý cập nhật","Sửa thông tin",0, Date.valueOf(now)));
-
+        thongBaoService.them(new ThongBao(0, getSS(request, response).getNhanVienId(), nvId, "Sửa thông tin cá nhân", "Thông tin cá nhân của bạn đã được quản lý cập nhật", "Sửa thông tin", 0, Date.valueOf(now)));
+        request.setAttribute("message", "Sửa thành công");
         taiKhoanServlet.goiDangNhapChoQuanLy(request, response, tk);
     }
-
-    // ================= THÊM =================
-
-
-
-    // ================= FORM SỬA =================
 
     private void suaForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        int id = Integer.parseInt(request.getParameter("id"));
+        String idStr = request.getParameter("id");
+        if (idStr == null || idStr.trim().isEmpty()) {
+            request.setAttribute("message", "Không tìm thấy nhân viên cần sửa!");
+            taiKhoanServlet.goiDangNhapChoQuanLy(request, response, getSS(request, response));
+            return;
+        }
+
+        int id = Integer.parseInt(idStr);
         NhanVien nv = nhanVienService.layTheoId(id);
+
+        if (nv == null) {
+            request.setAttribute("message", "Nhân viên không tồn tại!");
+            taiKhoanServlet.goiDangNhapChoQuanLy(request, response, getSS(request, response));
+            return;
+        }
+
         request.setAttribute("nv", nv);
         request.getRequestDispatcher("SuaNhanVien.jsp").forward(request, response);
     }
 
-    // ================= CẬP NHẬT =================
-
-    private void capNhatNhanVien(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        int idNhanVien=Integer.parseInt(request.getParameter("nhanVienId"));
-        NhanVien nv=nhanVienService.layTheoId(idNhanVien);
-        String hoTen=request.getParameter("hoTen");
-        String email =request.getParameter("email");
-        String sdt=request.getParameter("dienThoai");
-        String diaChi=request.getParameter("diaChi");
-        if(!hoTen.isEmpty()){
-        nv.setHoTen(hoTen);
-            System.out.println(hoTen);
-        }
-        else {
-            System.out.println("loi");
-        }
-        if(!email.isEmpty())
-        nv.setEmail(email);
-        if(!sdt.isEmpty())
-        nv.setDienThoai(sdt);
-        if(!diaChi.isEmpty())
-        nv.setDiaChi(request.getParameter("diaChi"));
-        nhanVienService.sua(nv, getSS(request, response).getNhanVienId());
-        taiKhoanServlet.goiDangNhapChoNV(request,response,getSS(request, response));
-    }
-
-    // ================= XÓA =================
-
     private void xoaNhanVien(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
 
-        int id = Integer.parseInt(request.getParameter("id"));
-        if(nhanVienService.setTrangThaiNghiViec(id)){
-            HopDong hd=hopDongService.layHopDongHieuLuc(id);
-            hd.setTrangThai("Da huy");
-            hopDongService.sua(hd,getSS(request,response).getNhanVienId());
-            phongBanService.setSoLuong(nhanVienService.layTheoId(id).getPhongBanId(),"giam");
-        request.setAttribute("message","Xóa thành công");
-        HopDong hhd= hopDongService.layHopDongHieuLuc(id);
-        hhd.setTrangThai("Da huy");
-       hopDongService.sua(hhd,getSS(request,response).getNhanVienId());
+        String idStr = request.getParameter("id");
+        if (idStr == null || idStr.trim().isEmpty()) {
+            request.setAttribute("message", "Không tìm thấy nhân viên cần xóa!");
+            taiKhoanServlet.goiDangNhapChoQuanLy(request, response, getSS(request, response));
+            return;
         }
-        else request.setAttribute("message","Thất bại");
-        taiKhoanServlet.goiDangNhapChoQuanLy(request,response,getSS(request,response));
-    }
 
-    // ================= CHI TIẾT =================
+        int id = Integer.parseInt(idStr);
+        NhanVien nv = nhanVienService.layTheoId(id);
+
+        if (nv == null) {
+            request.setAttribute("message", "Nhân viên không tồn tại!");
+            taiKhoanServlet.goiDangNhapChoQuanLy(request, response, getSS(request, response));
+            return;
+        }
+
+        if (nhanVienService.setTrangThaiNghiViec(id)) {
+            HopDong hd = hopDongService.layHopDongHieuLuc(id);
+            if (hd != null) {
+                hd.setTrangThai("Da huy");
+                hopDongService.sua(hd, getSS(request, response).getNhanVienId());
+            }
+            phongBanService.setSoLuong(nv.getPhongBanId(), "giam");
+            request.setAttribute("message", "Xóa thành công");
+        } else {
+            request.setAttribute("message", "Xóa thất bại, vui lòng thử lại!");
+        }
+
+        taiKhoanServlet.goiDangNhapChoQuanLy(request, response, getSS(request, response));
+    }
 
     private void xemChiTiet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        int id = Integer.parseInt(request.getParameter("id"));
+        String idStr = request.getParameter("id");
+        if (idStr == null || idStr.trim().isEmpty()) {
+            request.setAttribute("message", "Không tìm thấy nhân viên!");
+            taiKhoanServlet.goiDangNhapChoQuanLy(request, response, getSS(request, response));
+            return;
+        }
+
+        int id = Integer.parseInt(idStr);
         NhanVien nv = nhanVienService.layTheoId(id);
-        request.setAttribute("listPhongBan",phongBanService.layTatCa());
-        request.setAttribute("listChucVu",chucVuService.layTatCa());
+
+        if (nv == null) {
+            request.setAttribute("message", "Nhân viên không tồn tại!");
+            taiKhoanServlet.goiDangNhapChoQuanLy(request, response, getSS(request, response));
+            return;
+        }
+
+        request.setAttribute("listPhongBan", phongBanService.layTatCa());
+        request.setAttribute("listChucVu", chucVuService.layTatCa());
         request.setAttribute("nv", nv);
         request.getRequestDispatcher("WEB-INF/view/nhanvienview/XemChiTiet.jsp").forward(request, response);
     }
 
-    // ================= SESSION HELPER =================
-
-    private TaiKhoan getSS(HttpServletRequest request, HttpServletResponse response) {
-        HttpSession session = request.getSession(false);
-        return (TaiKhoan) session.getAttribute("taiKhoanDangDangNhap");
-    }
     private void capNhatCaNhan(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         HttpSession session = request.getSession(false);
         TaiKhoan tk = (TaiKhoan) session.getAttribute("taiKhoanDangDangNhap");
 
-        int nvId = Integer.parseInt(request.getParameter("nhanVienId"));
+        String nvIdStr = request.getParameter("nhanVienId");
+        if (nvIdStr == null || nvIdStr.trim().isEmpty()) {
+            request.setAttribute("message", "Không tìm thấy thông tin nhân viên!");
+            taiKhoanServlet.goiDangNhapChoNV(request, response, tk);
+            return;
+        }
 
+        int nvId = Integer.parseInt(nvIdStr);
 
         if (tk.getNhanVienId() != nvId) {
             request.setAttribute("message", "Không có quyền sửa thông tin người khác!");
@@ -362,24 +396,28 @@ private HopDongService hopDongService=new HopDongService();
         }
 
         NhanVien nv = nhanVienService.layTheoId(nvId);
-        String hoTen=request.getParameter("hoTen");
-        String email =request.getParameter("email");
-        String sdt=request.getParameter("dienThoai");
-        String diaChi=request.getParameter("diaChi");
-        if(!hoTen.isEmpty()){
-            nv.setHoTen(hoTen);
-            System.out.println(hoTen);
-        }
-        else {
-            System.out.println("loi");
+        if (nv == null) {
+            request.setAttribute("message", "Nhân viên không tồn tại!");
+            taiKhoanServlet.goiDangNhapChoNV(request, response, tk);
+            return;
         }
 
-        if(!email.isEmpty())
-            nv.setEmail(email);
-        if(!sdt.isEmpty())
-            nv.setDienThoai(sdt);
-        if(!diaChi.isEmpty())
-            nv.setDiaChi(request.getParameter("diaChi"));
+        String hoTen  = request.getParameter("hoTen");
+        String email  = request.getParameter("email");
+        String sdt    = request.getParameter("dienThoai");
+        String diaChi = request.getParameter("diaChi");
+
+        if (hoTen == null || hoTen.trim().isEmpty()) {
+            request.setAttribute("message", "Họ tên không được để trống!");
+            taiKhoanServlet.goiDangNhapChoNV(request, response, tk);
+            return;
+        }
+
+        nv.setHoTen(hoTen);
+        if (email  != null && !email.isEmpty())  nv.setEmail(email);
+        if (sdt    != null && !sdt.isEmpty())    nv.setDienThoai(sdt);
+        if (diaChi != null && !diaChi.isEmpty()) nv.setDiaChi(diaChi);
+
         String soTaiKhoan = request.getParameter("soTaiKhoan");
         if (soTaiKhoan != null && !soTaiKhoan.trim().isEmpty())
             nv.setSoTaiKhoan(soTaiKhoan.trim());
@@ -389,15 +427,20 @@ private HopDongService hopDongService=new HopDongService();
             nv.setNganHang(nganHang.trim());
 
         nhanVienService.sua(nv, tk.getNhanVienId());
-        LocalDate now=LocalDate.now();
-        request.setAttribute("messageCapNhat", "Cập nhật thông tin thành công!");
-        thongBaoService.them(new ThongBao(0,getSS(request,response).getNhanVienId(),getSS(request,response).getNhanVienId(),"Sửa thông tin","Đổi thông tin cá nhân thành công","sửa thông tin",0, Date.valueOf(now)));
-
+        LocalDate now = LocalDate.now();
+        thongBaoService.them(new ThongBao(0, getSS(request, response).getNhanVienId(), getSS(request, response).getNhanVienId(), "Sửa thông tin", "Đổi thông tin cá nhân thành công", "sửa thông tin", 0, Date.valueOf(now)));
+        request.setAttribute("message", "Cập nhật thông tin thành công!");
         taiKhoanServlet.goiDangNhapChoNV(request, response, tk);
     }
 
-    private void xuatExcel(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        xuatExcel.xuatDanhSachNhanVien(nhanVienService.layTatCa(),response);
-        taiKhoanServlet.goiDangNhapChoQuanLy(request,response,getSS(request,response));
+    private void xuatExcel(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        xuatExcel.xuatDanhSachNhanVien(nhanVienService.layTatCa(), response);
+        taiKhoanServlet.goiDangNhapChoQuanLy(request, response, getSS(request, response));
+    }
+
+    private TaiKhoan getSS(HttpServletRequest request, HttpServletResponse response) {
+        HttpSession session = request.getSession(false);
+        return (TaiKhoan) session.getAttribute("taiKhoanDangDangNhap");
     }
 }

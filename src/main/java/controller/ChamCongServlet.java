@@ -81,19 +81,6 @@ private  ChamCongService chamCongService=new ChamCongService();
                 .forward(request,response);
     }
 
-    // ================= THÊM =================
-
-
-
-    // ================= SỬA =================
-
-
-
-
-
-
-
-    // ================= XÓA =================
 
     private void xoaChamCong(HttpServletRequest request,HttpServletResponse response)
             throws IOException {
@@ -106,6 +93,10 @@ private  ChamCongService chamCongService=new ChamCongService();
     }
     private void checkIn(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int id=Integer.parseInt(request.getParameter("idNhanVien"));
+        if(getSS(request,response).getNhanVienId()!=id){
+            request.setAttribute("message","không được phép checkin hộ");
+            taiKhoanServlet.goiDangNhapChoNV(request,response,getSS(request,response));
+        }
         if(!chamCongService.checkIn(id)){
             request.setAttribute("message","Hôm nay đã CheckIn, vui lòng không spam");
         }
@@ -118,6 +109,10 @@ private  ChamCongService chamCongService=new ChamCongService();
     }
     private void checkOut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int id=Integer.parseInt(request.getParameter("idNhanVien"));
+        if(getSS(request,response).getNhanVienId()!=id){
+            request.setAttribute("message","không được phép checkout hộ");
+            taiKhoanServlet.goiDangNhapChoNV(request,response,getSS(request,response));
+        }
         if(!chamCongService.checkOut(id)){
             request.setAttribute("message","Hôm nay đã CheckOut, vui lòng không spam");
         }

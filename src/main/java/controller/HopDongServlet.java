@@ -51,9 +51,7 @@ public class HopDongServlet extends HttpServlet {
                 xemChiTiet(request, response);
                 break;
 
-            case "doiTrangThai":
-                doiTrangThai(request, response);
-                break;
+
             case "huy":
                 huyHopDong(request, response);
                 break;
@@ -89,10 +87,6 @@ public class HopDongServlet extends HttpServlet {
         }
     }
 
-    // ================= DANH SÁCH =================
-
-
-    // ================= FORM THÊM =================
 
     private void showFormThem(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -102,23 +96,18 @@ public class HopDongServlet extends HttpServlet {
         request.getRequestDispatcher("ThemHopDong.jsp").forward(request, response);
     }
 
-    // ================= THÊM =================
 
     private void themHopDong(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
-
         HopDong hd = new HopDong();
-
         hd.setSoHopDong(request.getParameter("soHopDong"));
         hd.setNhanVienId(Integer.parseInt(request.getParameter("nhanVienId")));
         hd.setLoaiHopDong(request.getParameter("loaiHopDong"));
         hd.setNgayBatDau(java.sql.Date.valueOf(request.getParameter("ngayBatDau")));
-
         String ngayKT = request.getParameter("ngayKetThuc");
         if (ngayKT != null && !ngayKT.isEmpty()) {
             hd.setNgayKetThuc(java.sql.Date.valueOf(ngayKT));
         }
-
         hd.setLuongCoBan(new BigDecimal(request.getParameter("luongCoBan")));
         hd.setPhuCap(new BigDecimal(request.getParameter("phuCap")));
         hd.setTrangThai(request.getParameter("trangThai"));
@@ -129,7 +118,6 @@ public class HopDongServlet extends HttpServlet {
         response.sendRedirect("hopdong");
     }
 
-    // ================= FORM SỬA =================
 
     private void suaForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -142,7 +130,6 @@ public class HopDongServlet extends HttpServlet {
             return;
         }
 
-        // Lấy tên nhân viên để hiển thị
         NhanVien nv = nhanVienService.layTheoId(hd.getNhanVienId());
         if (nv != null) {
             request.setAttribute("tenNhanVien", nv.getHoTen());
@@ -153,7 +140,6 @@ public class HopDongServlet extends HttpServlet {
                 .forward(request, response);
     }
 
-    // ================= CẬP NHẬT =================
 
     private void capNhatHopDong(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
@@ -161,13 +147,9 @@ public class HopDongServlet extends HttpServlet {
         int id = Integer.parseInt(request.getParameter("id"));
         HopDong hd = hopDongService.layTheoId(id);
 
-        // Xử lý gia hạn
         String giaHan = request.getParameter("giaHan");
         if (giaHan != null && !giaHan.isEmpty()) {
             int soThang = Integer.parseInt(giaHan);
-
-            // Tính ngày kết thúc mới từ ngày kết thúc hiện tại
-            // Nếu chưa có ngày kết thúc thì tính từ hôm nay
             java.time.LocalDate ngayGoc;
             if (hd.getNgayKetThuc() != null) {
                 ngayGoc = LocalDate.parse(hd.getNgayKetThuc().toString());
@@ -189,13 +171,12 @@ public class HopDongServlet extends HttpServlet {
 
         hopDongService.sua(hd,getSS(request,response).getNhanVienId());
 
-        request.getSession().setAttribute("message", "Cập nhật hợp đồng thành công!");
+        request.setAttribute("message", "Cập nhật hợp đồng thành công!");
         LocalDate now=LocalDate.now();
         thongBaoService.them(new ThongBao(0,getSS(request,response).getNhanVienId(),hd.getNhanVienId(),"Hợp đồng","Hợp đồng của bạn đã được cập nhật.","Cập nhật hợp đồng",0, Date.valueOf(now)));
-taiKhoanServlet.goiDangNhapChoQuanLy(request,response,getSS(request,response));
+        taiKhoanServlet.goiDangNhapChoQuanLy(request,response,getSS(request,response));
     }
 
-    // ================= XÓA =================
 
     private void xoaHopDong(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
@@ -206,8 +187,6 @@ taiKhoanServlet.goiDangNhapChoQuanLy(request,response,getSS(request,response));
 
         response.sendRedirect("hopdong");
     }
-
-    // ================= CHI TIẾT =================
 
     private void xemChiTiet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -221,18 +200,7 @@ taiKhoanServlet.goiDangNhapChoQuanLy(request,response,getSS(request,response));
         request.getRequestDispatcher("ChiTietHopDong.jsp").forward(request, response);
     }
 
-    // ================= ĐỔI TRẠNG THÁI =================
 
-    private void doiTrangThai(HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
-
-        int id = Integer.parseInt(request.getParameter("id"));
-        String trangThai = request.getParameter("trangThai");
-
-        hopDongService.sua(hopDongService.layTheoId(id),getSS(request,response).getNhanVienId() );
-
-        response.sendRedirect("hopdong");
-    }
     private void huyHopDong(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
 

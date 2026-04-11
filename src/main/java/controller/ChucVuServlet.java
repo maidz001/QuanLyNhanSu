@@ -63,7 +63,6 @@ public class ChucVuServlet extends HttpServlet {
         }
     }
 
-    // ================= DANH SÁCH =================
 
     private void danhSachChucVu(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -75,8 +74,6 @@ public class ChucVuServlet extends HttpServlet {
         request.getRequestDispatcher("/WEB-INF/view/chucvuview/ChucVuList.jsp")
                 .forward(request, response);
     }
-
-    // ================= THÊM =================
 
     private void themChucVu(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
@@ -98,16 +95,15 @@ public class ChucVuServlet extends HttpServlet {
         cv.setTrangThai(1);
 
         chucVuService.them(cv);
+        request.setAttribute("message","Thêm chức vụ thành công");
         taiKhoanServlet.goiDangNhapChoQuanLy(request,response,getSS(request,response));
 
 
     }
 
-    // ================= CẬP NHẬT =================
 
 
 
-    // ================= XÓA =================
 
     private void xoaChucVu(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
@@ -115,6 +111,7 @@ public class ChucVuServlet extends HttpServlet {
         int id = Integer.parseInt(request.getParameter("id"));
 
         chucVuService.xoa(id);
+        request.setAttribute("message","Xóa chức vụ thành công");
 
         taiKhoanServlet.goiDangNhapChoQuanLy(request,response,getSS(request,response));
     }
@@ -124,11 +121,9 @@ public class ChucVuServlet extends HttpServlet {
         int id = Integer.parseInt(request.getParameter("id"));
 
         chucVuService.kichHoat(id);
-
+        request.setAttribute("message","Kích hoạt chức vụ thành công");
         taiKhoanServlet.goiDangNhapChoQuanLy(request,response,getSS(request,response));
     }
-    // ================= XEM CHI TIẾT =================
-
     private void xemChiTiet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -171,6 +166,7 @@ public class ChucVuServlet extends HttpServlet {
         cv.setTrangThai(Integer.parseInt(request.getParameter("trangThai")));
 
         chucVuService.sua(cv);
+        request.setAttribute("message","Cập nhật chức vụ thành công");
         taiKhoanServlet.goiDangNhapChoQuanLy(request,response,getSS(request,response));
     }
     private TaiKhoan getSS(HttpServletRequest request, HttpServletResponse response) {

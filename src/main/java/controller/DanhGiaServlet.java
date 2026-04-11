@@ -118,7 +118,7 @@ public class DanhGiaServlet extends HttpServlet {
             dg.setThang(Integer.parseInt(request.getParameter("thang")));
             dg.setNam(Integer.parseInt(request.getParameter("nam")));
 
-            // Xử lý tongDiem có thể là số thập phân
+
             String tongDiemStr = request.getParameter("tongDiem");
             dg.setTongDiem(new BigDecimal(tongDiemStr != null ? tongDiemStr : "0"));
 
@@ -129,8 +129,11 @@ public class DanhGiaServlet extends HttpServlet {
             boolean result = danhGiaService.them(dg);
             if(result)
                 request.getRequestDispatcher("/WEB-INF/view/danhgiaview/ThemDanhGia.jsp").forward(request,response);
-            else
+            else{
+                request.setAttribute("message","Thêm đánh giá thành công");
                 taiKhoanServlet.goiDangNhapChoQuanLy(request,response,getSS(request,response));
+
+            }
 
         } catch (NumberFormatException | ServletException e) {
             throw new RuntimeException(e);
@@ -171,7 +174,7 @@ public class DanhGiaServlet extends HttpServlet {
             dg.setNgayDanhGia(now);
 
             danhGiaService.sua(dg);
-
+            request.setAttribute("message","Cập nhật thành công");
             taiKhoanServlet.goiDangNhapChoQuanLy(request,response,getSS(request,response));
         } catch (NumberFormatException e) {
             e.printStackTrace();

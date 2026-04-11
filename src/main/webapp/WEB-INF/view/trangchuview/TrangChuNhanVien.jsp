@@ -1472,8 +1472,17 @@
                                             </span>
                                         </td>
                                         <td>${not empty dg.nhanXet ? dg.nhanXet : '--'}</td>
-                                        <td>${not empty dg.tenNguoiDanhGia ? dg.tenNguoiDanhGia : '--'}</td>
-                                        <td><c:choose><c:when test="${not empty dg.ngayDanhGia}"><fmt:formatDate value="${dg.ngayDanhGia}" pattern="yyyy-MM-dd"/></c:when><c:otherwise>--</c:otherwise></c:choose></td>
+<td>
+    <c:set var="tenDanhGia" value="--"/>
+
+    <c:forEach var="nv" items="${listNhanVien}">
+        <c:if test="${nv.id == dg.nguoiDanhGia}">
+            <c:set var="tenDanhGia" value="${nv.hoTen}"/>
+        </c:if>
+    </c:forEach>
+
+    ${tenDanhGia}
+</td>                                        <td><c:choose><c:when test="${not empty dg.ngayDanhGia}"><fmt:formatDate value="${dg.ngayDanhGia}" pattern="yyyy-MM-dd"/></c:when><c:otherwise>--</c:otherwise></c:choose></td>
                                     </tr>
                                     </c:forEach>
                                 </c:when>
