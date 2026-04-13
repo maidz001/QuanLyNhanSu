@@ -1023,7 +1023,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
         <!-- ═══ TÀI KHOẢN ═══ -->
         <div class="panel" id="panel-taikhoan">
             <div class="box">
-                <div class="bh"><h3><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Quản lý tài khoản</h3><a href="${pageContext.request.contextPath}/taikhoan?action=them" class="btn bp2 bsm">+ Thêm tài khoản</a></div>
+                <div class="bh"><h3><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Quản lý tài khoản</h3></div>
                 <!-- SEARCH TÀI KHOẢN -->
                 <div class="search-bar">
                     <input type="text" id="s-tk" placeholder="🔍 Tìm tên đăng nhập..." oninput="filterTable('t-tk',this.value,[1,2],'count-tk','no-tk')"/>
@@ -1081,7 +1081,13 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
                         <option value="Đã đọc">Đã đọc</option>
                         <option value="Chưa đọc">Chưa đọc</option>
                     </select>
+
                     <span class="search-count" id="count-tb"></span>
+                    <a href="${pageContext.request.contextPath}/thongbao?action=danhdautatcaladadocchoql"
+                                                                                                             class="btn bw bsm"
+                                                                                                            >
+                                                                                                              Đánh dấu tất cả đã đọc
+                                                                                                          </a>
                 </div>
                 <table class="dt">
                     <thead>

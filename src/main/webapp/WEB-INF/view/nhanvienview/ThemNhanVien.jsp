@@ -224,8 +224,8 @@
 
     <!-- ACTIONS -->
     <div class="fa">
-        <a href="${pageContext.request.contextPath}/nhanvien" class="btn btn-outline">
-            <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Hủy
+        <a href="${pageContext.request.contextPath}/taikhoan?action=trangchu" class="btn btn-outline">
+            <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Quay về
         </a>
         <div class="fa-r">
             <button type="reset" class="btn btn-outline"

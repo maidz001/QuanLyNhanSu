@@ -55,7 +55,7 @@ public class TaiKhoanServlet extends HttpServlet {
             case "logout": dangXuat(request,response);break;
 
             case "trangchu":goiDangNhapChoQuanLy(request,response,getSS(request,response));break;
-            default:goiDangNhapChoQuanLy(request,response,getSS(request,response));
+            default:goiDangNhapChoNV(request,response,getSS(request,response));
         }
     }
 

@@ -28,6 +28,7 @@ import static org.apache.poi.ss.util.DateParser.parseDate;
         maxRequestSize    = 1024 * 1024 * 10
 )
 public class NhanVienServlet extends HttpServlet {
+    private TaiKhoanService taiKhoanService=new TaiKhoanService();
     private XuatExcel xuatExcel = new XuatExcel();
     private ThongBaoService thongBaoService = new ThongBaoService();
     private NhanVienService nhanVienService = new NhanVienService();
@@ -180,8 +181,9 @@ public class NhanVienServlet extends HttpServlet {
 
         LocalDate now = LocalDate.now();
 
-        if (nhanVienService.them(nv, getSS(request, response).getNhanVienId()))
-            thongBaoService.them(new ThongBao(0, getSS(request, response).getNhanVienId(), getSS(request, response).getNhanVienId(), "Thêm nhân viên", "Thêm thành công nhân viên " + nv.getHoTen() + " vào công ty", "Thêm nhân viên", 0, Date.valueOf(now)));
+        if (nhanVienService.them(nv, getSS(request, response).getNhanVienId())){
+            taiKhoanService.themTuDongKhiThemNhanVien(nv);
+            thongBaoService.them(new ThongBao(0, getSS(request, response).getNhanVienId(), getSS(request, response).getNhanVienId(), "Thêm nhân viên", "Thêm thành công nhân viên " + nv.getHoTen() + " vào công ty", "Thêm nhân viên", 0, Date.valueOf(now)));}
 
         NhanVien nvMoi = nhanVienService.layTheoMa(nv.getMaNhanVien());
         if (nvMoi != null) {
@@ -223,6 +225,7 @@ public class NhanVienServlet extends HttpServlet {
             if (!hopDongService.them(hd, getSS(request, response).getNhanVienId()))
                 System.out.println("loi tao hop dong");
         }
+
 
         request.setAttribute("message", "Thêm nhân viên thành công");
         taiKhoanServlet.goiDangNhapChoQuanLy(request, response, getSS(request, response));

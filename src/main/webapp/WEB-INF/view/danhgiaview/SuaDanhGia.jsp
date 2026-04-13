@@ -208,7 +208,7 @@
         <div class="tr">
             <span class="rating-badge">✏️ Chỉnh sửa</span>
             <button id="theme-btn" onclick="toggleTheme()">🌙</button>
-            <a href="${pageContext.request.contextPath}/home?panel=danhgia" class="btn bo2">
+            <a href="${pageContext.request.contextPath}/taikhoan?action=trangchu" class="btn bo2">
                 <svg viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
                 Quay về trang chủ
             </a>

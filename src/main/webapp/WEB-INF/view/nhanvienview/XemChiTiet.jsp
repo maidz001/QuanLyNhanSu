@@ -94,7 +94,7 @@
 
 <div class="topbar">
     <div class="topbar-left">
-        <a href="${pageContext.request.contextPath}/nhanvien" class="back-btn">
+        <a href="${pageContext.request.contextPath}/taikhoan?action=trangchu" class="back-btn">
             <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Quay lại
         </a>
         <div class="breadcrumb">Nhân viên / <span>${nv.hoTen}</span></div>

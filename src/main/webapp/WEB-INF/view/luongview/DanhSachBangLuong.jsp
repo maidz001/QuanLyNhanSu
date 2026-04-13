@@ -129,7 +129,7 @@
       </span>
     </div>
 
-    <a href="${pageContext.request.contextPath}/taikhoan?action=login" class="btn">OK, Quay về</a>
+    <a href="${pageContext.request.contextPath}/taikhoan?action=trangchu" class="btn">OK, Quay về</a>
   </div>
 </div>
 

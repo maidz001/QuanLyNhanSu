@@ -39,6 +39,9 @@ public class ThongBaoServlet extends HttpServlet {
             case "danhdautatcaladadoc":
                 danhDauTatCaLaDaDoc(request, response);
                 break;
+            case "danhdautatcaladadocchoql":
+                danhDauTatCaLaDaDocChoQL(request, response);
+                break;
             case "xoatatcathongbaodadoc":
                 xoaTatCaThongBaoDaDoc(request, response);
                 break;
@@ -79,11 +82,20 @@ public class ThongBaoServlet extends HttpServlet {
     private void danhDauTatCaLaDaDoc(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         TaiKhoan tk = (TaiKhoan) request.getSession(false).getAttribute("taiKhoanDangDangNhap");
-        int thongBaoId = Integer.parseInt(request.getParameter("nhanVienId"));
+        int nhanVienId = tk.getNhanVienId();
 
-        thongBaoService.docTatCa(thongBaoId);
+        thongBaoService.docTatCa(nhanVienId);
         request.setAttribute("message","Đã dánh dấu tất cả thành đã đọc thành công");
         taiKhoanServlet.goiDangNhapChoNV(request,response,tk);
+    }
+    private void danhDauTatCaLaDaDocChoQL(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        TaiKhoan tk = (TaiKhoan) request.getSession(false).getAttribute("taiKhoanDangDangNhap");
+        int nhanVienId = tk.getNhanVienId();
+
+        thongBaoService.docTatCa(nhanVienId);
+        request.setAttribute("message","Đã dánh dấu tất cả thành đã đọc thành công");
+        taiKhoanServlet.goiDangNhapChoQuanLy(request,response,tk);
     }
     private void xoaTatCaThongBaoDaDoc(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
