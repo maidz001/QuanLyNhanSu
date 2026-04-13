@@ -47,7 +47,7 @@ public class BangLuongServlet extends HttpServlet {
             case "thanh-toan-tien-mat":         thanhToanTienMat(request, response);       break;
             case "thanh-toan-chuyen-khoan":     thanhToanChuyenKhoan(request, response);   break;
             case "thanh-toan-tat-ca-tien-mat":  thanhToanTatCaTienMat(request, response);  break;
-            default:                            danhSachBangLuong(request, response);      break;
+            default:                           taiKhoanServlet.goiDangNhapChoQuanLy(request,response,getSS(request,response));      break;
         }
     }
 
@@ -66,14 +66,6 @@ public class BangLuongServlet extends HttpServlet {
         }
     }
 
-    private void danhSachBangLuong(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-        List<BangLuong> list = bangLuongService.layTatCa();
-        request.setAttribute("list", list);
-        request.getRequestDispatcher("/WEB-INF/view/luongview/DanhSachBangLuong.jsp")
-                .forward(request, response);
-    }
 
     private void showFormThem(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -132,13 +124,6 @@ public class BangLuongServlet extends HttpServlet {
         response.sendRedirect("bangluong");
     }
 
-    private void xoaBangLuong(HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
-
-        int id = Integer.parseInt(request.getParameter("id"));
-        bangLuongService.xoa(id);
-        response.sendRedirect("bangluong");
-    }
 
     private void xemChiTiet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
